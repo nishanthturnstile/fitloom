@@ -128,7 +128,7 @@ fitloom/
   packages/application/     commands shared by web and worker
   packages/db/              schemas, migrations, database transaction helpers
   infra/                    Compose, Caddy, Ansible, backup/restore
-  consolidated_requirements/
+  docs/
 ```
 
 Use `workspace:*` for local dependencies. The root owns workspace configuration and the lockfile; merge/remove nested scaffold workspace files and lockfiles. Use pnpm's ordinary isolated `node_modules` layout. Here, workspace means pnpm workspaces, not Yarn Plug'n'Play. Add package manifests/exports and scripts with the actual package code, and add shared UI/config packages only when reuse requires them. [pnpm workspaces](https://pnpm.io/workspaces).
