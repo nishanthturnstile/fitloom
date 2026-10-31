@@ -1,0 +1,20 @@
+{
+  "name": "@fitloom/worker",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "dev": "node --env-file-if-exists=.env.local --watch src/index.ts",
+    "start": "node --env-file-if-exists=.env.local dist/index.js",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@fitloom/application": "workspace:*",
+    "pino": "10.4.0"
+  },
+  "devDependencies": {
+    "@types/node": "26.6.6",
+    "typescript": "7.0.2"
+  }
+}

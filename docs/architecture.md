@@ -110,24 +110,26 @@ Authentication, database, jobs, private storage, and the Nodemailer SMTP transpo
 
 ## Project structure and template
 
-Begin implementation in this repository with a small pnpm workspace. Use the official `create-next-app` scaffold for `apps/web`, customized for the selected Next.js release, TypeScript, App Router, Tailwind, Biome, `src/`, and `@/*`. Keep the existing Git history and documents. Select scaffold options explicitly so saved/default CLI preferences do not add a second linter or change the package manager. [Official scaffold](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+The repository uses pnpm workspaces with Turborepo for development, builds, and type checking. The initial workspace was generated with the official `create-turbo` CLI and adapted to the structure below. Use the official `create-next-app` scaffold for `apps/web`, customized for the selected Next.js release, TypeScript, App Router, Tailwind, Biome, `src/`, and `@/*`. Keep the existing Git history and documents. Select scaffold options explicitly so saved/default CLI preferences do not add a second linter or change the package manager. [Official scaffold](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 The repository itself becomes the reusable project foundation. A third-party SaaS template, a separate template repository, or a starter comparison is not required. The official scaffold supplies framework setup; implement Fitloom's own identity, tenancy, billing, and domain modules on it.
 
-Planned structure:
+Workspace structure:
 
 ```text
 fitloom/
   package.json              root scripts and pinned packageManager
   pnpm-workspace.yaml       apps/* and packages/*
   pnpm-lock.yaml            one root lockfile
+  turbo.json                dependency-ordered tasks and cached build outputs
+  IN_PROGRESS.md            high-level work status
   tsconfig.base.json        shared compiler settings
   biome.json                shared formatting/lint rules
   apps/web/                 official Next.js scaffold and actual product UI
   apps/worker/              TypeScript worker compiled with tsc, run by Node
   packages/application/     commands shared by web and worker
   packages/db/              schemas, migrations, database transaction helpers
-  infra/                    Compose, Caddy, Ansible, backup/restore
+  infra/                    added with deployment in roadmap 1C
   docs/
 ```
 
@@ -139,7 +141,7 @@ Implement in this order: workspace/scaffold → database and transactions → id
 
 The initial dependencies are Next.js/React/TypeScript on Node, pnpm, PostgreSQL/pg/Drizzle, Better Auth, Zod, Biome, Pino, decimal/date utilities, and pg-boss as its worker is implemented. Add React Hook Form and shadcn components with the first real forms/screens. Add image/PDF/scanner/chart/PWA libraries in the phases that use them. Nodemailer supplies the actual auth-email transport; a development SMTP capture tool is optional. Ansible/Compose/Caddy and backup tools arrive with the retained app's deployment, after the project and database structure exist.
 
-Keep one web application, one worker, and one database. Root pnpm scripts provide the needed workspace commands. Turborepo/Nx, extra backend frameworks, Redis, an external telemetry stack, and a separate starter repository are not selected for this implementation.
+Keep one web application, one worker, and one database. Root pnpm scripts use Turborepo to run development, build, start, and type-check tasks. Biome checks and formats the workspace from the root. Nx, extra backend frameworks, Redis, an external telemetry stack, and a separate starter repository are not selected for this implementation.
 
 ## Selected technology stack and libraries
 
@@ -147,8 +149,8 @@ The user selected OVHcloud VPS-3 for one shared development/testing machine. Use
 
 | Area | Selected technology/library | Use and constraint |
 | --- | --- | --- |
-| Language/runtime | TypeScript strict mode, Node.js 24 LTS | One supported Node baseline for web, jobs, and tooling. Use Node runtime for database/files/PDFs. |
-| Repository | [pnpm workspaces](https://pnpm.io/workspaces), one committed lockfile | Web, worker, shared application modules, database, and UI. Pin pnpm and use frozen-lockfile installs. No build orchestrator is required initially. |
+| Language/runtime | TypeScript strict mode, Node.js 26 LTS | One supported Node baseline for web, jobs, and tooling. Use Node runtime for database/files/PDFs. |
+| Repository | [pnpm workspaces](https://pnpm.io/workspaces), [Turborepo](https://turborepo.dev/docs), one committed lockfile | Web, worker, shared application modules, database, and UI. Pin pnpm and use frozen-lockfile installs. Turborepo orders package builds and caches outputs. |
 | Web | Next.js 16 App Router, React 19 | One web application for shop, worker, customer, public, and operator interfaces. Route handlers and Server Actions call shared commands. Deploy standalone build output with required public/static/template/font assets. |
 | Database | PostgreSQL 18, `pg`, stable `drizzle-orm`, `drizzle-kit` | Reviewed SQL migrations, tenant-qualified constraints, decimal columns, locks, and RLS. Use stable-compatible APIs or migration SQL when online docs describe prerelease helpers. |
 | Authentication | Better Auth, its release-compatible Drizzle adapter, two-factor plugin | Database sessions, verified email/password, recovery, operator MFA. Add configured Google/phone/customer flows in their owning phases. Fitloom owns domain authorization. |
@@ -171,7 +173,7 @@ The user selected OVHcloud VPS-3 for one shared development/testing machine. Use
 | Backup/move | PostgreSQL `pg_dump`/`pg_restore`, restic, rsync over OpenSSH, systemd timers | Matched development database/file/configuration backups and encrypted off-VPS copies. pgBackRest/WAL archiving is deferred until production recovery objectives require it. |
 | Operator commands | GNU Make with small checked scripts/playbooks | One documented interface for setup, deploy, backup, restore, and verification. No cloud control plane is required. |
 
-Pin stable package versions, collection versions, and container digests while creating the actual workspace. Add each later-phase library when implementing its owning feature. Resolve package, native-binary, Chromium, or browser incompatibilities in that implementation. Do not build a separate compatibility application or trial environment.
+The workspace pins Node.js 26.13.0, pnpm 12.16.1, Turborepo 2.11.10, Next.js 16.4.3, React 19.3.1, TypeScript 7.0.2, Tailwind CSS 4.3.3, and Biome 2.6.4, checked on 2026-10-31. The worker uses Pino 10.4.0. Shared application/database modules currently have no business implementation. Pin stable package versions, collection versions, and container digests as their owning features are implemented. Add each later-phase library when implementing its owning feature. Resolve package, native-binary, Chromium, or browser incompatibilities in that implementation. Do not build a separate compatibility application or trial environment.
 
 Official references: [Next.js self-hosting](https://nextjs.org/docs/app/guides/self-hosting), [Node releases](https://nodejs.org/en/about/previous-releases), [PostgreSQL support](https://www.postgresql.org/support/versioning/), [Drizzle releases](https://github.com/drizzle-team/drizzle-orm/releases), [Better Auth adapter](https://better-auth.com/docs/adapters/drizzle), [Tailwind browser support](https://tailwindcss.com/docs/compatibility), [pg-boss transaction adapters](https://pgboss.io/api/adapters).
 

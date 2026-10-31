@@ -4,11 +4,12 @@ Read the documents in this order:
 
 | Document | Purpose |
 | --- | --- |
+| [Implementation status](../IN_PROGRESS.md) | High-level work areas, status, and next steps |
 | [Product requirements](requirements.md) | Scope, workflows, acceptance criteria, shared guarantees, and remaining business decisions |
 | [Architecture](architecture.md) | Selected stack/libraries, module ownership, data contracts, Linux setup, backups, and server migration |
 | [Implementation roadmap](roadmap.md) | Dependency order, phase deliverables, implementation steps, and requirement ownership |
 
-The current development/testing target is one OVHcloud VPS-3 with 6 vCores, 12 GB RAM, and 100 GB NVMe. Ansible configures Linux, SSH, firewall, Docker, and host tasks. Compose defines the application services, networks, ports, and storage. Phase 1 starts with the pnpm workspace and official Next.js scaffold, adds application foundations, then implements deployment of that retained application. Resolve issues as they arise; no trial workspace or preliminary validation stage is planned. Production capacity and availability decisions come later.
+The current development/testing target is one OVHcloud VPS-3 with 6 vCores, 12 GB RAM, and 100 GB NVMe. Ansible configures Linux, SSH, firewall, Docker, and host tasks. Compose defines the application services, networks, ports, and storage. The pnpm/Turborepo workspace and official Next.js scaffold are implemented. Phase 1 continues with application foundations, then deployment. Each later phase extends that retained application. Resolve issues as they arise; no trial workspace or preliminary validation stage is planned. Production capacity and availability decisions come later.
 
 ## Required references
 

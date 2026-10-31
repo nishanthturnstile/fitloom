@@ -44,10 +44,12 @@ Start immediately with the retained product repository. Every step below produce
 
 ### 1A. Create the project structure and pnpm workspace
 
-1. Keep the existing Git repository and `docs/`. Create root `package.json`, `pnpm-workspace.yaml`, one `pnpm-lock.yaml`, Node/package-manager version pins, shared TypeScript/Biome configuration, `.gitignore`, and `.env.example` files with placeholder names only.
+The initial structure is implemented with Turborepo. Current work status lives in [IN_PROGRESS.md](../IN_PROGRESS.md); runnable commands live in the [root README](../README.md).
+
+1. Keep the existing Git repository and `docs/`. Use the official `create-turbo` CLI, then adapt root `package.json`, `pnpm-workspace.yaml`, `turbo.json`, one `pnpm-lock.yaml`, Node/package-manager version pins, shared TypeScript/Biome configuration, `.gitignore`, and `.env.example` files with placeholder names only.
 2. Scaffold `apps/web` using the official `create-next-app` template for the selected Next.js release. Choose TypeScript, App Router, Tailwind, Biome, `src/`, and the standard import alias. Keep workspace and lockfile ownership at the repository root and avoid nested Git repositories or duplicate lockfiles.
 3. Create the retained Node worker entry point in `apps/worker`, compiled with TypeScript and run by Node. Add `packages/db` for database ownership and `packages/application` for commands shared by web/worker. Add shared UI/config packages only when actual reusable code needs them.
-4. Add root scripts for development, build, start, formatting, and type checking. Use pnpm filters and `workspace:*` for local packages. Keep secrets/server-only imports out of browser bundles. Install only the dependencies used by this foundation.
+4. Add root scripts for development, build, start, formatting, and type checking. Use Turborepo for dependency-ordered tasks, pnpm filters for package selection, and `workspace:*` for local packages. Keep secrets/server-only imports out of browser bundles. Install only the dependencies used by this foundation.
 
 This creates Fitloom's own reusable repository structure. Do not create a separate template repository or evaluate multiple third-party starters before implementing the product.
 

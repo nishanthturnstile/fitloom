@@ -1,0 +1,29 @@
+{
+  "name": "fitloom",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@12.16.1",
+  "engines": {
+    "node": ">=26.13.0 <27",
+    "pnpm": ">=12.16.1 <13"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.6.4",
+    "@types/node": "26.6.6",
+    "turbo": "2.11.10",
+    "typescript": "7.0.2"
+  },
+  "scripts": {
+    "dev": "turbo run dev",
+    "dev:web": "turbo run dev --filter=@fitloom/web",
+    "dev:worker": "turbo run dev --filter=@fitloom/worker",
+    "build": "turbo run build",
+    "start": "turbo run start",
+    "lint": "biome check .",
+    "format": "biome format --write .",
+    "format:check": "biome format .",
+    "typecheck": "turbo run typecheck",
+    "check": "pnpm lint && pnpm typecheck"
+  }
+}

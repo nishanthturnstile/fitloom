@@ -1,0 +1,19 @@
+# Dependencies and task caches
+node_modules/
+.turbo/
+
+# Build outputs
+.next/
+dist/
+coverage/
+*.tsbuildinfo
+next-env.d.ts
+
+# Local configuration and secrets
+.env
+.env.*
+!.env.example
+
+# Logs and operating system files
+*.log
+.DS_Store
