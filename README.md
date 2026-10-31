@@ -4,6 +4,8 @@ Fitloom is a tailoring and shop management application. This repository currentl
 
 Track current work in [IN_PROGRESS.md](IN_PROGRESS.md). Read [docs/README.md](docs/README.md) for requirements and architecture.
 
+Development and testing currently run locally. Server infrastructure, deployment platforms, host schedulers, and server backup automation are managed separately by the user. They are not implementation work in this repository. Notify the user to plan that environment after phase 3 works locally; assess the first deployment candidate after phase 4. See the [deployment readiness checkpoint](docs/roadmap.md#deployment-readiness-and-external-handoff). Application development does not wait for a VPS.
+
 ## Run locally
 
 Use Node.js 26.13.0 and pnpm 12.16.1. `.node-version` and `.nvmrc` pin Node; `package.json` pins pnpm. Install the pinned pnpm version with `npm install --global pnpm@12.16.1` if needed.

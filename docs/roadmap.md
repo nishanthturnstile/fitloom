@@ -4,7 +4,7 @@ Build the production multi-tenant SaaS application in dependency order, starting
 
 This roadmap sequences the [product requirements](requirements.md) using the selected stack and contracts in [the architecture](architecture.md). Phases 1–9 describe implementation order within one complete application. They are ordered implementation groups within the same retained application. The requirements' P1/P2/P3 groups summarize these dependencies at a broader level.
 
-The current environment is one OVHcloud VPS-3 with 6 vCores, 12 GB RAM, and 100 GB NVMe. Development, builds, tests, web, worker, PostgreSQL, and private files share it. Phase 1 delivers repeatable Ansible/Compose setup and a basic backup/restore/move path. Production capacity, availability, continuous archiving, and service-level recovery objectives are prelaunch decisions, not prerequisites to begin development.
+The current environment is the local development machine. Run builds, tests, web, worker, PostgreSQL, and private files locally. The user manages Linux servers, deployment platforms, host schedulers, server backup automation, and VPS moves separately from Fitloom. No infrastructure or deployment tooling is planned in this repository. Deployment is deferred until the application is in good shape and is not a prerequisite for subscriptions or business features. Preserve the application runtime and recovery contracts needed for that future environment.
 
 ## Start with the tailor's workflow on the SaaS foundation
 
@@ -26,7 +26,7 @@ Keep tenant and location identity, typed order lines, and module boundaries in t
 
 | Phase | Build | Result | Depends on |
 | --- | --- | --- | --- |
-| 1 | Project structure, shared foundations, Linux deployment, and subscriptions | Retained workspace/application, safe records, independent tenants, repeatable deployment, and billing | Implement 1A → 1B → 1C → 1D below |
+| 1 | Project structure, shared foundations, and subscriptions | Locally runnable application, safe records, independent tenants, and billing | Implement 1A → 1B → 1D locally; 1C is a deferred external handoff |
 | 2 | Customers, garment masters, and measurements | A tailor can record reusable, versioned cutting information | 1 |
 | 3 | Orders, pricing, collections, and documents | A tailor can accept and bill a real order | 2 |
 | 4 | Production, trials, delivery, and daily control | Complete tailoring workflow within the production application | 3 |
@@ -40,7 +40,7 @@ Follow this sequence while preserving each feature's dependencies. SaaS identity
 
 ## Phase 1: Build the production SaaS foundation
 
-Start immediately with the retained product repository. Every step below produces actual application or deployment code used by subsequent modules. Handle installation, framework, database, and hosting issues when they arise in that work. There is no preliminary feasibility build, trial workspace, disposable feature slice, or separate deployment/validation stage.
+Start with the retained product repository and implement application code locally. Handle installation, framework, database, and integration issues within their owning work. Continue 1A → 1B → 1D without waiting for server provisioning. Keep 1C as a deferred external handoff, not an application implementation dependency. No preliminary feasibility build, trial workspace, or disposable feature slice is required.
 
 ### 1A. Create the project structure and pnpm workspace
 
@@ -61,14 +61,19 @@ This creates Fitloom's own reusable repository structure. Do not create a separa
 4. Implement decimal money/quantity primitives, accounting-owner journal contracts, audit/history, operation identities, request hashes, and expected versions. Business writes, audit, idempotency result, and pg-boss/outbox insert share one transaction.
 5. Implement the actual worker handlers and durable job states, provider inbox/signature handling, private-file staging/streaming, sensitive-job authorization, and the minimum operator lifecycle/account-recovery commands. Add limits and error reporting with their owning entry points.
 
-### 1C. Add deployment for the retained application
+### 1C. Defer infrastructure and deployment to a separate user-managed project
 
-1. Add web/worker Docker images, one Compose file, PostgreSQL persistence, Caddy routing/TLS, environment configuration, and bounded worker/database resources for the selected VPS-3.
-2. Implement Ansible inventory/host tasks for Ubuntu, deploy-user SSH access, UFW/IPv6 policy, Docker, directories/permissions, secret files, startup, and log rotation. Publish only Caddy ports; retain deploy access while applying SSH changes.
-3. Add Make commands for provisioning, application deployment, migrations, backup, and restore. Deploy the retained application on the one development server as part of its implementation. Fix deployment issues there and continue feature development.
-4. Add daily/pre-change database-dump plus file/configuration backups and the encrypted off-VPS copy. Keep the documented single-writer move procedure for when a machine move is actually required. Do not provision an extra VM/workspace or perform an upfront restore/redeployment exercise.
+Status: Deferred. This identifier remains for traceability and is not a dependency between 1B and 1D.
+
+The user plans and implements Linux provisioning, deployment-platform selection, server routing/TLS, host timers, monitoring infrastructure, backups, and VPS migration separately. Do not add a deployment center, infrastructure administration, Ansible playbooks, server Compose stacks, proxy configuration, or host scheduling tools to Fitloom as part of this roadmap.
+
+Fitloom supplies application configuration, runtime and migration entry points, worker lifecycle, private-storage requirements, health observations, and application verification. Local dependency setup remains application development. Product background jobs, recurring business actions, and appointment scheduling retain their existing module owners.
+
+Notify the user at the milestones in the [deployment readiness checkpoint](#deployment-readiness-and-external-handoff). Actual deployment waits for the user's separate environment and decision, while local feature development continues.
 
 ### 1D. Implement subscription and platform foundations
+
+Implement after 1B locally. External deployment in 1C is not a prerequisite. Use provider development mode where configured and record callbacks or delivery checks that still need an external environment.
 
 1. Add versioned plans, trial/active/grace/expired/suspended lifecycle, effective entitlements, overrides, atomic usage admission, and separate platform accounting.
 2. Implement plan selection/renewal, provider checkout and signed events, durable deduplication, pending/failed activation, reconciliation, invoices/history, and minimum operator billing commands. Use the provider's development mode when implementing its integration; it is part of the integration, not a preliminary product experiment.
@@ -130,7 +135,7 @@ Extend the implemented order workflow into team operations:
 - Standalone walk-in alterations and original-order rework, retaining original delivery/payment history and using the same financial correction rules.
 - Packages with explicit component/fixed-total allocation, design gallery, reusable media, visual construction sheets, and reviewed sheet revisions.
 - Measurement-slip OCR with confidence states, preserved manual input, undo, explicit review, and save as a new version. Implement the selected provider with handwriting/language support and explicit image egress/retention policy.
-- Recurring expenses, broader audit viewer, scheduled business exports with status/history, and an exercised recovery check. Operational recovery already exists from phase 1.
+- Recurring expenses, broader audit viewer, scheduled business exports with status/history, and an exercised application recovery check. Verify locally implemented coverage; server recovery is a separate external predeployment responsibility.
 - Installable web shell, allowlisted principal/tenant-scoped IndexedDB drafts, honest offline state, and conflict handling. Exclude private responses/photos/measurements/documents from service-worker caching by default. Clear drafts on logout/context switch. Offline financial/order actions cannot appear server-confirmed.
 - Expanded role administration, remaining configured sign-in methods, owner authenticator/remembered-device controls, tours, localized audio with text fallback, and persisted support tickets/status. Deliver a minimum authorized operator triage queue/detail/status path alongside ticket intake; the shared inbox remains phase 9.
 - Public shop/showcase and scoped order tracking. Publish booking entry only when phase 8 provides working confirmation. Add notification preferences and the basic notification center.
@@ -201,7 +206,7 @@ Keep tenant/location authority, effective plans, usage admission, owner renewal/
 | Stock is derived from movements and reservations | Build the stock transaction model before POS, returns, POs, transfers, or counts. |
 | Money, stock, delivery, and earnings require concurrency and retry safety | Implement atomic local effects and stable operation identities in every mutation. |
 | Outbox/job records commit with the business transaction; workers act after commit | Handle crash/retry and uncertain provider acceptance in the command/worker implementation. A standalone post-commit queue publish is insufficient. |
-| Host configuration and application deployment are versioned separately from data | Ansible/Compose recreates configuration; a matched dump/blob/config backup restores data. Implement restoration and single-writer cutover for actual recovery/moves. |
+| External infrastructure and application data have distinct owners | The user manages host setup, deployment, backups, and single-writer moves separately. Fitloom supplies runtime, schema, file, and recovery contracts. Local development does not depend on a server. |
 | Authorization applies to every projection | Enforce scope in APIs, direct URLs, files, documents, QR links, exports, and jobs. |
 
 Keep the modular monolith until measured scale or independent module ownership justifies a service split. This roadmap does not require microservices or a separate native mobile app.
@@ -251,7 +256,7 @@ Every canonical capability has an initial build point and a completion owner. A 
 | REQ-ONBOARD | 1: retained tenant onboarding and subscription selection | Each import: source IDs/preview/reconciliation; 5: tours/sample UI; 7: boutique/both setup; 9: offers |
 | REQ-WORKSPACE | 1: multiple tenants, authorized selection, initial location per tenant | 7: advanced location directory/switching and tenant-wide reports |
 | REQ-SETTINGS | 1: shop/user settings | 2–7: domain/document preferences; 9: remaining notification settings |
-| REQ-BACKUP | 1C: backup/off-VPS copy and restore/move commands | 5: scheduled business exports; prelaunch: production recovery objectives |
+| REQ-BACKUP | External deployment handoff: server backup/restore owned by user | 5: application scheduled business exports; before remote or real-data use: verified recovery and retention |
 | REQ-AUDIT | 1: critical event capture | Every phase: new writes; 5: general audit viewer |
 | REQ-PLAN | 1: effective plans, atomic limits, lifecycle, protected owner export/renewal | 9: expanded comparison/admin UI |
 | REQ-BILLING | 1: verified subscription payments and history | 9: referral/promo credits and expanded commercial UI |
@@ -289,15 +294,28 @@ Every canonical capability has an initial build point and a completion owner. A 
 | NFR-USABILITY | 1 | Each interface supports mobile/desktop, keyboard/touch, readable contrast, validation, and truthful loading/error/retry states. Apply the proposed WCAG 2.2 AA accessibility target. |
 | NFR-FILES | 1 | Upload validation, private retrieval, expiry, scope checks, and orphan cleanup work. |
 | NFR-JOBS | 1, extended with each integration | Document/export/provider jobs expose actual state, bounded retries, and correlation IDs. |
-| NFR-OBSERVE | 1 | Failures, queue lag, incomplete effects, delivery errors, and backup freshness are observable as modules arrive. |
-| NFR-RECOVERY | 1 | Implement daily/pre-move matched dump/file/config backup, off-VPS status, and the actual restore command. Production RPO/RTO/PITR are selected before launch. |
-| NFR-PERFORMANCE | 1, extended with each module | Bound pools/concurrency on VPS-3 and resolve resource bottlenecks encountered during implementation. Production capacity objectives remain later work. |
+| NFR-OBSERVE | 1, extended with each module | Failures, queue lag, incomplete effects, and delivery errors are observable locally. Host telemetry and server backup freshness belong to the user's external environment. |
+| NFR-RECOVERY | Local application checks as stateful modules arrive; external handoff before deployment | Define matched database/file/config recovery and verify local application behavior. The user implements server backups, off-server protection, and restore/move operations separately before deployed use. |
+| NFR-PERFORMANCE | 1, extended with each module | Bound pools/concurrency locally and resolve measured bottlenecks. Verify target-host budgets during external deployment; production capacity objectives remain later work. |
 | NFR-LOCAL | 1 | Shop-local dates, timezones, original units/precision, currency, and configured language remain consistent. |
-| NFR-PORTABILITY | 1C, extended with stateful modules | Implement repeatable Ansible/Compose setup, backup/restore commands, and single-writer move/rollback. Use the procedure when recovery or a host move is needed. |
+| NFR-PORTABILITY | Application contracts throughout; deferred external 1C handoff | Keep configuration external, migrations versioned, and persistent data identified. The user owns reproducible host setup, deployment, restore, and single-writer cutover separately. |
+
+## Deployment readiness and external handoff
+
+Development remains local until the user chooses to deploy. Use capability milestones rather than calendar dates:
+
+1. After phase 3 is verified locally, notify the user to begin the separate infrastructure plan. Orders, prices, collections, and documents provide a concrete workload for environment planning.
+2. After phase 4 is verified locally, report the first deployment candidate. The tailoring flow must work from shop setup through customers, measurement snapshots, order/advance, production, partial delivery, balance collection, and reconciliation.
+3. Continue phases 5–9 locally if the user is not ready. An earlier need for shared remote testing or a provider callback that cannot be verified locally triggers an earlier notification, not automatic server provisioning.
+4. Before actual remote deployment or real-data use, coordinate with the user's external environment. Verify secrets, roles, migrations, private persistence, routing/TLS, cookies/origins, callbacks, worker shutdown/restart, resource budgets, matched backups, and restore ownership on the target.
+
+Supply the runtime version and commands, configuration names, migration/bootstrap procedure, queue privileges, writable paths, health observations, provider endpoints, and schema/file recovery requirements. Container packaging or deployment integration can be agreed at that handoff. This roadmap does not create or configure the external project, select a deployment platform, or schedule automated reminders.
+
+Local evidence includes real PostgreSQL, tenant isolation, retry/concurrency behavior, job recovery, private files, and provider development-mode checks where available. Fixtures, local SMTP capture, or a passing local build do not prove external delivery, deployed TLS, Linux compatibility, or server disaster recovery. Track those checks until they run in the appropriate environment.
 
 ## Production readiness is a later release decision
 
-The selected development baseline is one VPS and a repeatable move/restore path. Before real-data launch, confirm capacity and service budgets, production RPO/RTO and retention, off-site backup automation and any WAL/PITR need, external alert destination/support coverage, actual tax/invoice/payment policy, privacy jurisdiction/consent, and production provider credentials. Preserve the existing application and schemas; this later release decision does not interrupt the current implementation sequence.
+The selected development baseline is the local machine. Before real-data launch, coordinate the separate user-managed deployment and recovery setup. Confirm capacity and service budgets, production RPO/RTO and retention, off-site backup automation and any WAL/PITR need, external alert destination/support coverage, actual tax/invoice/payment policy, privacy jurisdiction/consent, and production provider credentials. Preserve the existing application and schemas; this later release decision does not interrupt local implementation.
 
 ## Continue implementation in dependency order
 

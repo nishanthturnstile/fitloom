@@ -6,10 +6,13 @@ Read the documents in this order:
 | --- | --- |
 | [Implementation status](../IN_PROGRESS.md) | High-level work areas, status, and next steps |
 | [Product requirements](requirements.md) | Scope, workflows, acceptance criteria, shared guarantees, and remaining business decisions |
-| [Architecture](architecture.md) | Selected stack/libraries, module ownership, data contracts, Linux setup, backups, and server migration |
+| [Architecture](architecture.md) | Selected stack/libraries, module ownership, data contracts, local development, and the external deployment boundary |
 | [Implementation roadmap](roadmap.md) | Dependency order, phase deliverables, implementation steps, and requirement ownership |
+| [Phase 1B implementation plan](phase-1b-implementation-plan.md) | Seven-day foundation sequence, implementation contracts, acceptance checks, dependencies, and official references |
 
-The current development/testing target is one OVHcloud VPS-3 with 6 vCores, 12 GB RAM, and 100 GB NVMe. Ansible configures Linux, SSH, firewall, Docker, and host tasks. Compose defines the application services, networks, ports, and storage. The pnpm/Turborepo workspace and official Next.js scaffold are implemented. Phase 1 continues with application foundations, then deployment. Each later phase extends that retained application. Resolve issues as they arise; no trial workspace or preliminary validation stage is planned. Production capacity and availability decisions come later.
+Development and testing currently run on the local machine. The pnpm/Turborepo workspace and official Next.js scaffold are implemented. Continue with local application foundations, subscriptions, and business features. Linux setup, deployment platforms, host schedulers, server backups, and VPS migration are user-managed work outside this repository. Roadmap 1C records a deferred external handoff and does not block 1D or later application development.
+
+Notify the user to plan the external environment after phase 3 works locally. Assess the first deployment candidate after phase 4 completes the locally verified tailoring workflow. Development can continue locally beyond that point. A future server needs its own deployment and recovery verification before remote or real-data use. See the [deployment readiness checkpoint](roadmap.md#deployment-readiness-and-external-handoff).
 
 ## Required references
 
