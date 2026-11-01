@@ -15,15 +15,30 @@
     "typescript": "7.0.2"
   },
   "scripts": {
-    "dev": "turbo run dev",
-    "dev:web": "turbo run dev --filter=@fitloom/web",
-    "dev:worker": "turbo run dev --filter=@fitloom/worker",
+    "dev": "node scripts/compose.mjs up",
+    "dev:web": "node scripts/compose.mjs up",
+    "dev:worker": "node scripts/compose.mjs up",
     "build": "turbo run build",
-    "start": "turbo run start",
+    "start": "node scripts/compose.mjs up",
     "lint": "biome check .",
     "format": "biome format --write .",
     "format:check": "biome format .",
     "typecheck": "turbo run typecheck",
-    "check": "pnpm lint && pnpm typecheck"
+    "check": "pnpm lint && pnpm typecheck",
+    "test": "node scripts/compose.mjs test",
+    "setup:local": "node scripts/compose.mjs up",
+    "dev:up": "node scripts/compose.mjs up",
+    "dev:down": "node scripts/compose.mjs down",
+    "dev:status": "node scripts/compose.mjs status",
+    "dev:logs": "node scripts/compose.mjs logs",
+    "dev:watch": "docker compose watch --no-up web worker",
+    "test:workspace": "pnpm --filter @fitloom/application test:storage-reset && pnpm --filter @fitloom/db test && pnpm --filter @fitloom/application test",
+    "validate": "node scripts/compose.mjs validate",
+    "db:migrate": "node scripts/compose.mjs migrate",
+    "dev:account": "node scripts/compose.mjs account",
+    "operator:bootstrap": "node scripts/compose.mjs operator-bootstrap",
+    "operator:recover-mfa": "node scripts/compose.mjs operator-recover-mfa",
+    "verify:recovery": "node scripts/compose.mjs recovery",
+    "verify:resources": "node scripts/verify-foundation-resources.mjs"
   }
 }

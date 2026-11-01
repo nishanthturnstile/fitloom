@@ -1,34 +1,94 @@
-# Fitloom development documents
+# Fitloom documentation
 
-Read the documents in this order:
+Start with the [implementation status](implementation/status.md), then read the [roadmap](product/roadmap.md). Phase 1B is complete locally. Next is phase 2: customers, garment masters, and measurements. Phase 3 adds orders and manually recorded shop payments. Subscriptions, platform billing, and payment-provider integrations are deferred until explicitly reopened.
+
+## Folder structure
+
+```text
+docs/
+  README.md
+  product/
+  architecture/
+  implementation/
+    status.md
+    plans/
+  operations/
+  development/
+  references/
+```
+
+| Folder | Contents |
+| --- | --- |
+| `product/` | Product requirements, scope decisions, and the implementation roadmap |
+| `architecture/` | System design, ownership, authentication, workspace, and background-work contracts |
+| `implementation/` | Current status, implementation plans, reviews, and phase verification records |
+| `operations/` | Local setup, runtime limits, diagnostics, recovery, and operating procedures |
+| `development/` | Guides for the web app, worker, shared application package, and database package |
+| `references/` | Extracted source evidence and the frozen reference baseline |
+
+## Product and architecture
 
 | Document | Purpose |
 | --- | --- |
-| [Implementation status](../IN_PROGRESS.md) | High-level work areas, status, and next steps |
-| [Product requirements](requirements.md) | Scope, workflows, acceptance criteria, shared guarantees, and remaining business decisions |
-| [Architecture](architecture.md) | Selected stack/libraries, module ownership, data contracts, local development, and the external deployment boundary |
-| [Implementation roadmap](roadmap.md) | Dependency order, phase deliverables, implementation steps, and requirement ownership |
-| [Phase 1B implementation plan](phase-1b-implementation-plan.md) | Seven-day foundation sequence, implementation contracts, acceptance checks, dependencies, and official references |
+| [Product requirements](product/requirements.md) | Canonical scope, workflows, acceptance criteria, and remaining business decisions |
+| [Implementation roadmap](product/roadmap.md) | Dependency order, phase deliverables, and requirement ownership |
+| [Architecture](architecture/overview.md) | Selected stack, module ownership, data contracts, and deployment boundary |
+| [Identity, email, and operator MFA](architecture/authentication.md) | Identity policy, local Mailpit, production Resend configuration, and sessions |
+| [Setup and authorized workspaces](architecture/workspaces.md) | Resumable setup, roles, delegation, invitations, projections, and access wiring |
+| [Durable workers and provider inbox](architecture/jobs-and-inbox.md) | Transactional dispatch, leases, retries, cancellation, and signed fixtures |
 
-Development and testing currently run on the local machine. The pnpm/Turborepo workspace and official Next.js scaffold are implemented. Continue with local application foundations, subscriptions, and business features. Linux setup, deployment platforms, host schedulers, server backups, and VPS migration are user-managed work outside this repository. Roadmap 1C records a deferred external handoff and does not block 1D or later application development.
+## Implementation
 
-Notify the user to plan the external environment after phase 3 works locally. Assess the first deployment candidate after phase 4 completes the locally verified tailoring workflow. Development can continue locally beyond that point. A future server needs its own deployment and recovery verification before remote or real-data use. See the [deployment readiness checkpoint](roadmap.md#deployment-readiness-and-external-handoff).
-
-## Required references
-
-| Reference | Why it stays |
+| Document | Purpose |
 | --- | --- |
-| [Source feature details](references/source_feature_details.md) | Normative scope appendix with detailed source behavior mapped to the 64 canonical requirements |
-| [Frozen reference baseline](references/reference_baseline.json) | Preserves 860 original entries, 17 configuration/schema/API references, and 15 reports/findings for traceability |
+| [Implementation status](implementation/status.md) | Work areas, completion evidence, current scope decisions, and next steps |
+| [Phase 1B implementation plan](implementation/plans/phase-1b-implementation-plan.md) | Retained seven-day foundation plan, acceptance checks, and completion criteria |
 
-The canonical requirements and architecture resolve conflicting source behavior. The references preserve evidence and limitations; they do not establish successful writes, backend authorization, or implemented Fitloom capabilities.
+## Operations
 
-## Archived work
+| Document | Purpose |
+| --- | --- |
+| [Local Docker Compose development](operations/local-development.md) | Fixed ports, Tailscale access, hot reload, persistent data, and validation |
+| [Foundation operations and verification](operations/foundation-operations.md) | Status, diagnostics, limits, pagination, recovery evidence, and remaining dependencies |
+| [Private files and operator recovery](operations/private-files-and-operator-recovery.md) | SeaweedFS lifecycle, file permissions, operator commands, bootstrap, and MFA recovery |
 
-Completed research plans, findings, the final review, and one-time verification records are archived outside the project. Their selected decisions and useful primary-source links are incorporated in the documents above. The complete pre-cleanup snapshot and SHA-256 manifest are at:
+## Development guides
+
+| Document | Owner |
+| --- | --- |
+| [Web application](development/web.md) | `apps/web/` |
+| [Worker](development/worker.md) | `apps/worker/` |
+| [Shared application package](development/application.md) | `packages/application/` |
+| [Database package](development/database.md) | `packages/db/` |
+
+## References
+
+| Document | Purpose |
+| --- | --- |
+| [Source feature details](references/source_feature_details.md) | Normative scope appendix mapping extracted source behavior to 64 canonical requirements |
+| [Frozen reference baseline](references/reference_baseline.json) | Original 860 entries, 17 configuration/schema/API references, and 15 reports/findings |
+
+Canonical requirements and architecture resolve conflicts with source behavior. Reference mappings preserve provenance; they do not establish implemented capabilities or override explicitly deferred scope. Preserve the frozen baseline when changing current product decisions.
+
+## Place new documents
+
+Keep project documentation inside `docs/`. Put each document in the folder matching its purpose. Add a link to this index when creating a document.
+
+- Put implementation plans in `implementation/plans/`, for example `phase-2-implementation-plan.md`.
+- Update `implementation/status.md` as work starts, changes scope, or finishes.
+- Put phase review and verification records under `implementation/`. Keep reusable operating procedures in `operations/`.
+- Keep detailed module documentation in `development/`. Root and package READMEs remain entry points linking to the central documentation.
+- Use relative Markdown links and update incoming links when moving a document.
+- Keep source code, migrations, tests, and runnable scripts in their owning application/package directories.
+
+Development and testing run locally. External infrastructure, deployment, host scheduling, and server backups belong to the user's separate environment work. Notify the user after locally verified phase 3 and assess the first deployment candidate after phase 4. Neither the external handoff nor deferred subscription work blocks internal business development. See the [deployment readiness checkpoint](product/roadmap.md#deployment-readiness-and-external-handoff).
+
+## Historical archive
+
+Completed research plans, findings, the final review, and one-time records archived before development remain outside the project. Their selected decisions and primary-source links are incorporated above. The pre-cleanup snapshot and SHA-256 manifest are at:
 
 ```text
 /Users/nishanth/Archives/fitloom/predevelopment-cleanup-20261031-123004-194756
 ```
 
-The archive also retains the earlier archive locations and provenance notes. It is optional historical material, not a development dependency. No application or infrastructure deployment is implied by these documents.
+That archive is optional historical material, not a development dependency. New implementation documentation belongs in the structure above.

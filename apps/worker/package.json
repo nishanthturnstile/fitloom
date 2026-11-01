@@ -11,10 +11,12 @@
   },
   "dependencies": {
     "@fitloom/application": "workspace:*",
-    "pino": "10.4.0"
+    "pino": "10.4.0",
+    "@fitloom/db": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "26.6.6",
     "typescript": "7.0.2"
-  }
+  },
+  "description": "Fitloom transactional mail worker"
 }

@@ -1,7 +1,5 @@
-# Fitloom web
+# Fitloom web application
 
-Next.js App Router application for the shop, worker, customer, public, and operator interfaces. The scaffold currently renders the Fitloom heading.
+Read the [web application guide](../../docs/development/web.md) for implementation details and verification.
 
-Run `pnpm dev:web` from the repository root. See the [root README](../../README.md) for setup and commands.
-
-Keep credentials and server commands out of client components. Server commands belong in `@fitloom/application`; database ownership belongs in `@fitloom/db`.
+Project documentation, implementation status, and plans live in [docs](../../docs/README.md). Run project commands from the repository root as documented in the guide.

@@ -1,18 +1,18 @@
 # Phase 1B database identity and application foundations plan
 
-Status: Planned. Prepared on 2026-10-31 against repository baseline `2958755`.
+Status: Done locally. Days 1–7 implemented and verified by 2026-11-01. Prepared against repository baseline `2958755`. See [current operations and verification evidence](../../operations/foundation-operations.md).
 
-Execution policy updated on 2026-10-31: implement and verify on the local machine. Infrastructure, deployment platforms, server backup automation, and host schedulers are user-managed work outside Fitloom. The plan is ready; application implementation has not started.
+Execution policy updated on 2026-10-31: implement and verify on the local machine. Infrastructure, deployment platforms, server backup automation, and host schedulers are user-managed work outside Fitloom. The user subsequently authorized local Docker Compose/Tailscale; external production infrastructure remains deferred. Current scope update: continue with phase 2 for the internal product. Subscriptions, platform billing, and payment-provider integrations are deferred; manual shop payments remain required in their owning phases.
 
 Implement roadmap 1B in the retained Fitloom application. Deliver database isolation, verified identity, resumable shop setup, authorized workspaces, transactional commands, durable jobs, private files, and minimum operator recovery commands.
 
 Use seven focused engineering days as the initial planning target. These are work increments, not calendar deadlines or a measured estimate. Resolve integration problems within the affected increment. If work exceeds the target, continue the same scope and retain its acceptance criteria.
 
-The [requirements](requirements.md), [architecture](architecture.md), and [roadmap](roadmap.md#1b-implement-the-database-identity-and-shared-application-foundations) remain authoritative. This plan expands their implementation steps. Proposed names and implementation choices below become final when the corresponding code and migrations are reviewed.
+The [requirements](../../product/requirements.md), [architecture](../../architecture/overview.md), and [roadmap](../../product/roadmap.md#1b-implement-the-database-identity-and-shared-application-foundations) remain authoritative. This plan expands their implementation steps. Proposed names and implementation choices below become final when the corresponding code and migrations are reviewed.
 
 ## Establish the starting point
 
-The [implementation status](../IN_PROGRESS.md) records workspace verification on 2026-10-31. The three commits present at preparation are dated that day. They establish a repository baseline, not a full week of implementation history.
+The [implementation status](../status.md) records workspace verification on 2026-10-31. The three commits present at preparation are dated that day. They establish a repository baseline, not a full week of implementation history.
 
 | Area | State at preparation | Work remaining for 1B |
 | --- | --- | --- |
@@ -22,9 +22,9 @@ The [implementation status](../IN_PROGRESS.md) records workspace verification on
 | Database package | Empty module | Schema, migrations, role grants, constraints, RLS, and transaction helpers |
 | Application package | Empty module | Shared commands, authorization, identity integration, and foundation services |
 | Deployment | Deferred external 1C handoff | User manages the environment separately; local development continues |
-| Subscription billing | Planned in 1D | Define the admission integration contract now and implement commercial behavior in 1D |
+| Subscription billing | Deferred by current internal-product scope | No commercial plan/subscription/provider implementation; existing generic contracts do not require billing work |
 
-The workspace pins Node.js 26.13.0, pnpm 12.16.1, Next.js 16.4.3, React 19.3.1, TypeScript 7.0.2, Turborepo 2.11.10, Tailwind CSS 4.3.3, Biome 2.6.4, and worker Pino 10.4.0. These are repository facts. New foundation packages have not been installed or compatibility-tested.
+The workspace pins Node.js 26.13.0, pnpm 12.16.1, Next.js 16.4.3, React 19.3.1, TypeScript 7.0.2, Turborepo 2.11.10, Tailwind CSS 4.3.3, Biome 2.6.4, and worker Pino 10.4.0. Foundation dependencies were added and compatibility-tested in their increments; current versions/evidence are in the operations guide. The table above preserves the starting baseline.
 
 ## Keep the scope aligned with the roadmap
 
@@ -39,13 +39,13 @@ The workspace pins Node.js 26.13.0, pnpm 12.16.1, Next.js 16.4.3, React 19.3.1, 
 Retain these later-phase boundaries:
 
 - 1C records a deferred external handoff. The user owns Linux setup, deployment-platform selection, routing/TLS, host timers, server backups, and VPS moves separately. Do not implement infrastructure or deployment tooling in Fitloom. Use a real local PostgreSQL instance for application development and tests.
-- 1D owns versioned commercial plans, subscription state, entitlements, usage admission, checkout, billing callbacks, manual owner export during lockout, and billing operator actions.
+- 1D is deferred in full. No versioned commercial plans, subscription state, entitlements/quotas, platform checkout, billing callbacks, lockout renewal/export, or billing operator actions are scheduled. Manual business collections/refunds remain phase 3 and later owning modules.
 - Phase 2 owns customers, garment masters, and measurements. Phase 3 extends accounting into real charges, collections, refunds, pricing, and documents.
 - Google, phone OTP, customer identity, advanced multi-location operations, full operator consoles, scheduled business exports, and privacy self-service retain their roadmap owners.
 
 Build the foundation portions of onboarding and settings now. Later owners add plan selection, garment defaults, first-order tracking, tours, sample data, document settings, and operational policies. Do not mark the full parent requirements complete when only their foundation portions exist.
 
-Continue 1B → 1D → phases 2–9 locally. Notify the user to plan the separate environment after locally verified phase 3. Assess the first deployment candidate after locally verified phase 4, when the tailoring workflow works end to end. Continue locally if the user is not ready. See the [deployment readiness checkpoint](roadmap.md#deployment-readiness-and-external-handoff). Application jobs, business scheduling, and local dependency setup remain in scope.
+Continue 1B → phases 2–9 locally. Skip deferred 1D. Notify the user to plan the separate environment after locally verified phase 3. Assess the first deployment candidate after locally verified phase 4, when the tailoring workflow works end to end. Continue locally if the user is not ready. See the [deployment readiness checkpoint](../../product/roadmap.md#deployment-readiness-and-external-handoff). Application jobs, business scheduling, and local dependency setup remain in scope.
 
 ## Preserve module ownership
 
@@ -72,6 +72,8 @@ Create internal modules inside these packages as real code requires them. Keep s
 Use the selected PostgreSQL 18, `pg`, stable Drizzle, Better Auth, Zod, decimal.js, pg-boss, Nodemailer, and Pino stack. Add sharp when the file implementation accepts images requiring decoding and re-encoding. Pin compatible package versions and the auth generator at implementation time. Do not replace the repository's existing pins based on an unverified version assumption.
 
 ## Day 1: Implement database roles schema and isolation
+
+Implemented on 2026-10-31. See [database setup and boundaries](../../development/database.md). Retained migrations cover auth/MFA/rate limits, principals, tenancy, location grants, setup, operator grants/security audit, and queue installation. Later-owned schema groups remain with their increments.
 
 1. Set up a real local PostgreSQL instance and document connection setup. Separate runtime, migration, and test credentials. Isolate test databases and file paths from developer records. This local dependency setup does not require a Linux server or deployment platform.
 2. Select compatible releases of `pg`, `drizzle-orm`, `drizzle-kit`, Better Auth, its Drizzle adapter, and pg-boss. Include the two-factor and persistent rate-limit schema requirements before generating auth tables.
@@ -118,6 +120,8 @@ Day 1 is complete when clean-database migrations succeed, repeated migration inv
 
 ## Day 2: Implement command consistency audit and decimals
 
+Implemented on 2026-10-31. See [command, audit/outbox, decimal, and journal contracts](../../development/application.md). Setup save/provisioning and journal commands exercise the shared executor on real PostgreSQL. Identity admission, platform MFA, dispatcher/handlers, and business posting matrices retain their later owners.
+
 Create one shared execution contract for Fitloom business commands. Define these inputs and outputs before implementing the first onboarding mutation:
 
 | Contract | Required content |
@@ -149,6 +153,8 @@ Implement the journal contract with distinct shop and platform owners, source op
 Day 2 is complete when concurrent duplicate commands create one effect, changed payloads conflict, stale versions fail, injected failures roll back every local effect, and invalid decimal or journal inputs are rejected.
 
 ## Day 3: Implement verified identity email and operator MFA
+
+Implemented on 2026-11-01. Development/testing uses isolated Mailpit only; production configuration requires Resend SMTP through Nodemailer. See [identity policy, local setup, delivery guarantees, and verification](../../architecture/authentication.md). Auth/token changes and encrypted email intents share one transaction; real database failure injection proves rollback. Production recipient delivery remains unverified until credentials and a verified sender domain are supplied.
 
 Implement registration, email verification, resend, sign-in, session restoration, logout, password reset, password change, and session revocation. Do not provision a shop before verification.
 
@@ -189,9 +195,11 @@ Return field allowlists for each query. A restricted member must not receive own
 
 Protect pages, route handlers, and Server Actions through shared application checks. Keep protected responses out of shared caches. Layout or navigation checks alone are insufficient. See [Next.js authentication guidance](https://nextjs.org/docs/app/guides/authentication).
 
-Define the 1D admission contract now. Preserve the authority order of identity/security, membership/location, commercial state, feature resolution, and atomic usage admission. Before 1D exists, identify commercial behavior as unimplemented development policy. Do not substitute a hard-coded active subscription and claim entitlement enforcement is complete.
+The retained 1B implementation includes an unimplemented admission interface. Under the current internal-product decision, do not expand it into plans, subscription state, commercial feature resolution, or quotas. Continue enforcing identity/security and current membership/location/permission checks. Any later internal production-mode wiring must use an explicit internal access policy rather than require a subscription or simulate a paid account.
 
 Day 4 is complete when two shops can be provisioned independently, setup resumes without duplication, invited membership works, tenant and location tampering fails, and permission changes take effect on the next protected request.
+
+Implemented on 2026-11-01. See [setup and workspace contracts](../../architecture/workspaces.md). Real PostgreSQL and Mailpit checks cover complete atomic provisioning, resumed drafts, independent shops, additional setup identities, recipient-bound invitations, current delegation, permission changes, private projections, stale hints, and explicit All Locations access. Protected pages and direct routes use current sessions. Commercial policy remains explicitly unimplemented in current development wiring. Subscription work is now deferred and is not the next implementation increment.
 
 ## Day 5: Complete durable workers and the provider inbox
 
@@ -214,15 +222,17 @@ Implement the provider inbox contract:
 5. Apply events through state-aware commands. Separate event uniqueness from business-effect uniqueness.
 6. Retain processing failures and support authorized retry and reconciliation.
 
-Use versioned signed fixtures to prove the generic inbox contract. A fixture verifier does not complete a real payment integration. Implement the selected billing provider's actual signature and event contract in 1D, with the relevant account and environment.
+Use versioned signed fixtures to prove the generic inbox contract. A fixture verifier does not complete a real payment integration. All payment-provider integration is deferred. Keep the fixture as generic foundation evidence without adding a billing adapter.
 
 Provider acceptance followed by a worker crash can leave an uncertain outcome. Use provider idempotency and status lookup when available. For SMTP, do not promise exactly-once delivery or interpret SMTP acceptance as delivery to the recipient. See [AWS transactional outbox guidance](https://docs.aws.amazon.com/prescriptive-guidance/latest/cloud-design-patterns/transactional-outbox.html).
 
 Day 5 is complete when real handlers survive restart, rolled-back commands enqueue nothing, duplicates cannot repeat local effects, cancelled sensitive work is blocked, and invalid, duplicate, or unordered provider fixtures produce the expected durable outcomes.
 
+Implemented on 2026-11-01. See [durable workers and provider inbox](../../architecture/jobs-and-inbox.md) for the retained outbox/SQL queue adapter decision, durable attempts and fenced recovery, cleanup staging boundary, protected retry/cancellation, real TOTP operator checks, and signed fixture verification. Real payment-provider integration is deferred with 1D.
+
 ## Day 6: Implement private files and minimum operator recovery
 
-Implement the filesystem `BlobStore` behind an application interface. Keep objects outside public web assets. Use generated opaque keys and reject path traversal, symlinks, and user-controlled filesystem paths.
+Implement the private `BlobStore` behind an application interface. Day 6 user direction selects self-hosted SeaweedFS through its S3 API instead of the originally planned filesystem backend. Keep objects outside public web assets. Use generated opaque keys and reject path traversal, symlinks, and user-controlled filesystem paths.
 
 Use this lifecycle:
 
@@ -244,7 +254,11 @@ Initiate owner password recovery through supported reset flows. Do not expose ex
 
 Day 6 is complete when cross-tenant downloads fail, current authorization controls new downloads, interrupted attachment produces a collectable orphan, referenced objects survive cleanup, and operator actions enforce authority and audit. Previously downloaded copies remain outside server revocation guarantees.
 
+Implemented on 2026-11-01. See [private files and operator recovery](../../operations/private-files-and-operator-recovery.md) for the SeaweedFS choice, image limits, lifecycle/locking, private workspace UI, actual storage/HTTP checks, operator authority/idempotency, supported owner reset, and restricted bootstrap/MFA recovery.
+
 ## Day 7: Verify the complete foundation and document operations
+
+Implemented and verified on 2026-11-01. The Day 6 review reproduced delayed S3 overwrite and buffered-stream deadline defects; immutable prepared digest keys and enforced stream deadlines fix both. Day 7 also adds protected truthful status, worker observations, safe diagnostics, bounded pages/counts and UI continuation, process-owned runtime pools, container administrative wrappers, resource observations, and an actual matched database/object restore rehearsal. See [the operating contract, evidence matrix, and unresolved external dependencies](../../operations/foundation-operations.md).
 
 Exercise the retained application end to end locally. Run verification throughout Days 1 through 6 as each feature lands. Day 7 closes integration gaps and records final evidence. Preserve development data and use isolated test databases and temporary file paths.
 
@@ -271,7 +285,7 @@ Use real PostgreSQL and runtime roles for the checks below. Keep tests focused o
 
 Run the existing `pnpm lint`, `pnpm typecheck`, and `pnpm build` commands with the pinned runtime. Add targeted verification scripts with their actual implementation and document their exact invocation. Do not describe proposed database or integration test commands as already available.
 
-Update environment examples, package READMEs, setup instructions, migration commands, operator recovery instructions, and [implementation status](../IN_PROGRESS.md). Record tested versions, checks and outcomes, and unresolved external dependencies. Mark 1B Done only after its required behavior is implemented and verified.
+Update environment examples, package READMEs, setup instructions, migration commands, operator recovery instructions, and [implementation status](../status.md). Record tested versions, checks and outcomes, and unresolved external dependencies. Mark 1B Done only after its required behavior is implemented and verified.
 
 ## Add limits and observability with each entry point
 
@@ -302,29 +316,29 @@ Add configuration variables only with consumers. Cover runtime and migration dat
 | Owner MFA and additional login methods | Product owner | Before their owning authentication work completes. Mandatory operator MFA remains required now. |
 | Upload allowlist, limits, and retention | Developer, with product owner for real-data policy | Before enabling the corresponding file type. Use explicit development policies until real-data rules are approved. |
 | Real currency, tax, fiscal year, and document rules | Product owner | Before relevant real documents or financial operations. INR fixtures do not settle these policies. |
-| Commercial plan rules and payment provider | Product owner and developer | 1D. Fixtures cannot count as commercial billing or entitlement enforcement. |
+| Commercial plan rules and payment provider | Product owner and developer | Deferred until explicitly reopened. No current phase or billing dependency for the internal product. Fixtures are generic evidence only. |
 | Privacy jurisdiction and real-data retention | Product owner | Before real-data use. Keep synthetic development records meanwhile. |
 
 Keep a missing provider integration visibly incomplete. Do not bypass verification, fabricate provider success, weaken tenant boundaries, or grant broad database privileges to meet a day target.
 
 ## Complete 1B and continue local development
 
-- [ ] Reviewed migrations and explicit runtime/migration privileges are reproducible.
-- [ ] Same-connection tenant transactions, tenant-qualified relationships, RLS, and location checks pass real-database verification.
-- [ ] Verified email/password, recovery, database sessions, revocation, and mandatory operator MFA work.
-- [ ] Independent tenants, initial locations, memberships, grants, resumable onboarding, and workspace selection work.
-- [ ] Protected requests and sensitive jobs check current authority and return permitted fields only.
-- [ ] Decimal money/quantity helpers and accounting-owner journal contracts enforce their declared invariants.
-- [ ] Critical audit, operation hashes/results, expected versions, and deferred work satisfy transaction guarantees.
-- [ ] Real worker handlers expose durable progress, bounded retry, terminal failure, and recovery behavior.
-- [ ] Provider inbox signature and deduplication foundations are verified, with real-provider completion clearly distinguished from fixtures.
-- [ ] Private-file staging, finalization, attachment, authorized streaming, and safe cleanup work.
-- [ ] Minimum operator lifecycle and account-recovery commands enforce grants, MFA, and audit.
-- [ ] Limits, structured errors, protected status, environment examples, and operating instructions match running behavior.
-- [ ] Lint, types, build, and relevant integration checks pass with recorded evidence.
-- [ ] Unresolved provider dependencies and later-phase requirements retain explicit owners and status.
+- [x] Reviewed migrations and explicit runtime/migration privileges are reproducible.
+- [x] Same-connection tenant transactions, tenant-qualified relationships, RLS, and location checks pass real-database verification.
+- [x] Verified email/password, recovery, database sessions, revocation, and mandatory operator MFA work locally.
+- [x] Independent tenants, initial locations, memberships, grants, resumable onboarding, and workspace selection work.
+- [x] Protected requests and sensitive jobs check current authority and return permitted fields only.
+- [x] Decimal money/quantity helpers and accounting-owner journal contracts enforce their declared invariants.
+- [x] Critical audit, operation hashes/results, expected versions, and deferred work satisfy transaction guarantees. Dispatch is implemented in Day 5.
+- [x] Real worker handlers expose durable progress, bounded retry, terminal failure, and recovery behavior.
+- [x] Provider inbox signature and deduplication foundations are verified, with real-provider completion clearly distinguished from fixtures.
+- [x] Private-file staging, finalization, attachment, authorized streaming, and safe cleanup work.
+- [x] Minimum operator lifecycle and account-recovery commands enforce grants, MFA, and audit.
+- [x] Limits, structured errors, protected status, environment examples, and operating instructions match running behavior.
+- [x] Lint, types, build, and relevant integration checks pass with recorded evidence.
+- [x] Unresolved provider dependencies and later-phase requirements retain explicit owners and status.
 
-Continue to 1D locally for commercial admission and billing, then the dependent application phases. Do not wait for 1C or create an infrastructure project as part of 1B.
+Continue to phase 2 customers, garment masters, and measurements, followed by phase 3 orders and manual business payments. Skip deferred 1D; no subscription or payment-provider work is authorized. Do not wait for 1C or create an infrastructure project as part of 1B.
 
 Keep runtime variables, database bootstrap and migration commands, queue privileges, writable private-file paths, process startup/shutdown behavior, health observations, and local resource measurements documented as features arrive. Supply this application contract when the user plans the external environment after phase 3 and reviews a deployment candidate after phase 4. Verify target-specific behavior during that later handoff. Local checks do not establish deployed TLS, proxy/cookie behavior, provider delivery, Linux compatibility, or server disaster recovery.
 

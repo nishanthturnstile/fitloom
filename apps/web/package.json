@@ -3,18 +3,21 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --hostname 0.0.0.0 --port 24410",
     "build": "next build",
-    "start": "next start",
+    "start": "next start --hostname 0.0.0.0 --port 24410",
     "lint": "biome check .",
     "format": "biome format --write .",
     "typecheck": "next typegen && tsc --noEmit"
   },
   "dependencies": {
+    "@fitloom/application": "workspace:*",
+    "@fitloom/db": "workspace:*",
     "next": "16.4.3",
+    "pino": "10.4.0",
     "react": "19.3.1",
     "react-dom": "19.3.1",
-    "@fitloom/application": "workspace:*"
+    "server-only": "0.0.1"
   },
   "devDependencies": {
     "@tailwindcss/turbopack": "4.3.3",
@@ -24,5 +27,6 @@
     "tailwindcss": "4.3.3",
     "typescript": "7.0.2"
   },
-  "type": "module"
+  "type": "module",
+  "description": "Fitloom web interface and API"
 }

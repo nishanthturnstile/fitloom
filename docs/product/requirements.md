@@ -1,22 +1,22 @@
 # Fitloom product requirements
 
-Status: consolidated development baseline, updated 31 October 2026 for local development and separately managed infrastructure/deployment. Requirements describe intended behavior, not implemented capabilities.
+Status: consolidated development baseline, updated 1 November 2026 for internal-product scope, manual business payments, and deferred subscriptions, platform billing, and payment-provider integrations. Requirements describe intended behavior, not implemented capabilities.
 
 ## Purpose and scope
 
 Fitloom combines the tailoring, boutique retail, workshop, inventory, finance, customer access, and operator capabilities extracted from Tailorman, Tailormate, and NoolTech. The scope is the union of the supplied inventories, including capabilities evidenced in only one application.
 
-Fitloom is a production multi-tenant SaaS application. Independent businesses use isolated tenant workspaces with their own members, locations, settings, operational records, and subscriptions. A tenant represents a business; a location represents an outlet or workshop within that business. Supporting one initial location per tenant does not limit the platform to one tenant.
+Fitloom is currently an internal multi-tenant business application. Businesses use isolated tenant workspaces with their own members, locations, settings, and operational records. There is no platform subscription or platform subscription fee. A tenant represents a business; a location represents an outlet or workshop within that business. Supporting one initial location per tenant does not limit the platform to one tenant.
 
 Development builds the actual product continuously, starting with the tailor's workflow and extending the same application through the full consolidated scope. Each phase delivers retained production code, data models, and integrations. Phases describe the order of retained implementation work. Begin with the project structure and pnpm workspace, then add the actual application foundations and business modules. Resolve issues as they arise in their owning work. The [implementation roadmap](roadmap.md) defines the detailed build order. No preliminary feature subset, trial workspace, deployment experiment, or standalone validation stage precedes implementation.
 
-Development, builds, and tests currently run on the local machine with local PostgreSQL, worker processes, and private files. The user plans Linux provisioning, deployment platforms, host schedulers, server backups, and VPS migration in a separate project. These are not Fitloom implementation deliverables and do not block application work. [The architecture](architecture.md#local-development-and-external-infrastructure) defines the application boundary. Notify the user to plan the external environment after locally verified phase 3 and assess the first deployment candidate after phase 4. Tenant isolation, financial correctness, durable history, and retry safety apply locally and after deployment.
+Development, builds, and tests currently run on the local machine with local PostgreSQL, worker processes, and private files. The user plans Linux provisioning, deployment platforms, host schedulers, server backups, and VPS migration in a separate project. These are not Fitloom implementation deliverables and do not block application work. [The architecture](../architecture/overview.md#local-development-and-external-infrastructure) defines the application boundary. Notify the user to plan the external environment after locally verified phase 3 and assess the first deployment candidate after phase 4. Tenant isolation, financial correctness, durable history, and retry safety apply locally and after deployment.
 
 Resolve development issues through fixes, compatible alternatives, or documented workarounds, then continue the sequence. A workaround must preserve tenant isolation, authorization, financial correctness, historical records, and retry safety. Track its limitations and follow-up work. An unresolved issue blocks its affected dependency, not unrelated development, and cannot be represented as a completed capability.
 
-This document defines canonical requirements. The [source feature appendix](references/source_feature_details.md) is a normative scope appendix: its retained source behaviors must be considered within the requirement to which they map. The canonical requirements and [architecture decisions](architecture.md) take precedence when a source behavior conflicts with the selected design. Defects, implementation-specific limits, UI labels, hardcoded prices, and unverified server claims are not automatically target requirements.
+This document defines canonical requirements. The [source feature appendix](../references/source_feature_details.md) is a normative scope appendix: its retained source behaviors must be considered within the requirement to which they map. The canonical requirements and [architecture decisions](../architecture/overview.md) take precedence when a source behavior conflicts with the selected design. Defects, implementation-specific limits, UI labels, hardcoded prices, and unverified server claims are not automatically target requirements.
 
-Every source entry has one primary requirement mapping in the [source feature appendix](references/source_feature_details.md). A mapping means the entry's scope has an owner; it does not mean the source behavior has been tested or that every detail is adopted unchanged. Entries can inform other requirements, such as financial visibility across all printed documents.
+Every source entry has one primary requirement mapping in the [source feature appendix](../references/source_feature_details.md). A mapping means the entry's scope has an owner; it does not mean the source behavior has been tested or that every detail is adopted unchanged. Entries can inform other requirements, such as financial visibility across all printed documents.
 
 The sources describe 860 extracted entries, with overlapping and differently sized definitions. This document deliberately does not call those entries 860 distinct consolidated features. Full original functionality descriptions, roles, evidence pointers, and verification gaps remain available in the appendix and frozen reference baseline.
 
@@ -26,17 +26,27 @@ The sources describe 860 extracted entries, with overlapping and differently siz
 | [Orders and workshop](#order-workshop-and-delivery-requirements) | Intake, pricing, collection, documents, production, tasks, and delivery |
 | [Retail and stock](#retail-stock-and-procurement-requirements) | Checkout, returns, materials, procurement, transfers, counts, and labels |
 | [Workforce and finance](#workforce-finance-and-analytics-requirements) | Permissions, earnings, expenses, ledger, and reports |
-| [Workspace foundations](#workspace-and-platform-foundations) | Authentication, stores, settings, backup, audit, plans, and subscriptions |
+| [Workspace foundations](#workspace-and-platform-foundations) | Authentication, stores, settings, backup, and audit; commercial plans/subscriptions deferred |
 | [Customer access](#customer-access-and-engagement) | Public shop, portal, booking, Fit Cards, messaging, and tools |
-| [Operator requirements](#software-operator-requirements) | Tenant, billing, support, communications, health, privacy, and content administration |
+| [Operator requirements](#software-operator-requirements) | Tenant security, support, communications, health, privacy, and content administration; platform billing deferred |
 | [Acceptance and delivery](#cross-cutting-acceptance-requirements) | Shared guarantees, proposed release sequence, end-to-end scenarios, and open decisions |
+
+## Current commercial and payment scope
+
+Decision confirmed by the user on 2026-11-01: defer subscriptions, plan pricing, trials, commercial entitlements and quotas, platform billing, subscription invoices, referrals/promotions tied to subscriptions, and payment-provider integrations. No related implementation is scheduled, including under phase 9. Reopen this scope only on an explicit user decision. Existing generic contracts and extracted source records do not authorize building these features.
+
+Business payments remain required. Staff manually record customer advances, partial/full collections, credit balances, refunds, expenses, supplier payments, and workforce payouts in their owning phases. Store amount/currency, payment date, method, reference, notes or evidence when applicable, allocations, recording actor, and audit history. Cash, UPI, card, and bank describe how money moved outside Fitloom. Fitloom records the transaction without initiating a transfer, charging a card, hosting checkout, or calling a payment provider.
+
+An authorized posted receipt changes the relevant balance and journal once. An unconfirmed payment note or pending refund does not count as settled money. Preserve receipts, invoices, correction/reversal history, source allocations, permissions, concurrency checks, and retry safety. Manual recording is not independent gateway or bank verification. Shop order invoices and receipts remain in scope even though platform subscription invoices are deferred.
+
+Internal access uses identity, current tenant/location permissions, security status, and field projections. No subscription record, trial, plan selection, or commercial expiry is required for shop setup or business workflows. Security suspension and technical resource limits still apply. This decision overrides commercial requirements retained below and in the source appendix.
 
 ## Requirement conventions
 
 - Each `REQ-*` identifier names a canonical capability. Requirement IDs are stable across future revisions.
 - **Required behavior** describes the proposed Fitloom behavior. These statements are requirements for the combined product, not claims about current Fitloom implementation.
 - **Acceptance** gives reviewable outcomes for implementation. Cross-cutting requirements apply to every capability, including capabilities introduced in later releases.
-- P1, P2, and P3 group implementation dependencies within the same production application. They do not define separate product versions or require a launch between groups. The roadmap phases provide the detailed tailor-first order. All capabilities remain in scope.
+- P1, P2, and P3 group implementation dependencies within the same production application. They do not define separate product versions or require a launch between groups. The roadmap phases provide the detailed tailor-first order. Business capabilities remain in scope. Subscription, platform-billing, and payment-provider capabilities follow the explicit deferral above.
 - Application coverage is computed in the source appendix. “Single-source” means evidenced in only one supplied inventory, not proven unique in the market or absent from the other products.
 - Every implementation task records its requirement IDs, accepted source details, dependencies, policy decisions, and acceptance evidence. Explicitly record modified or inapplicable source behavior under the existing precedence rules. A broad ownership row does not replace those checks.
 
@@ -44,14 +54,14 @@ The sources describe 860 extracted entries, with overlapping and differently siz
 
 | User | Responsibilities and permitted information |
 | --- | --- |
-| Shop owner/admin | Business setup, staff and location access, operations, finance, reports, and subscription management |
+| Shop owner/admin | Business setup, staff and location access, operations, manually recorded payments, finance, and reports |
 | Manager | Delegated shop/location management, scheduling, approvals, and permitted financial views |
 | Cashier/office/sales staff | Customer intake, orders, POS, collections, delivery, and documents within explicit grants |
 | Cutter/tailor/stitcher/QC worker | Assigned tasks, measurements, technical instructions, progress, and own earnings; financial details require a separate grant |
 | Inventory/procurement staff | Product/material stock, vendors, POs, receiving, transfers, and physical counts within location scope |
 | Customer | Approved linked-shop orders, invoices, measurements, appointments, sharing permissions, and own profile |
 | Public visitor | Published shop information, booking entry, and limited tracking after the required verification |
-| Platform operator | Tenant lifecycle, plans, support, billing, system health, and approved privacy processes through separate operator permissions |
+| Platform operator | Tenant security lifecycle, support, system health, and approved privacy processes through separate operator permissions |
 
 Workers and staff logins are separate records. An owner can link them. Roles are presets over granular permissions, and a staff member can have different roles in different locations.
 
@@ -85,7 +95,7 @@ The following is the proposed target state model. Reference state names differ a
 | PO | Draft → approved → ordered → partially received → received, or cancelled remaining quantity. Received quantities retain their goods-receipt records. |
 | Transfer | In transit → completed or cancelled. Partial receipt requires a defined quantity model before that option is exposed. |
 | Alteration | Pending → in progress → done → delivered. Rework keeps a link to the original item. |
-| Subscription | Trial/active/grace/expired/suspended with effective dates and server-resolved entitlements. Trial-to-paid activation requires verified billing or an audited operator action. |
+| Subscription | Deferred. The internal product has no subscription lifecycle or commercial admission requirement. |
 | Background job | Pending → running → succeeded or failed. Retry preserves the same business operation identity. |
 | Booking | Confirmed, cancelled, completed, or no-show. Confirmation/rescheduling checks the complete resource/time interval under concurrency. An availability response is not a reservation. |
 
@@ -95,20 +105,20 @@ Core dependencies apply regardless of release phase:
 - Production and job sheets depend on order snapshots and assignment permissions. Wage accrual depends on stable worker identity, agreed rates, and eligible completion events.
 - Checkout, returns, POs, transfers, and counts depend on the stock movement model. Collections, refunds, wages, and purchases depend on source-linked finance.
 - Portal access depends on customer authentication and approved shop links. Booking depends on a working availability service; Fit Card imports depend on sharing authorization and versioned measurements.
-- Automation depends on consent, durable jobs, provider configuration, audit, and truthful delivery states. Paid hosting also depends on entitlement and billing reconciliation.
+- Automation depends on consent, durable jobs, provider configuration, audit, and truthful delivery states. Subscription hosting and its entitlement/billing reconciliation are deferred.
 - Staff working hours, holidays, leave, service durations, buffers, branch timezone, and trial conflicts belong to REQ-CALENDAR. Public booking consumes that schedule and capacity contract.
 
 ## Financial, quantity, and access contracts
 
-These financial, quantity, and access rules apply across modules. The [architecture policies](architecture.md#domain-records-and-policies) define implementation defaults and ownership.
+These financial, quantity, and access rules apply across modules. The [architecture policies](../architecture/overview.md#domain-records-and-policies) define implementation defaults and ownership.
 
 - Garment quantities are positive integers. Material quantities use fixed decimals and explicit units. A line with three shirts creates three independently tracked production units. Different wearers, measurement snapshots, or designs use separate commercial lines. Quantity reductions cannot remove delivered pieces or completed work without the relevant reversal or commercial-return command.
 - Effective charge equals posted charge amounts minus posted charge credits. Net settlement equals posted receipt and credit-redemption allocations minus allocation reversals and settled refunds. Outstanding equals the positive part of effective charge minus net settlement. Any excess settlement is a visible customer liability, not negative receivables. Cash-change tender is not an allocation above the charge.
 - A ₹1,000 fully paid order credited by ₹400 and refunded by ₹400 has a ₹600 effective charge and ₹600 net settlement, so its outstanding amount is zero. Before the refund settles, show a ₹400 refund liability without collecting another ₹400.
-- Financial posting uses an append-only balanced journal by accounting owner and currency. The daybook projects actual cash movements. Shop finance and platform subscription finance have separate accounting owners, balances, and invoice identities. Each domain adds its posting rules before accepting its transactions. This does not claim a complete statutory accounting suite.
+- Financial posting uses an append-only balanced journal by accounting owner and currency. The daybook projects actual cash movements. Shop finance uses explicit accounting owners, balances, and invoice identities. The retained platform-owner isolation contract does not require implementing deferred subscription finance. Each domain adds its posting rules before accepting its transactions. This does not claim a complete statutory accounting suite.
 - Freeze price, package allocation, discount, tax, and cost calculations in the source record. Posted invoices keep their legal number/date and snapshot. Corrections issue linked adjustment documents; an audited order-display correction cannot rewrite an issued invoice.
-- Authentication proves identity. Fitloom separately checks tenant membership, location, permission, field projection, subscription admission, and customer/operator authority. No active-tenant cookie, UI flag, QR code, or organization membership alone grants domain access.
-- Suspension, plan expiry, override precedence, usage counting, owner export, and session revocation follow the explicit [access policy](architecture.md#authentication-and-entitlement-policy). Sensitive jobs recheck current access/request state before disclosure or deletion.
+- Authentication proves identity. Fitloom separately checks tenant membership, location, permission, field projection, and customer/operator authority. No active-tenant cookie, UI flag, QR code, or organization membership alone grants domain access.
+- Security suspension, authorized export, and session revocation follow the explicit [access policy](../architecture/overview.md#authentication-and-entitlement-policy). Subscription expiry, commercial overrides, and plan quota counting are deferred. Sensitive jobs recheck current access/request state before disclosure or deletion.
 
 ## Customer and measurement requirements
 
@@ -202,7 +212,7 @@ Required behavior: Record dated receipts with cash/UPI/card/bank components, ref
 
 Acceptance: Reject nonfinite/nonpositive collections, invalid component sums, and overpayment unless an explicit credit policy exists. Retried requests post once. Reopening an order does not erase receipts. Reversed collections visibly adjust balance and ledger without deleting history.
 
-Settlement contract: Record charge credits and refund liabilities separately from refund execution. Pending external refunds do not count as cash already paid out. Apply the effective-charge/net-settlement formulas above, including the paid ₹1,000 order with ₹400 credit/refund regression. Recording cash/UPI/card/bank identifies a method; gateway initiation, verified payment, and bank settlement require their own integration state.
+Settlement contract: Record charge credits and refund liabilities separately from refund execution. Pending external refunds do not count as cash already paid out. Apply the effective-charge/net-settlement formulas above, including the paid ₹1,000 order with ₹400 credit/refund regression. Staff manually record cash/UPI/card/bank payments and refunds after confirming the money movement through the shop process. Capture method, date, reference, actor, and allocations. Pending refunds remain liabilities until an authorized settlement is recorded. Gateway initiation and automatic provider/bank verification are deferred; selecting a method does not claim those integrations exist.
 
 ### REQ-DOC: Invoices, receipts, payment advice, and order documents
 
@@ -440,13 +450,13 @@ Required behavior: Support configured email/password, Google, and phone OTP sign
 
 Acceptance: Password change reports success only after a successful persisted server operation. OTP/MFA validation is rate-limited and server-verified. Logout invalidates the intended session, and stale client state cannot bypass membership checks.
 
-Authority policy: Start with verified email/password, password recovery, database-backed sessions, and mandatory operator authenticator MFA. Keep customer and operator authority explicit even if one identity has several roles. Disable session cookie caching initially and recheck membership/entitlement per protected request. Revoked sessions or memberships fail the next protected request after the revocation commits. Remaining configured Google/phone/customer methods keep their roadmap completion owners.
+Authority policy: Start with verified email/password, password recovery, database-backed sessions, and mandatory operator authenticator MFA. Keep customer and operator authority explicit even if one identity has several roles. Disable session cookie caching initially and recheck membership, location, security status, and permissions per protected request. Revoked sessions or memberships fail the next protected request after the revocation commits. Remaining configured Google/phone/customer methods keep their roadmap completion owners.
 
 ### REQ-ONBOARD: Shop creation, setup, and first-use guidance
 
 Sequence: P1. Users: owners and invited staff.
 
-Required behavior: Collect business profile, tailoring/boutique/both mode, specialization, plan/trial selection, referral/promo input, and consent. Support optional/resumable setup, verification before provisioning, default masters, first-store setup, guided tours, and opt-in sample data with removal. Track setup and first-order completion.
+Required behavior: Collect business profile, tailoring/boutique/both mode, specialization, and consent. Plan/trial selection and subscription referral/promo input are deferred and must not block setup. Support optional/resumable setup, verification before provisioning, default masters, first-store setup, guided tours, and opt-in sample data with removal. Track setup and first-order completion.
 
 Acceptance: Repeated provisioning cannot create duplicate tenants. Sample records are clearly marked and removable without deleting real records. Completing one step persists and can resume on another session.
 
@@ -488,21 +498,21 @@ Acceptance: Posted corrections keep original events. An expense audit link opens
 
 ### REQ-PLAN: Plans, usage limits, trial, and account access
 
-Sequence: P1 mandatory SaaS foundation, P3 expanded administration. Users: owners and operators.
+Status: Deferred in full. No current implementation phase. The internal product does not require plans, trials, commercial entitlements, or subscription quotas. The following describes retained future scope only. Users: owners and operators.
 
-Required behavior: Define configurable plans, monthly/yearly comparison, resource limits, business-type features, trial policy, override precedence, usage indicators, and trial/active/grace/expired/suspended states. Support mid-session reevaluation, renewal reminders, and protected owner data export after operational lockout.
+Deferred future behavior: Define configurable plans, monthly/yearly comparison, resource limits, business-type features, trial policy, override precedence, usage indicators, and trial/active/grace/expired/suspended states. Support mid-session reevaluation, renewal reminders, and protected owner data export after operational lockout.
 
-Acceptance: UI promises and effective entitlement checks agree. A usage limit is enforced at commit under concurrency. Plan changes show their actual effective state. Reference plan names/prices are evidence, not Fitloom commercial commitments.
+Deferred future acceptance: UI promises and effective entitlement checks agree. A usage limit is enforced at commit under concurrency. Plan changes show their actual effective state. Reference plan names/prices are evidence, not Fitloom commercial commitments.
 
-Foundation ownership: Provide a manual, authorized owner export in phase 1, including during ordinary subscription lockout; scheduled delivery remains phase 5. Security suspension follows the restricted operator-reviewed export procedure. Usage limits are enforced atomically using versioned count rules, tenant-local periods, and explicit unlimited values. Overrides can change commercial access but cannot grant permissions or bypass security suspension.
+Deferred ownership: Commercial lockout export/renewal and plan usage rules are deferred with subscriptions. Authorized business exports and security-reviewed recovery retain REQ-BACKUP and privacy ownership. Technical resource bounds and permission checks remain required without subscription quotas.
 
 ### REQ-BILLING: Subscription payment, invoices, and referral credits
 
-Sequence: P1 subscription billing foundation, P3 referral incentives and expanded commercial administration. Users: owners and operators.
+Status: Deferred in full. No current implementation phase, including manual platform subscription charges or payment-provider integrations. Shop collections, invoices, receipts, and refunds remain required under REQ-COLLECT and REQ-DOC. The following describes retained future platform scope only. Users: owners and operators.
 
-Required behavior: Select/renew/upgrade plans, create hosted provider checkout, verify provider results, show activation pending/success/failure, renewal/auto-renew state, billing invoices/history, referrals, promo validation, and applied credits. Record manual subscription payments through authorized operator actions.
+Deferred future behavior: Select/renew/upgrade plans, create hosted provider checkout, verify provider results, show activation pending/success/failure, renewal/auto-renew state, billing invoices/history, referrals, promo validation, and applied credits. Record manual subscription payments through authorized operator actions.
 
-Acceptance: Client checkout success alone never activates access. Verified duplicate provider events apply once. A failed or pending activation remains visible, with reconciliation and retry. Exact pricing, proration, refunds, and referral terms remain open.
+Deferred future acceptance: Client checkout success alone never activates access. Verified duplicate provider events apply once. A failed or pending activation remains visible, with reconciliation and retry. Exact pricing, proration, refunds, and referral terms remain open.
 
 ### REQ-CACHE: Installable web access and offline boundaries
 
@@ -614,23 +624,23 @@ Retention contract: Define separate retention for photos, measurements, local dr
 
 ## Software-operator requirements
 
-Operator functions are separate from shop administration. Tenant provisioning, lifecycle enforcement, subscription administration, and audited operator access are part of the production SaaS foundation. Later phases extend the same operations into the complete console.
+Operator functions are separate from shop administration. Tenant provisioning, security lifecycle enforcement, and audited operator access are part of the internal foundation. Subscription administration and platform billing are deferred in full. Later phases extend the same operations into the complete console.
 
 ### REQ-OPS-TENANT: Tenant directory, lifecycle, overrides, and trials
 
-Sequence: P1 minimum provisioning/support, P3 full console. Users: authorized platform operators.
+Sequence: P1 minimum provisioning/security/support, P3 full internal console. Trial management, commercial activation, and plan/resource overrides are deferred. Users: authorized platform operators.
 
-Required behavior: Search/filter/create/edit tenants, inspect owner/contact/business type, usage/security/activation funnel, extend/reactivate trials, activate/suspend, soft-delete/restore, unlock accounts, initiate owner credential recovery, apply resource/feature overrides, manage demo access, and export authorized tenant usage.
+Required behavior: Search/filter/create/edit tenants, inspect owner/contact/business type and security status, inspect technical usage, security-suspend/restore, soft-delete/restore under retention policy, unlock accounts, initiate owner credential recovery, manage demo access, and export authorized tenant usage. Plan filters, trial extension/reactivation, commercial activation funnels, and plan resource/feature overrides are deferred.
 
-Acceptance: Changes persist and display effective values. Suspension and overrides affect server admission. Credential recovery does not reveal existing passwords. Deletion/restore follows retention and operator permission rules.
+Acceptance: Changes persist and display effective values. Security suspension affects server admission. Commercial overrides and trial controls remain deferred. Credential recovery does not reveal existing passwords. Deletion/restore follows retention and operator permission rules.
 
 ### REQ-OPS-PLAN: Platform plans, subscriptions, and billing administration
 
-Sequence: P1 subscription and billing operations, P3 full console. Users: billing operators.
+Status: Deferred in full with subscriptions and platform billing. No current implementation phase. The following describes retained future scope only. Users: billing operators.
 
-Required behavior: Edit/version plan identity, pricing, feature flags and limits; activate/synchronize plans; inspect/change/pause/resume subscriptions; extend grace; record manual payments; list invoices and failed payments; download invoices and issue reminders; view revenue/signup/tenant analytics and exports.
+Deferred future behavior: Edit/version plan identity, pricing, feature flags and limits; activate/synchronize plans; inspect/change/pause/resume subscriptions; extend grace; record manual payments; list invoices and failed payments; download invoices and issue reminders; view revenue/signup/tenant analytics and exports.
 
-Acceptance: Editing a plan has an explicit effective date and grandfathering rule. Manual payments are auditable and deduplicated. Platform billing and effective tenant entitlements reconcile.
+Deferred future acceptance: Editing a plan has an explicit effective date and grandfathering rule. Manual payments are auditable and deduplicated. Platform billing and effective tenant entitlements reconcile.
 
 ### REQ-OPS-SUPPORT: Platform support and shared messaging inbox
 
@@ -654,7 +664,7 @@ Sequence: P3. Users: restricted operators.
 
 Required behavior: Configure rollout flags and targeting, activate/disable/retire flags, preview selected tenants, and run bulk email, suspension, activation, plan change, or deletion actions through authorized jobs.
 
-Acceptance: Preview states exact target scope and action. Execution records per-tenant outcome and operation ID, supports bounded retry, and requires the configured confirmation for destructive bulk changes. A rollout flag does not bypass permission or entitlement checks.
+Acceptance: Preview states exact target scope and action. Execution records per-tenant outcome and operation ID, supports bounded retry, and requires the configured confirmation for destructive bulk changes. A rollout flag does not bypass current permission or security checks. Commercial entitlements remain deferred.
 
 ### REQ-OPS-SYSTEM: Operator identity, policy, audit, and system settings
 
@@ -712,11 +722,11 @@ The following are proposed Fitloom guarantees derived from the source limitation
 
 | Stage | Intended result | Included implementation |
 | --- | --- | --- |
-| P1: SaaS foundation and tailoring operations | Production multi-tenancy, identity/workspaces, plans/entitlements/subscription billing, operator access, audit/recovery, customers, measurements, garment masters, tailoring intake, prices/documents/collections, production/job cards/trials/delivery, expenses/daybook/core reports | Implement partial delivery, financial reconciliation, tenant/role isolation, subscription lifecycle, corrections, and operational recovery in the retained application. |
+| P1: Internal foundation and tailoring operations | Multi-tenancy, identity/workspaces, operator access, audit/recovery, customers, measurements, garment masters, tailoring intake, pricing/documents/manual collections, production/job cards/trials/delivery, expenses/daybook/core reports | Implement partial delivery, manually recorded incoming/outgoing payments, financial reconciliation, tenant/role isolation, corrections, and operational recovery. Subscriptions and payment providers are deferred. |
 | P2: Workshop, inventory, retail, and location depth | Scan slips, packages, tasks, visual sheets/gallery, alterations, wages, products/materials/direct purchases, vendors/POs, reservations/transfers/counts/labels, POS/mixed orders, returns/exchanges, loyalty, multi-location workflows, recurring work, scheduled exports, public shop/tracking, and domain reports | Implement retry handling, concurrent stock changes, selected-row payouts, PO partial receipts, retail returns/restock, and location isolation. |
 | P3: Customer and operator expansion | Customer authentication/portal, booking, Fit Cards/connections, campaigns/push, achievements/tools, custom reports, privacy self-service, and complete operator suite/content | Implement customer link isolation/revocation, capacity-safe booking, consented communications, privacy processing, and scoped bulk operator actions. |
 
-These groups describe cumulative construction of the complete product. There is no validation-only implementation stage or requirement to release a smaller version before continuing. The roadmap phases are the authoritative detailed sequence. SaaS billing, entitlement enforcement, tenant isolation, audit, and operational recovery start in the foundation and remain required throughout development. Production launch timing is a separate decision.
+These groups describe cumulative construction of the complete product. There is no validation-only implementation stage or requirement to release a smaller version before continuing. The roadmap phases are the authoritative detailed sequence. Tenant isolation, authorization, audit, operational recovery, and consistent manually recorded business payments remain required throughout development. Subscriptions, commercial entitlements, platform billing, and payment providers are deferred until explicitly reopened. Production launch timing is a separate decision.
 
 ## End-to-end acceptance scenarios
 
@@ -728,9 +738,9 @@ These describe complete product behavior as its modules are implemented. They ar
 4. Receive a partial PO, reserve stock for work, consume material, dispatch and receive a transfer, then post a physical count. Retry each command and prove quantities do not duplicate.
 5. Accrue earnings for two workers with identical names. Change the current rate, settle selected rows, and reverse one payout. Original rates and worker identities remain correct.
 6. Attempt direct API/document/export access as a worker, another location, another tenant, and an unlinked customer. Each result respects data and field permissions.
-7. Simulate provider failure after local commit, then retry payment verification, notification, and refund work. Business records remain consistent, and pending external actions remain visible.
+7. Record an advance, partial balance collection, and manual refund. Retry after a lost response and verify one posting, correct outstanding balances, and retained references/history. An unconfirmed receipt or pending refund must not count as settled money. Exercise notification-provider failure separately without a payment-provider dependency.
 8. Approve a customer link, book a slot concurrently with another customer, share/revoke a Fit Card, export authorized personal data, and cancel a deletion request before its queued processor runs.
-9. Expire a plan mid-session. Protected mutations stop according to policy while authorized owner export and renewal remain available. Duplicate billing callbacks do not double-activate credits or access.
+9. Operate an authorized internal workspace without selecting a subscription or trial. Revoke membership or security-suspend the tenant and verify that the next protected request fails. Subscription expiry and billing callback scenarios are deferred with REQ-PLAN and REQ-BILLING.
 10. Run a scheduled business export and inspect its contents locally when its application module exists. Verify application recovery using isolated databases and file paths. At the later external deployment handoff, coordinate a compatible target restore with the user's infrastructure project. Restore matched database/file/configuration state, open historical files, reconcile totals, and prove only one writer/side-effect worker is active after cutover. Local export success alone does not establish server recovery or portability.
 11. Confirm three identical garment pieces, assign different workers, complete two, deliver one, and cancel one undelivered piece. Reverse an accidental completion/delivery through explicit events. Commercially return a sold piece and verify it does not create an unrequested replacement.
 12. Fully settle a ₹1,000 order, post a ₹400 charge credit, and settle a ₹400 refund. Outstanding stays zero, refund liability becomes zero after settlement, and each accounting owner/currency journal balances. Exercise duplicate and failed refund settlement.
@@ -741,17 +751,17 @@ The selected baseline and remaining decision deadlines are recorded below.
 
 | Decision | Selected baseline or remaining decision | Owner and latest safe point |
 | --- | --- | --- |
-| Product direction | Full production multi-tenant SaaS, continuous retained implementation, tailor-first order, local development/testing. | Confirmed by user. Preserve scope through phases 1–9; deployment waits for readiness and the user's decision. |
+| Product direction | Internal multi-tenant product, manual business payments, continuous retained implementation, tailor-first order, local development/testing. | Confirmed 2026-11-01. Continue 1B → phase 2 → phase 3 and onward. Subscriptions/platform billing/payment providers are deferred until explicitly reopened. |
 | Stack and hosting | Application/library stack selected in architecture. Local machine is the current environment. Linux setup, deployment platform, host schedulers, and VPS sizing are outside Fitloom. | Developer implements application dependencies locally. User separately plans infrastructure after the phase 3 reminder; assess first deployment readiness after phase 4. |
 | Money and documents | Decimal calculations, balanced journals, immutable charge credits/refunds, original allocations, and fiscal document sequences. INR is the development fixture currency. | Product owner confirms actual market, currency, tax/invoice rules, fiscal year, and zero-price policy before issuing the relevant real document. Development uses explicit test policies. |
 | Production and quantities | Individual garment units, separate return/replacement obligations, phase 4 piece-rate accrual, explicit cloth custody. Default fixture workflow and overrides are in architecture. | Product owner confirms real garment templates, QC/trial/skip/unpaid-delivery rules before operational use. |
 | Location policies | Tenant isolation and location-qualified records/grants are mandatory from phase 1; additional locations arrive in phase 7. | Product owner chooses workshop/outlet relationships, cross-location customer/pricing policy, and consolidated reporting grants before phase 7 commands. |
-| Identity and access | Better Auth database sessions, operator MFA, fresh protected-request checks, explicit authority and entitlement precedence. | Selected foundation. Product owner confirms optional owner MFA and remaining configured login methods before their owning phase completes. |
+| Identity and access | Better Auth database sessions, operator MFA, fresh protected-request checks, explicit authority, scope, and security precedence. | Selected foundation. Product owner confirms optional owner MFA and remaining configured login methods before their owning phase completes. |
 | Stock and loyalty | Moving weighted average, original-cost returns, nonnegative availability, explicit reservation releases, server-owned loyalty journal. | Selected stock baseline. Product owner sets PO tolerance, transfer partial-receipt policy, loyalty rates/caps/expiry, and serial scope before those phase 6–7 commands. |
 | Payroll | Assignment rate snapshots and minimal phase 4 piece-rate accrual. Phase 5 adds salary and settlement. | Product owner defines salary accrual, advances/deductions, rework, and settled-earning adjustment rules before those commands are enabled. |
 | Scheduling | REQ-CALENDAR owns working-time/capacity; phase 8 booking consumes it. Fixture slots are 30 minutes with one place per staff member. | Product owner sets hours, leave, durations, buffers, resource capacity, cancellation, and rescheduling policy before accepting real bookings. |
-| Providers and integration contracts | Nodemailer SMTP adapter selected. Payments, phone OTP, messaging, and OCR use versioned adapters and sandbox/provider fixtures during development. | Developer evaluates contracts; product owner selects accounts/terms before integration acceptance. Missing credentials cannot count as a completed provider integration. |
-| Subscription offer | Versioned trial/plan/grace/override rules, atomic usage admission, protected owner export, and separate platform accounting. | Product owner sets real prices, renewal/proration/refund/referral rules before exposing their commercial actions. Test plans do not set public prices. |
+| Providers and integration contracts | Nodemailer SMTP adapter selected. Phone OTP, messaging, and OCR retain their owning phases. All payment-provider integrations are deferred; business payments are recorded manually. | Developer evaluates contracts; product owner selects accounts/terms before integration acceptance. Missing credentials cannot count as a completed provider integration. |
+| Subscription offer | Deferred in full; no platform subscription or commercial plan is required for internal use. | Product owner must explicitly reopen scope before prices, trials, entitlements, quotas, platform accounting workflows, or subscription/provider integration are implemented. No current deadline or phase. |
 | Recovery and scale | Local application recovery checks and bounded development resources now. Server backups, alerts, infrastructure recreation, and VPS migration are separate user-owned work. | User prepares and verifies external recovery before deployed use. Confirm production traffic/capacity, availability, RPO/RTO, retention, and support coverage before real-data launch. |
 | Privacy and sharing | Private-file projections, future-access revocation, explicit downloaded/imported-copy limits, restore-time deletion reconciliation. | Product owner confirms jurisdiction, photo limits, wearer identity/consent, retained financial records, and nominee authority before real-data use. Fit Card fields/expiry and cross-shop sharing policy are due before phase 8 sharing. |
 | Imports and accounting exports | Dry-run, source IDs, row outcomes, and reconciliation for each claimed format. Complete legacy-history migration is not inferred. | Developer and product owner specify input/target formats before implementing each import/export. |
@@ -761,6 +771,6 @@ A recorded policy gate addresses a review gap without inventing legal, commercia
 
 ## Evidence limits
 
-The original Tailorman, Tailormate, and NoolTech reports are retained verbatim in the `research_notes` sections of [the frozen reference baseline](references/reference_baseline.json). They describe the inspected builds and their boundaries. Most entries are code-defined, with browser evidence of forms, screens, restrictions, or previews. Successful writes, server authorization, provider delivery, backup execution, and complete backend behavior were generally not established. Raw scripts and screenshots are archived outside this workspace. Their original coordinates and hashes remain provenance metadata, not live local dependencies.
+The original Tailorman, Tailormate, and NoolTech reports are retained verbatim in the `research_notes` sections of [the frozen reference baseline](../references/reference_baseline.json). They describe the inspected builds and their boundaries. Most entries are code-defined, with browser evidence of forms, screens, restrictions, or previews. Successful writes, server authorization, provider delivery, backup execution, and complete backend behavior were generally not established. Raw scripts and screenshots are archived outside this workspace. Their original coordinates and hashes remain provenance metadata, not live local dependencies.
 
-The consolidated baseline preserves those limits. It covers every supplied inventory row, not every possible feature of the original applications. Architectural choices and acceptance criteria are proposed Fitloom design work. The archived coverage verification checks mapping and source preservation, not implementation readiness or business correctness. Its location is recorded in [README](README.md).
+The consolidated baseline preserves those limits. It covers every supplied inventory row, not every possible feature of the original applications. Architectural choices and acceptance criteria are proposed Fitloom design work. The archived coverage verification checks mapping and source preservation, not implementation readiness or business correctness. Its location is recorded in [README](../README.md).

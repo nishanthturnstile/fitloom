@@ -1,7 +1,10 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  allowedDevOrigins: ["nishanths-macbook-pro.tail30fb6a.ts.net"],
+  logging: { incomingRequests: false },
+  allowedDevOrigins: process.env.AUTH_BASE_URL
+    ? [new URL(process.env.AUTH_BASE_URL).hostname]
+    : [],
   turbopack: {
     rules: {
       "*.css": {

@@ -1,0 +1,167 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1793467690226,
+      "tag": "0000_identity_tenancy",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1793467718581,
+      "tag": "0001_isolation",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1793467795552,
+      "tag": "0002_queue_install",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1793468325108,
+      "tag": "0003_command_journal_contracts",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1793468503260,
+      "tag": "0004_command_safety",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1793468782386,
+      "tag": "0005_provisioning_commands",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1793507462309,
+      "tag": "0006_day2_review_fixes",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1793507513714,
+      "tag": "0007_verified_identity_mail_mfa",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1793508099152,
+      "tag": "0008_auth_hardening",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1793510488453,
+      "tag": "0009_resumable_workspaces",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1793510820260,
+      "tag": "0010_workspace_validation_fixes",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1793510820261,
+      "tag": "0011_role_permission_validation",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1793510820262,
+      "tag": "0012_workspace_authority_validation",
+      "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1793510820263,
+      "tag": "0013_existing_setup_completion",
+      "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1793510820264,
+      "tag": "0014_durable_jobs_inbox",
+      "breakpoints": true
+    },
+    {
+      "idx": 15,
+      "version": "7",
+      "when": 1793510820265,
+      "tag": "0015_worker_contract_hardening",
+      "breakpoints": true
+    },
+    {
+      "idx": 16,
+      "version": "7",
+      "when": 1793510820266,
+      "tag": "0016_worker_supervision",
+      "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1793510820267,
+      "tag": "0017_queue_retention_lock",
+      "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1793510820268,
+      "tag": "0018_private_files",
+      "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1793510820269,
+      "tag": "0019_operator_recovery",
+      "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1793510820270,
+      "tag": "0020_immutable_private_objects",
+      "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1793510820271,
+      "tag": "0021_foundation_operations",
+      "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "7",
+      "when": 1793510820272,
+      "tag": "0022_bounded_foundation_lists",
+      "breakpoints": true
+    }
+  ]
+}

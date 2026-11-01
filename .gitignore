@@ -17,3 +17,6 @@ next-env.d.ts
 # Logs and operating system files
 *.log
 .DS_Store
+
+# Local Compose configuration, credentials, logs, and backups
+.local/

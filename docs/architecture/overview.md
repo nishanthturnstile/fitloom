@@ -6,11 +6,11 @@ Use a TypeScript modular monolith with server-owned business commands, PostgreSQ
 
 The supplied client research shows three different shapes: Tailorman accesses Firebase services directly and has a small custom HTTP layer; Tailormate uses a shared HTTP service for shop workflows; NoolTech exposes more domain-oriented client services. Their server source and complete authorization or transaction behavior were not supplied. This recommendation combines domain separation with transaction boundaries across related business records.
 
-## Production SaaS and continuous implementation
+## Internal product and continuous implementation
 
-Fitloom is a production multi-tenant SaaS application. The tailor-first sequence builds retained modules within this architecture. Each phase extends the same application, transactional records, and integration contracts through the complete product scope. Production deployment timing is separate from development checkpoints. The current environment is the local development machine. Run builds, tests, web, worker, PostgreSQL, and private files locally. The user manages Linux setup, deployment platforms, host schedulers, server backups, and VPS migration separately. Remote deployment waits until the application is ready and the user has prepared that environment. Production capacity, high availability, continuous archiving, and recovery commitments remain prelaunch decisions.
+Fitloom is currently an internal multi-tenant business application with no platform subscription. Subscriptions, platform billing, commercial entitlements/quotas, and all payment-provider integrations are deferred until explicitly reopened. Shop business payments remain required as manually entered records in their owning phases. The tailor-first sequence builds retained modules within this architecture. Each phase extends the same application, transactional records, and integration contracts through the complete product scope. Production deployment timing is separate from development checkpoints. The current environment is the local development machine. Run builds, tests, web, worker, PostgreSQL, and private files locally. The user manages Linux setup, deployment platforms, host schedulers, server backups, and VPS migration separately. Remote deployment waits until the application is ready and the user has prepared that environment. Production capacity, high availability, continuous archiving, and recovery commitments remain prelaunch decisions.
 
-Tenant provisioning, identity/membership, subscription lifecycle, effective entitlements, verified billing, operator access, audit, jobs, application diagnostics, and application recovery contracts belong to the foundation. Host recovery automation is a separate external responsibility before deployed use. Later phases expand their interfaces and business capabilities. Subscription trials are tenant account states, not a development experiment.
+Tenant provisioning, identity/membership, current permissions, operator access, audit, jobs, application diagnostics, and application recovery contracts belong to the internal foundation. Host recovery automation is a separate external responsibility before deployed use. Later phases expand their interfaces and business capabilities. Commercial plan/subscription work has no scheduled implementation phase.
 
 A business is a tenant, and its outlets/workshops are locations. Resolve tenant context from the authenticated principal's authorized membership. Validate every referenced record against that tenant and the applicable location grants. Carry the same authorized scope through database queries and relationships, private files, caches, search, exports, documents, and queued jobs. Platform-wide records and operator actions use separate explicit authority. Never infer unrestricted tenant access from an operator-facing screen.
 
@@ -27,7 +27,7 @@ Shop workspace      Worker workspace      Customer portal      Operator console
                                   |
  Identity + tenants | Customers + measurements | Orders + pricing
  Production + tasks | Catalog + stock + purchasing | Finance + payroll
- Documents + messaging | Plans + support | Privacy + platform operations
+ Documents + messaging | Support | Privacy + platform operations
                                   |
              Transactional records + private files + durable job queue
 ```
@@ -43,7 +43,8 @@ Shop workspace      Worker workspace      Customer portal      Operator console
 | Procurement | Vendor, purchase order, goods receipt, supplier payment state | Approve PO, receive quantities, cancel remaining quantities |
 | Finance and payroll | Charge credits, receipts/allocations, refund/exchange-credit liabilities, balanced journal, costs, earnings, payouts | Post charge/credit, collect/refund, post expense, accrue/settle earning |
 | Documents and communication | Document snapshot, export job, notification, delivery attempt | Generate document, export authorized data, enqueue notification |
-| Subscription and platform | Plan versions, entitlements, usage counters, provider inbox, separate platform billing, support, operator actions | Admit usage, apply verified billing event, manage tenant lifecycle |
+| Internal platform | Support, operator actions, security lifecycle, generic provider inbox and diagnostics | Manage tenant security, perform audited recovery, observe durable work |
+| Subscription and billing, deferred | Future plans, commercial entitlements/quotas, platform billing and payment providers | No current implementation; explicit scope reopening required |
 | Privacy and retention | Consent, sharing revocation, export and deletion requests, retention jobs | Request export, review deletion, execute eligible retention action |
 
 Modules expose domain operations instead of permitting arbitrary writes to another module's records. A single deployed service can coordinate related records in one transaction. Split a module into a separate service only after measured scale or independent ownership justifies the distributed consistency cost.
@@ -56,7 +57,7 @@ Modules expose domain operations instead of permitting arbitrary writes to anoth
 - An order contains typed lines: custom tailoring, readymade product, material sale, or alteration service. A line has quantity/unit, frozen price/charge components, and promised date. Every tailoring piece has a stable production-unit ID and independent assignments/stage history. All pieces in one line share wearer, measurement, design, and price snapshots; differing pieces use separate lines. Delivery references quantities and applicable unit IDs.
 - An order's commercial status, production progress, delivery quantities, and payment state remain separate. Aggregate views derive from those records through documented rules.
 - Stock balance is derived from posted movements by item, variant, and location. Reservations affect availability. Opening stock is one movement. Edits do not silently replace stock history.
-- A receipt contains payment-method components and source allocations. Charge credits reduce the collectible charge; refund obligations and their actual settlements are separate. Refunds reference original allocations. Reversals retain originals. Exchange credit is a separate liability. A balanced append-only journal separates shop accounting from platform subscription accounting.
+- A receipt contains payment-method components and source allocations. Charge credits reduce the collectible charge; refund obligations and their actual settlements are separate. Refunds reference original allocations. Reversals retain originals. Exchange credit is a separate liability. A balanced append-only journal records shop accounting. Existing accounting-owner separation is retained; platform subscription workflows are deferred.
 - A worker can exist without a login. A staff membership can link to a worker. Phase 4 qualifying cutting/stitching completion creates an earning tied to a unique unit/assignment/completion and agreed rate snapshot. Phase 5 extends tasks, salary, and payouts. Settlement cannot pay an earning twice. Reopening or rework retains settled history and posts explicit adjustments.
 - Operational job sheets and financial invoices have different authorized projections. Documents retain a versioned snapshot of the data and template used to generate them.
 
@@ -77,13 +78,13 @@ All choices below are recommendations. The named sources establish the alternati
 | Consistent returns and refunds | NoolTech F082–F084 and separate refund/restock failure finding | Use an explicit return record, disposition, refund, stock movement, and exchange credit. Within the service, commit related records together. External payout failures remain retryable and visible. |
 | Agreed rates and immutable earnings | Tailorman computes pending wages at current master rates; Tailormate assigns rates and pays selected rows; NoolTech supports salary/advance/deduction | Snapshot the agreed rate on assignment and accrue at qualifying completion. Configure daily/monthly salary separately. Rate changes cannot rewrite settled work. |
 | Financial corrections retain history | Tailormate edits/deactivates receipts; Tailorman voiding, manual entries, and linked ledger | Posted corrections use reversal plus replacement, with reason and actor. Display the net effect and preserve the original documents. |
-| Server-wide authorization | Tailormate permission vocabulary; Tailorman worker document masking warning; NoolTech staff and portal roles | Enforce tenant, location, role, entitlement, and field visibility on every API, export, document, file download, and background job. UI checks improve navigation only. |
+| Server-wide authorization | Tailormate permission vocabulary; Tailorman worker document masking warning; NoolTech staff and portal roles | Enforce tenant, location, role, security status, and field visibility on every API, export, document, file download, and background job. UI checks improve navigation only. |
 | Durable shared drafts and communication status | NoolTech local held carts and local reminder Sent marker; Tailorman composer links | Local drafts can aid recovery. Shared held carts save the full customer and cart server-side. Composer opened, queued, accepted, delivered, and failed are distinct communication states. |
-| Central entitlement policy | Tailorman live flags differ from fallback/pricing copy; NoolTech plan flags; Tailormate paid-plan matrix unknown | Resolve effective access from versioned plan, trial policy, overrides, and account state. Use the same policy for UI, server admission, pricing comparison, and usage limits. |
+| Central entitlement policy | Tailorman live flags differ from fallback/pricing copy; NoolTech plan flags; Tailormate paid-plan matrix unknown | Deferred with subscriptions. Internal access uses current identity, permissions, tenant/location scope, and security status. Technical safety limits remain independent of commercial plans. |
 | Durable jobs with truthful completion | Tailormate backup schedule; NoolTech export, automated messaging, email and retention services | Queue jobs with idempotency, retry limits, status, and visible failures. A schedule configuration does not count as a completed backup or delivered message. |
 | Responsive operational interfaces | Tailorman phone cards and work queues; Tailormate detailed garment editors; NoolTech guided POS and portal | Use fast mobile queues and one-tap work actions, richer expandable editors, and role-specific navigation. Desktop tables and mobile cards share search and pagination. |
 
-Sources: the original Tailorman, Tailormate, and NoolTech reports retained in the `research_notes` sections of [the frozen reference baseline](references/reference_baseline.json). Individual feature anchors and evidence limits appear in the [source appendix](references/source_feature_details.md). The appendix retains historical coordinates for raw evidence archived outside this workspace.
+Sources: the original Tailorman, Tailormate, and NoolTech reports retained in the `research_notes` sections of [the frozen reference baseline](../references/reference_baseline.json). Individual feature anchors and evidence limits appear in the [source appendix](../references/source_feature_details.md). The appendix retains historical coordinates for raw evidence archived outside this workspace.
 
 ## Command and integration contracts
 
@@ -98,21 +99,21 @@ These are proposed contracts, not copied vendor endpoints:
 | Receive purchase | PO, receipt lines and quantities, destination, cost, idempotency key → goods receipt, stock movements, payable reference |
 | Return items | Original sale, returned quantities, stock disposition, refund or exchange-credit choice, idempotency key → return, credit/refund, stock outcome |
 | Import measurements | Authorized customer, selected shared entries, consent/provenance, reviewed units, idempotency key → independent shop-owned versions |
-| Apply billing event | Raw signature-verified provider/account/event, subscription, amount/currency/environment → durable inbox event and idempotent entitlement revision |
+| Apply billing event, deferred | No subscription or payment-provider implementation in the internal scope; retained future contract only |
 | Book/reschedule | Authorized customer/staff, location/resource intervals, expected version, idempotency key → capacity-checked persisted appointment |
 | Post charge credit/refund | Original charge/allocation, credited amount, disposition/settlement, expected version, idempotency key → charge credit, liability, journal, and settlement state |
 
 Every mutation validates input on the server and returns a persisted result or a specific error. Version conflicts require reload or explicit merge. List queries use server pagination, stable ordering, authorized filters, and independent total counts. Reports state whether data is complete and include their filter scope.
 
-A command commits its business changes, critical audit, idempotency result, and outbox/job row in the same PostgreSQL transaction on the same connection. Use the pg-boss transaction adapter with the Drizzle transaction, or a domain outbox inserted in that transaction. Only after commit does the worker generate PDFs or contact providers. A standalone enqueue after commit is not sufficient. Provider retries must not repeat collections, stock movement, earnings, or subscription activation. Credentials remain in restricted server-side secret files.
+A command commits its business changes, critical audit, idempotency result, and outbox/job row in the same PostgreSQL transaction on the same connection. Use the pg-boss transaction adapter with the Drizzle transaction, or a domain outbox inserted in that transaction. Only after commit does the worker generate PDFs or contact providers. A standalone enqueue after commit is not sufficient. Retries must not repeat manually recorded collections/refunds, stock movement, or earnings. Subscription activation and payment-provider callbacks are deferred. Credentials remain in restricted server-side secret files.
 
-Authentication, database, jobs, private storage, and the Nodemailer SMTP transport are selected below. External SMTP, phone OTP, messaging, OCR, and payment accounts/providers remain phase-specific decisions. Razorpay is a candidate for confirmed India/INR subscription billing, not a mandatory dependency. Use sandbox events and explicit fixtures during development; missing credentials do not complete an integration. Accounting export formats, mobile deep links, and QR payloads require versioned contracts. No public developer API is inferred from a plan flag.
+Authentication, database, jobs, private storage, and the Nodemailer SMTP transport are selected below. External SMTP, phone OTP, messaging, and OCR accounts/providers remain phase-specific decisions. Payment accounts/providers are deferred. No payment provider is selected or required for the internal product. All payment-provider evaluation/integration is deferred until explicitly reopened. Use sandbox events and explicit fixtures during development; missing credentials do not complete an integration. Accounting export formats, mobile deep links, and QR payloads require versioned contracts. No public developer API is inferred from a plan flag.
 
 ## Project structure and template
 
 The repository uses pnpm workspaces with Turborepo for development, builds, and type checking. The initial workspace was generated with the official `create-turbo` CLI and adapted to the structure below. Use the official `create-next-app` scaffold for `apps/web`, customized for the selected Next.js release, TypeScript, App Router, Tailwind, Biome, `src/`, and `@/*`. Keep the existing Git history and documents. Select scaffold options explicitly so saved/default CLI preferences do not add a second linter or change the package manager. [Official scaffold](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-The repository itself becomes the reusable project foundation. A third-party SaaS template, a separate template repository, or a starter comparison is not required. The official scaffold supplies framework setup; implement Fitloom's own identity, tenancy, billing, and domain modules on it.
+The repository itself becomes the reusable project foundation. A third-party SaaS template, a separate template repository, or a starter comparison is not required. The official scaffold supplies framework setup; implement Fitloom's own identity, tenancy, manual business payment records, and domain modules on it.
 
 Workspace structure:
 
@@ -122,19 +123,24 @@ fitloom/
   pnpm-workspace.yaml       apps/* and packages/*
   pnpm-lock.yaml            one root lockfile
   turbo.json                dependency-ordered tasks and cached build outputs
-  IN_PROGRESS.md            high-level work status
   tsconfig.base.json        shared compiler settings
   biome.json                shared formatting/lint rules
   apps/web/                 official Next.js scaffold and actual product UI
   apps/worker/              TypeScript worker compiled with tsc, run by Node
   packages/application/     commands shared by web and worker
   packages/db/              schemas, migrations, database transaction helpers
-  docs/
+  docs/                     centralized project documentation
+    product/                requirements and roadmap
+    architecture/           design and feature contracts
+    implementation/         status and phase plans
+    operations/             local setup, recovery, and verification
+    development/            web, worker, application, and database guides
+    references/             source evidence and frozen baseline
 ```
 
 Use `workspace:*` for local dependencies. The root owns workspace configuration and the lockfile; merge/remove nested scaffold workspace files and lockfiles. Use pnpm's ordinary isolated `node_modules` layout. Here, workspace means pnpm workspaces, not Yarn Plug'n'Play. Add package manifests/exports and scripts with the actual package code, and add shared UI/config packages only when reuse requires them. [pnpm workspaces](https://pnpm.io/workspaces).
 
-Implement locally in this order: workspace/scaffold → database and transactions → identity/tenancy → jobs/files/audit → subscriptions → the remaining business modules. Roadmap 1C is a deferred external handoff and does not block 1D or later application work. Notify the user to plan the environment after phase 3 works locally, and assess the first deployment candidate after phase 4. Continue local development until the user is ready.
+Implement locally in this order: workspace/scaffold → database and transactions → identity/tenancy → jobs/files/audit → customers/garments/measurements → orders/manual payments → the remaining business modules. Roadmap 1C and subscription work in 1D are deferred and do not block internal application work. Notify the user to plan the environment after phase 3 works locally, and assess the first deployment candidate after phase 4. Continue local development until the user is ready.
 
 ### Keep the initial stack small
 
@@ -160,14 +166,14 @@ Develop and test on the local machine. The previously discussed VPS size is not 
 | Money/quantities | [decimal.js](https://mikemcl.github.io/decimal.js/), PostgreSQL `numeric` | Decimal strings at JSON boundaries; explicit scales/rounding. Never derive authoritative money using binary floats. |
 | Dates | `date-fns`, [@date-fns/tz](https://github.com/date-fns/tz), IANA timezone names | Separate date-only business fields from `timestamptz` instants. Use location timezone for schedules and period boundaries. |
 | Jobs/outbox | `pg-boss`, Drizzle transaction adapter | Shared PostgreSQL, separate worker entry point, transaction-bound job creation, bounded retry and failed-job visibility. |
-| Files/images | Private filesystem `BlobStore`, [sharp](https://sharp.pixelplumbing.com/) | Immutable opaque keys, metadata/ownership in PostgreSQL, authorized streaming, bounded image decoding/re-encoding. An S3 adapter can be added later without changing domain records. |
+| Files/images | Self-hosted SeaweedFS S3-compatible `BlobStore`, [sharp](https://sharp.pixelplumbing.com/) | User-selected in Day 6. Private bucket-scoped server credentials, opaque keys, lifecycle/ownership in PostgreSQL, current-authority streaming, and bounded image validation/re-encoding. See [private files](../operations/private-files-and-operator-recovery.md). |
 | Documents | [Playwright Chromium](https://playwright.dev/docs/api/class-page#page-pdf), versioned HTML/CSS templates, bundled fonts | Worker PDF generation and browser print layouts. Test A4/A5, 58/80 mm, and supported scripts. Limit browser concurrency and network access. |
 | QR/barcodes | [qrcode](https://github.com/soldair/node-qrcode), [bwip-js](https://github.com/metafloor/bwip-js), [ZXing browser](https://github.com/zxing-js/browser) | Generate codes and labels; add camera decoding in inventory. Hardware keyboard scanners need no camera decoder. Codes do not grant authorization. |
 | Email/phone | [Nodemailer SMTP](https://nodemailer.com/smtp/) adapter; `libphonenumber-js` for contact normalization | SMTP account and OTP provider are selected against delivery/abuse requirements. Optional local Mailpit captures development email; its UI is private. |
 | PWA/drafts | Web App Manifest, a narrowly scoped service worker, IndexedDB through `idb` | Cache public shell assets and approved local drafts only. No general offline sync engine or private-response cache. |
 | Logs | [Pino](https://github.com/pinojs/pino), structured local process/job status | Add correlation and error reporting to actual commands/jobs. Host log rotation, server backup status, and external monitoring belong to the separate infrastructure environment. |
 | Developer tooling | Biome and TypeScript compiler | Root formatting/type-check/build scripts support implementation. Vitest, browser-test runners, Testcontainers, and property-test frameworks are deferred; they are not foundation deliverables or a separate validation stage. |
-| Local runtime | pnpm commands, local PostgreSQL, local worker, and private file paths | Use real dependencies and isolated test databases/files. No VPS or deployment dashboard is required. |
+| Local runtime | Docker Compose with web, worker, PostgreSQL, and separate Mailpit instances | Fixed non-default ports, Tailscale HTTPS, persistent data, and Compose Watch. See [local development](../operations/local-development.md). |
 | External infrastructure | User-managed project outside Fitloom | Linux, deployment platform, routing/TLS, host timers, backups, and machine moves are deferred external work. |
 | Recovery contract | Versioned application schema, file ownership, configuration, and migration metadata | Verify application recovery locally. Coordinate target-host backups and restore before remote or real-data use. |
 
@@ -199,27 +205,27 @@ The worker receives committed jobs at least once. External acceptance followed b
 
 Use Better Auth for identity and database-backed sessions. Fitloom membership/location grants are the authoritative business access model. A Better Auth organization integration, if enabled, must have a unique one-to-one tenant mapping; it must not create a competing membership store. Customer identities receive approved shop links, not staff membership. Operator authority has separate grants and admission. The same person can hold several authorities only through explicit authorization.
 
-The initial methods are verified email/password, reset/verification email, and operator authenticator MFA. Google, phone OTP, and customer methods remain required in their assigned phases. Disable session cookie caching initially. Check current session validity, principal status, membership, and entitlements for every protected request. Revocation takes effect on the next protected request after commit; already downloaded copies remain outside that guarantee. [Better Auth session management](https://better-auth.com/docs/concepts/session-management).
+The initial methods are verified email/password, reset/verification email, and operator authenticator MFA. Google, phone OTP, and customer methods remain required in their assigned phases. Disable session cookie caching initially. Check current session validity, principal/tenant security status, membership, location, permissions, and permitted fields for every protected request. Internal access has no subscription requirement. Revocation takes effect on the next protected request after commit; already downloaded copies remain outside that guarantee. [Better Auth session management](https://better-auth.com/docs/concepts/session-management).
 
 | Decision order | Enforced rule |
 | --- | --- |
-| 1. Identity and security | Reject revoked sessions/inactive principals. Security suspension blocks ordinary tenant access regardless of plan or feature override. Restricted operators can review recovery and export requests through audited commands. |
-| 2. Authority and location | Require explicit business membership/location grants, approved customer link, or platform authority. No role preset or subscription can grant a missing permission. |
-| 3. Commercial account state | Trial, active, and grace use their versioned effective plan. Expired accounts stop protected operational mutations. Verified owners retain renewal and manual data export; ordinary subscription expiry does not erase records. |
-| 4. Feature resolution | Resolve effective plan version and effective dates, then explicit commercial feature/limit overrides. Overrides cannot bypass security suspension, permissions, or scope. An extension/reactivation is its own audited lifecycle event. |
-| 5. Usage admission | Check and increment the applicable quota atomically with the operation. Use an explicit unlimited value, not an overloaded zero or client sentinel. |
+| 1. Identity and security | Reject revoked sessions/inactive principals. Security suspension blocks ordinary tenant access. Restricted operators can review recovery and export requests through audited commands. |
+| 2. Authority and location | Require explicit business membership/location grants, approved customer link, or platform authority and current permission. |
+| 3. Field and operation policy | Apply the permitted projection, domain validation, expected version, and technical safety limits before a command commits. |
 
-Usage rules identify resource, owner, period timezone, counting event, reversal policy, and reservation/release behavior. Count seats by active staff logins, not worker records without login. Count issued bill/sale operations within the tenant-local period and retain audit on void/reversal; do not reset usage by deleting history. Storage counts finalized live objects and reserved upload bytes, with cleanup reconciliation. Plan changes retain effective dates and do not rewrite historical usage.
+Commercial account state, plan feature resolution, and subscription quotas are deferred. Do not create trial/active/grace/expired subscription records or simulate an active paid plan to admit internal users. Current development wiring retains an unimplemented admission interface and a production-mode guard. Changing that guard for an internal deployment is a separate explicit internal-access task, not a reason to build subscriptions. See [current workspace wiring](workspaces.md#commercial-admission-boundary).
 
 Rate-limit login/OTP, recovery, invitations, public tracking, scans, and campaigns. Limit file size/decoded pixels, query duration, report/export size, queue backlog, and PDF concurrency. Protected Next.js pages, API responses, documents, and private downloads are not shared-cacheable. Delayed disclosure/deletion jobs recheck current grants, consent, suspension exceptions, and cancellation state.
 
-Commercial expiry does not cancel an already owed refund or provider reconciliation. Such system work uses explicit service authority and the original obligation, independent of a former staff session. Security-suspended accounts require the restricted operational policy for financial recovery; they do not regain ordinary data disclosure or user mutation rights through a queued job.
+An already owed refund remains a durable obligation independent of the recording actor's later membership. Record its manual settlement under authorized financial commands. Payment-provider execution/reconciliation and commercial expiry are deferred. Such system work uses explicit service authority and the original obligation, independent of a former staff session. Security-suspended accounts require the restricted operational policy for financial recovery; they do not regain ordinary data disclosure or user mutation rights through a queued job.
 
 ## Domain records and policies
 
 ### Charges, settlement, and journal
 
-Shop transactions and platform subscription transactions use separate accounting owners and journal accounts. A posting has a unique business operation, currency, source, debit/credit lines, actor, and reversal link. Debit and credit totals balance per owner/currency. Related source changes and postings are one local transaction. Each module supplies its posting matrix before its first transaction.
+Business payments are recorded manually without a payment-provider API. Retain amount/currency, payment date, method, external reference, source allocations, actor, notes/evidence, and correction history. Cash/UPI/card/bank indicate movement handled outside Fitloom. A posted receipt changes receivables and the journal once; an unconfirmed note or pending refund does not count as settled money. Advances, partial collections, balances, refunds, expenses, supplier payments, and workforce payouts remain in their owning business phases. Platform subscription charges and invoices are deferred.
+
+Shop transactions use explicit accounting owners and journal accounts. The retained platform-owner contract remains isolated, but platform subscription transactions are deferred. A posting has a unique business operation, currency, source, debit/credit lines, actor, and reversal link. Debit and credit totals balance per owner/currency. Related source changes and postings are one local transaction. Each module supplies its posting matrix before its first transaction.
 
 Store issued charge snapshots and separate credit adjustments. Effective charge equals charge minus charge credits. Net settlement equals receipt and credit-redemption allocations minus their reversals and settled refunds. Outstanding is `max(effective charge - net settlement, 0)`. An excess is customer/refund liability. Refund obligation, provider attempt, settled refund, and exchange-credit liability are distinct records. Tender/change is not an over-allocation. A ₹1,000 paid charge with a ₹400 credit and ₹400 settled refund leaves charge/settlement at ₹600 and zero outstanding.
 
@@ -261,7 +267,7 @@ Each supported import records format/version, source IDs, preview, duplicates, p
 
 ## Local development and external infrastructure
 
-Develop and verify the retained application on the local machine. Run web and worker through the root pnpm scripts. Add a real local PostgreSQL instance and private-file directory with 1B. Local dependency containers may be used without building a Linux provisioning or deployment system in this repository.
+Develop and verify the application through the root Docker Compose workflow. `pnpm dev` starts every required local service and background source synchronization. This local MacBook setup is explicitly authorized by the user and separate from production Linux provisioning or deployment. See [local development](../operations/local-development.md).
 
 Keep runtime, migration, and test credentials separate. Use isolated test databases and temporary file roots. Preserve developer records across ordinary setup changes. Use synthetic development data until the relevant real-data policies and recovery arrangements are ready.
 
@@ -271,7 +277,7 @@ Use local environment files and placeholder examples. Keep secrets outside Git, 
 
 The user separately plans and implements Linux provisioning, SSH/firewall policy, Docker host management, deployment dashboards, shared routing/TLS, host monitoring, server backup schedules, and VPS moves. Do not add an infrastructure center, deployment center, general host scheduler, Ansible playbooks, server Compose stacks, or server administration commands to this application.
 
-Fitloom retains its own background jobs, recurring business actions, calendar/appointment scheduling, subscription logic, private-file access, diagnostics, and application recovery contracts. Product operator permissions do not imply a general server-administration interface.
+Fitloom retains its own background jobs, recurring business actions, calendar/appointment scheduling, manual payment records, private-file access, diagnostics, and application recovery contracts. Subscription logic is deferred. Product operator permissions do not imply a general server-administration interface.
 
 Keep the application independent of the chosen external deployment manager. Supply runtime commands, configuration names, migrations and roles, worker lifecycle, persistence paths, and health observations. Agree any application container packaging and environment integration at the later handoff. Do not mark an external platform or VPS as provisioned because local commands work.
 
@@ -285,7 +291,7 @@ Version schema changes and preserve historical records. Reverting application co
 
 After phase 3 works locally, notify the user to begin the separate infrastructure plan. After phase 4 completes the locally verified tailoring workflow, report the first deployment candidate. Continue local development if the external environment is not ready. An earlier request for shared remote testing or an integration that cannot be verified locally triggers an earlier notification.
 
-Before remote deployment or real-data use, coordinate environment-specific verification with the user. Check routing/TLS, trusted origins and cookies, provider callbacks, secret delivery, migration privileges, persistent paths, worker restart, resource limits, backups, and restore ownership. See the [roadmap handoff](roadmap.md#deployment-readiness-and-external-handoff). No deployment or reminder automation is created by this plan.
+Before remote deployment or real-data use, coordinate environment-specific verification with the user. Check routing/TLS, trusted origins and cookies, provider callbacks, secret delivery, migration privileges, persistent paths, worker restart, resource limits, backups, and restore ownership. See the [roadmap handoff](../product/roadmap.md#deployment-readiness-and-external-handoff). No deployment or reminder automation is created by this plan.
 
 ## Application recovery and external server recovery
 
@@ -299,4 +305,4 @@ Scheduled business exports and their run history remain application features in 
 
 ## Decisions still needed
 
-Product direction, the application stack, local-first development, private filesystem adapter, tenant enforcement, and financial/quantity contracts are selected. Infrastructure and deployment are separate user-managed work, deferred until application readiness. Host sizing, deployment platform, external recovery tooling, real market/tax/invoice policy, payroll terms, privacy retention, providers, and subscription prices retain explicit owners and deadlines in [the requirements](requirements.md#open-decisions). Resolve each before its affected integration, deployment, or real-data action while continuing independent local development. The [roadmap](roadmap.md) sequences those dependencies.
+Product direction, the application stack, local-first development, SeaweedFS storage adapter, tenant enforcement, and financial/quantity contracts are selected. Infrastructure and deployment are separate user-managed work, deferred until application readiness. Host sizing, deployment platform, external recovery tooling, real market/tax/invoice policy, payroll terms, privacy retention, nonpayment providers retain explicit owners and deadlines in [the requirements](../product/requirements.md#open-decisions). Resolve each before its affected integration, deployment, or real-data action while continuing independent local development. The [roadmap](../product/roadmap.md) sequences those dependencies.

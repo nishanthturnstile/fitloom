@@ -6,7 +6,11 @@ export const metadata: Metadata = {
   description: "Tailoring and shop management",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="en">
       <body>{children}</body>

@@ -1,8 +1,10 @@
 # Source feature details
 
-This appendix preserves every supplied feature entry under one canonical requirement. Descriptions below state extracted reference behavior, including limitations and defects. They are not claims that Fitloom implements that behavior. The [canonical requirements](../requirements.md) and [architecture decisions](../architecture.md) resolve conflicts.
+This appendix preserves every supplied feature entry under one canonical requirement. Descriptions below state extracted reference behavior, including limitations and defects. They are not claims that Fitloom implements that behavior. The [canonical requirements](../product/requirements.md) and [architecture decisions](../architecture/overview.md) resolve conflicts.
 
 Complete original records, source coordinates, configuration references, and authored findings are retained in [the frozen reference baseline](reference_baseline.json). Raw scripts and screenshots have been archived outside this workspace. Evidence paths and anchors below are historical coordinates, not local file links.
+
+Scope update on 2026-11-01: extracted subscription, commercial plan/quota, platform-billing, and payment-provider behaviors remain reference evidence but are deferred until explicitly reopened. They do not require implementation in the internal product or phase 9. Shop collections, refunds, invoices/receipts, and other business payments remain required as manual records. The frozen baseline and requirement mappings are preserved.
 
 Coverage: 860 source entries mapped to 64 canonical requirements. Counts describe inventory entries, not deduplicated actions or executed business tests.
 
@@ -12,109 +14,109 @@ An empty source column means no entry is assigned to this capability in that ext
 
 | Requirement | Tailorman | Tailormate | NoolTech |
 | --- | ---: | ---: | ---: |
-| [REQ-HOME: Operational dashboard and global search](../requirements.md#req-home-operational-dashboard-and-global-search) | 9 | 7 | 7 |
-| [REQ-CRM: Customer register, profile, and history](../requirements.md#req-crm-customer-register-profile-and-history) | 11 | 6 | 9 |
-| [REQ-MEASURE: Versioned body and garment measurements](../requirements.md#req-measure-versioned-body-and-garment-measurements) | 9 | 10 | 15 |
-| [REQ-SCAN: Measurement-slip scanning with review](../requirements.md#req-scan-measurement-slip-scanning-with-review) | 3 |  |  |
-| [REQ-MASTER: Garment, measurement, service, and add-on configuration](../requirements.md#req-master-garment-measurement-service-and-add-on-configuration) | 7 | 15 | 2 |
-| [REQ-PACKAGE: Service packages and bundle pricing](../requirements.md#req-package-service-packages-and-bundle-pricing) | 4 |  |  |
-| [REQ-INTAKE: Guided order intake and garment detail](../requirements.md#req-intake-guided-order-intake-and-garment-detail) | 5 | 14 | 7 |
-| [REQ-ORDER: Order register, detail, amendments, and lifecycle](../requirements.md#req-order-order-register-detail-amendments-and-lifecycle) | 9 | 16 | 17 |
-| [REQ-PRICE: Canonical quotes, tax, discounts, and numbering](../requirements.md#req-price-canonical-quotes-tax-discounts-and-numbering) | 6 | 5 | 6 |
-| [REQ-COLLECT: Receipts, receivables, refunds, and corrections](../requirements.md#req-collect-receipts-receivables-refunds-and-corrections) | 10 | 3 | 9 |
-| [REQ-DOC: Invoices, receipts, payment advice, and order documents](../requirements.md#req-doc-invoices-receipts-payment-advice-and-order-documents) | 3 | 7 | 5 |
-| [REQ-PRODUCTION: Item stages, assignments, and production board](../requirements.md#req-production-item-stages-assignments-and-production-board) | 14 |  | 10 |
-| [REQ-TASK: Task planning, duration, execution, and cost allocation](../requirements.md#req-task-task-planning-duration-execution-and-cost-allocation) |  | 14 |  |
-| [REQ-CALENDAR: Workload, trials, quantity delivery, and capacity](../requirements.md#req-calendar-workload-trials-quantity-delivery-and-capacity) | 6 | 7 | 3 |
-| [REQ-ALTER: Standalone alterations and rework](../requirements.md#req-alter-standalone-alterations-and-rework) | 5 |  | 1 |
-| [REQ-JOB: Workshop job cards and visual construction sheets](../requirements.md#req-job-workshop-job-cards-and-visual-construction-sheets) | 2 |  | 6 |
-| [REQ-GALLERY: Design gallery and reusable media](../requirements.md#req-gallery-design-gallery-and-reusable-media) |  | 6 |  |
-| [REQ-PRODUCT: Retail catalog and stock master](../requirements.md#req-product-retail-catalog-and-stock-master) | 7 | 4 | 10 |
-| [REQ-POS: Retail/material checkout, held carts, and loyalty](../requirements.md#req-pos-retailmaterial-checkout-held-carts-and-loyalty) | 8 | 5 | 18 |
-| [REQ-RETURN: Retail returns, refunds, and exchanges](../requirements.md#req-return-retail-returns-refunds-and-exchanges) |  |  | 3 |
-| [REQ-MATERIAL: Material inventory, variants, reservations, and consumption](../requirements.md#req-material-material-inventory-variants-reservations-and-consumption) | 6 | 5 | 12 |
-| [REQ-PURCHASE: Direct purchases, stock adjustments, and history](../requirements.md#req-purchase-direct-purchases-stock-adjustments-and-history) | 9 | 10 | 2 |
-| [REQ-VENDOR: Vendor directory and supplier information](../requirements.md#req-vendor-vendor-directory-and-supplier-information) |  |  | 7 |
-| [REQ-PO: Purchase orders, approval, and goods receiving](../requirements.md#req-po-purchase-orders-approval-and-goods-receiving) |  |  | 11 |
-| [REQ-TRANSFER: Inter-location stock transfers](../requirements.md#req-transfer-inter-location-stock-transfers) |  |  | 2 |
-| [REQ-COUNT: Physical stock reconciliation](../requirements.md#req-count-physical-stock-reconciliation) |  |  | 3 |
-| [REQ-LABEL: Barcode, QR, scanning, and label printing](../requirements.md#req-label-barcode-qr-scanning-and-label-printing) |  |  | 6 |
-| [REQ-INVREPORT: Inventory and supplier analytics](../requirements.md#req-invreport-inventory-and-supplier-analytics) |  |  | 6 |
-| [REQ-WORKER: Worker records, staff linkage, and assignments](../requirements.md#req-worker-worker-records-staff-linkage-and-assignments) | 3 | 10 | 5 |
-| [REQ-ROLE: Granular permissions and location membership](../requirements.md#req-role-granular-permissions-and-location-membership) | 1 | 8 | 3 |
-| [REQ-WAGE: Earnings, salary, advances, and payouts](../requirements.md#req-wage-earnings-salary-advances-and-payouts) | 9 | 10 | 3 |
-| [REQ-EXPENSE: Categorized expenses and recurring schedules](../requirements.md#req-expense-categorized-expenses-and-recurring-schedules) | 6 | 5 | 6 |
-| [REQ-LEDGER: Daybook, cashflow, and source-linked finance](../requirements.md#req-ledger-daybook-cashflow-and-source-linked-finance) | 7 |  |  |
-| [REQ-REPORT: Standard reports and business insights](../requirements.md#req-report-standard-reports-and-business-insights) | 11 | 11 | 12 |
-| [REQ-CUSTOMREPORT: Saved custom reports](../requirements.md#req-customreport-saved-custom-reports) |  |  | 5 |
-| [REQ-AUTH: Business sign-in, account security, and sessions](../requirements.md#req-auth-business-sign-in-account-security-and-sessions) | 11 | 10 | 10 |
-| [REQ-ONBOARD: Shop creation, setup, and first-use guidance](../requirements.md#req-onboard-shop-creation-setup-and-first-use-guidance) | 5 | 1 | 8 |
-| [REQ-WORKSPACE: Tenant workspace, stores, and navigation](../requirements.md#req-workspace-tenant-workspace-stores-and-navigation) | 3 | 9 | 2 |
-| [REQ-SETTINGS: Business, appearance, and document preferences](../requirements.md#req-settings-business-appearance-and-document-preferences) | 2 | 5 | 4 |
-| [REQ-BACKUP: Scheduled business exports and recovery](../requirements.md#req-backup-scheduled-business-exports-and-recovery) |  | 3 |  |
-| [REQ-AUDIT: Business audit and change history](../requirements.md#req-audit-business-audit-and-change-history) | 3 |  | 1 |
-| [REQ-PLAN: Plans, usage limits, trial, and account access](../requirements.md#req-plan-plans-usage-limits-trial-and-account-access) | 11 |  | 7 |
-| [REQ-BILLING: Subscription payment, invoices, and referral credits](../requirements.md#req-billing-subscription-payment-invoices-and-referral-credits) | 3 |  | 4 |
-| [REQ-CACHE: Installable web access and offline boundaries](../requirements.md#req-cache-installable-web-access-and-offline-boundaries) | 3 |  | 2 |
-| [REQ-PUBLIC: Public shop, showcase, and limited tracking](../requirements.md#req-public-public-shop-showcase-and-limited-tracking) | 5 |  | 10 |
-| [REQ-CUSTAUTH: Customer identity and linked-shop selection](../requirements.md#req-custauth-customer-identity-and-linked-shop-selection) |  |  | 8 |
-| [REQ-PORTAL: Customer orders, invoices, measurements, and profile](../requirements.md#req-portal-customer-orders-invoices-measurements-and-profile) |  |  | 18 |
-| [REQ-BOOK: Public and customer appointment booking](../requirements.md#req-book-public-and-customer-appointment-booking) |  |  | 6 |
-| [REQ-FIT: Shareable Fit Cards and reviewed measurement import](../requirements.md#req-fit-shareable-fit-cards-and-reviewed-measurement-import) |  |  | 6 |
-| [REQ-CONNECT: Customer app invitations and connection approvals](../requirements.md#req-connect-customer-app-invitations-and-connection-approvals) |  |  | 10 |
-| [REQ-NOTIFY: Reminders, campaigns, messaging, and notification center](../requirements.md#req-notify-reminders-campaigns-messaging-and-notification-center) | 2 | 1 | 14 |
-| [REQ-ENGAGE: Shop achievements and activation challenges](../requirements.md#req-engage-shop-achievements-and-activation-challenges) |  |  | 7 |
-| [REQ-TOOLS: Tailoring calculators and advice](../requirements.md#req-tools-tailoring-calculators-and-advice) |  |  | 8 |
-| [REQ-SUPPORT: Help, tours, spoken guidance, and support tickets](../requirements.md#req-support-help-tours-spoken-guidance-and-support-tickets) | 9 | 2 | 2 |
-| [REQ-PRIVACY: Consent, sharing, personal exports, and deletion requests](../requirements.md#req-privacy-consent-sharing-personal-exports-and-deletion-requests) |  |  | 4 |
-| [REQ-OPS-TENANT: Tenant directory, lifecycle, overrides, and trials](../requirements.md#req-ops-tenant-tenant-directory-lifecycle-overrides-and-trials) | 7 |  | 15 |
-| [REQ-OPS-PLAN: Platform plans, subscriptions, and billing administration](../requirements.md#req-ops-plan-platform-plans-subscriptions-and-billing-administration) | 2 |  | 12 |
-| [REQ-OPS-SUPPORT: Platform support and shared messaging inbox](../requirements.md#req-ops-support-platform-support-and-shared-messaging-inbox) |  |  | 8 |
-| [REQ-OPS-COMMS: Announcements, campaigns, referrals, and templates](../requirements.md#req-ops-comms-announcements-campaigns-referrals-and-templates) |  |  | 9 |
-| [REQ-OPS-FLAG: Rollout flags and guarded bulk actions](../requirements.md#req-ops-flag-rollout-flags-and-guarded-bulk-actions) |  |  | 5 |
-| [REQ-OPS-SYSTEM: Operator identity, policy, audit, and system settings](../requirements.md#req-ops-system-operator-identity-policy-audit-and-system-settings) |  |  | 7 |
-| [REQ-OPS-HEALTH: Tenant health, platform metrics, and alerts](../requirements.md#req-ops-health-tenant-health-platform-metrics-and-alerts) | 3 |  | 7 |
-| [REQ-OPS-RETENTION: Privacy operations and retention processing](../requirements.md#req-ops-retention-privacy-operations-and-retention-processing) |  |  | 3 |
-| [REQ-OPS-CONTENT: Public content and blog administration](../requirements.md#req-ops-content-public-content-and-blog-administration) |  |  | 4 |
+| [REQ-HOME: Operational dashboard and global search](../product/requirements.md#req-home-operational-dashboard-and-global-search) | 9 | 7 | 7 |
+| [REQ-CRM: Customer register, profile, and history](../product/requirements.md#req-crm-customer-register-profile-and-history) | 11 | 6 | 9 |
+| [REQ-MEASURE: Versioned body and garment measurements](../product/requirements.md#req-measure-versioned-body-and-garment-measurements) | 9 | 10 | 15 |
+| [REQ-SCAN: Measurement-slip scanning with review](../product/requirements.md#req-scan-measurement-slip-scanning-with-review) | 3 |  |  |
+| [REQ-MASTER: Garment, measurement, service, and add-on configuration](../product/requirements.md#req-master-garment-measurement-service-and-add-on-configuration) | 7 | 15 | 2 |
+| [REQ-PACKAGE: Service packages and bundle pricing](../product/requirements.md#req-package-service-packages-and-bundle-pricing) | 4 |  |  |
+| [REQ-INTAKE: Guided order intake and garment detail](../product/requirements.md#req-intake-guided-order-intake-and-garment-detail) | 5 | 14 | 7 |
+| [REQ-ORDER: Order register, detail, amendments, and lifecycle](../product/requirements.md#req-order-order-register-detail-amendments-and-lifecycle) | 9 | 16 | 17 |
+| [REQ-PRICE: Canonical quotes, tax, discounts, and numbering](../product/requirements.md#req-price-canonical-quotes-tax-discounts-and-numbering) | 6 | 5 | 6 |
+| [REQ-COLLECT: Receipts, receivables, refunds, and corrections](../product/requirements.md#req-collect-receipts-receivables-refunds-and-corrections) | 10 | 3 | 9 |
+| [REQ-DOC: Invoices, receipts, payment advice, and order documents](../product/requirements.md#req-doc-invoices-receipts-payment-advice-and-order-documents) | 3 | 7 | 5 |
+| [REQ-PRODUCTION: Item stages, assignments, and production board](../product/requirements.md#req-production-item-stages-assignments-and-production-board) | 14 |  | 10 |
+| [REQ-TASK: Task planning, duration, execution, and cost allocation](../product/requirements.md#req-task-task-planning-duration-execution-and-cost-allocation) |  | 14 |  |
+| [REQ-CALENDAR: Workload, trials, quantity delivery, and capacity](../product/requirements.md#req-calendar-workload-trials-quantity-delivery-and-capacity) | 6 | 7 | 3 |
+| [REQ-ALTER: Standalone alterations and rework](../product/requirements.md#req-alter-standalone-alterations-and-rework) | 5 |  | 1 |
+| [REQ-JOB: Workshop job cards and visual construction sheets](../product/requirements.md#req-job-workshop-job-cards-and-visual-construction-sheets) | 2 |  | 6 |
+| [REQ-GALLERY: Design gallery and reusable media](../product/requirements.md#req-gallery-design-gallery-and-reusable-media) |  | 6 |  |
+| [REQ-PRODUCT: Retail catalog and stock master](../product/requirements.md#req-product-retail-catalog-and-stock-master) | 7 | 4 | 10 |
+| [REQ-POS: Retail/material checkout, held carts, and loyalty](../product/requirements.md#req-pos-retailmaterial-checkout-held-carts-and-loyalty) | 8 | 5 | 18 |
+| [REQ-RETURN: Retail returns, refunds, and exchanges](../product/requirements.md#req-return-retail-returns-refunds-and-exchanges) |  |  | 3 |
+| [REQ-MATERIAL: Material inventory, variants, reservations, and consumption](../product/requirements.md#req-material-material-inventory-variants-reservations-and-consumption) | 6 | 5 | 12 |
+| [REQ-PURCHASE: Direct purchases, stock adjustments, and history](../product/requirements.md#req-purchase-direct-purchases-stock-adjustments-and-history) | 9 | 10 | 2 |
+| [REQ-VENDOR: Vendor directory and supplier information](../product/requirements.md#req-vendor-vendor-directory-and-supplier-information) |  |  | 7 |
+| [REQ-PO: Purchase orders, approval, and goods receiving](../product/requirements.md#req-po-purchase-orders-approval-and-goods-receiving) |  |  | 11 |
+| [REQ-TRANSFER: Inter-location stock transfers](../product/requirements.md#req-transfer-inter-location-stock-transfers) |  |  | 2 |
+| [REQ-COUNT: Physical stock reconciliation](../product/requirements.md#req-count-physical-stock-reconciliation) |  |  | 3 |
+| [REQ-LABEL: Barcode, QR, scanning, and label printing](../product/requirements.md#req-label-barcode-qr-scanning-and-label-printing) |  |  | 6 |
+| [REQ-INVREPORT: Inventory and supplier analytics](../product/requirements.md#req-invreport-inventory-and-supplier-analytics) |  |  | 6 |
+| [REQ-WORKER: Worker records, staff linkage, and assignments](../product/requirements.md#req-worker-worker-records-staff-linkage-and-assignments) | 3 | 10 | 5 |
+| [REQ-ROLE: Granular permissions and location membership](../product/requirements.md#req-role-granular-permissions-and-location-membership) | 1 | 8 | 3 |
+| [REQ-WAGE: Earnings, salary, advances, and payouts](../product/requirements.md#req-wage-earnings-salary-advances-and-payouts) | 9 | 10 | 3 |
+| [REQ-EXPENSE: Categorized expenses and recurring schedules](../product/requirements.md#req-expense-categorized-expenses-and-recurring-schedules) | 6 | 5 | 6 |
+| [REQ-LEDGER: Daybook, cashflow, and source-linked finance](../product/requirements.md#req-ledger-daybook-cashflow-and-source-linked-finance) | 7 |  |  |
+| [REQ-REPORT: Standard reports and business insights](../product/requirements.md#req-report-standard-reports-and-business-insights) | 11 | 11 | 12 |
+| [REQ-CUSTOMREPORT: Saved custom reports](../product/requirements.md#req-customreport-saved-custom-reports) |  |  | 5 |
+| [REQ-AUTH: Business sign-in, account security, and sessions](../product/requirements.md#req-auth-business-sign-in-account-security-and-sessions) | 11 | 10 | 10 |
+| [REQ-ONBOARD: Shop creation, setup, and first-use guidance](../product/requirements.md#req-onboard-shop-creation-setup-and-first-use-guidance) | 5 | 1 | 8 |
+| [REQ-WORKSPACE: Tenant workspace, stores, and navigation](../product/requirements.md#req-workspace-tenant-workspace-stores-and-navigation) | 3 | 9 | 2 |
+| [REQ-SETTINGS: Business, appearance, and document preferences](../product/requirements.md#req-settings-business-appearance-and-document-preferences) | 2 | 5 | 4 |
+| [REQ-BACKUP: Scheduled business exports and recovery](../product/requirements.md#req-backup-scheduled-business-exports-and-recovery) |  | 3 |  |
+| [REQ-AUDIT: Business audit and change history](../product/requirements.md#req-audit-business-audit-and-change-history) | 3 |  | 1 |
+| [REQ-PLAN: Plans, usage limits, trial, and account access](../product/requirements.md#req-plan-plans-usage-limits-trial-and-account-access) | 11 |  | 7 |
+| [REQ-BILLING: Subscription payment, invoices, and referral credits](../product/requirements.md#req-billing-subscription-payment-invoices-and-referral-credits) | 3 |  | 4 |
+| [REQ-CACHE: Installable web access and offline boundaries](../product/requirements.md#req-cache-installable-web-access-and-offline-boundaries) | 3 |  | 2 |
+| [REQ-PUBLIC: Public shop, showcase, and limited tracking](../product/requirements.md#req-public-public-shop-showcase-and-limited-tracking) | 5 |  | 10 |
+| [REQ-CUSTAUTH: Customer identity and linked-shop selection](../product/requirements.md#req-custauth-customer-identity-and-linked-shop-selection) |  |  | 8 |
+| [REQ-PORTAL: Customer orders, invoices, measurements, and profile](../product/requirements.md#req-portal-customer-orders-invoices-measurements-and-profile) |  |  | 18 |
+| [REQ-BOOK: Public and customer appointment booking](../product/requirements.md#req-book-public-and-customer-appointment-booking) |  |  | 6 |
+| [REQ-FIT: Shareable Fit Cards and reviewed measurement import](../product/requirements.md#req-fit-shareable-fit-cards-and-reviewed-measurement-import) |  |  | 6 |
+| [REQ-CONNECT: Customer app invitations and connection approvals](../product/requirements.md#req-connect-customer-app-invitations-and-connection-approvals) |  |  | 10 |
+| [REQ-NOTIFY: Reminders, campaigns, messaging, and notification center](../product/requirements.md#req-notify-reminders-campaigns-messaging-and-notification-center) | 2 | 1 | 14 |
+| [REQ-ENGAGE: Shop achievements and activation challenges](../product/requirements.md#req-engage-shop-achievements-and-activation-challenges) |  |  | 7 |
+| [REQ-TOOLS: Tailoring calculators and advice](../product/requirements.md#req-tools-tailoring-calculators-and-advice) |  |  | 8 |
+| [REQ-SUPPORT: Help, tours, spoken guidance, and support tickets](../product/requirements.md#req-support-help-tours-spoken-guidance-and-support-tickets) | 9 | 2 | 2 |
+| [REQ-PRIVACY: Consent, sharing, personal exports, and deletion requests](../product/requirements.md#req-privacy-consent-sharing-personal-exports-and-deletion-requests) |  |  | 4 |
+| [REQ-OPS-TENANT: Tenant directory, lifecycle, overrides, and trials](../product/requirements.md#req-ops-tenant-tenant-directory-lifecycle-overrides-and-trials) | 7 |  | 15 |
+| [REQ-OPS-PLAN: Platform plans, subscriptions, and billing administration](../product/requirements.md#req-ops-plan-platform-plans-subscriptions-and-billing-administration) | 2 |  | 12 |
+| [REQ-OPS-SUPPORT: Platform support and shared messaging inbox](../product/requirements.md#req-ops-support-platform-support-and-shared-messaging-inbox) |  |  | 8 |
+| [REQ-OPS-COMMS: Announcements, campaigns, referrals, and templates](../product/requirements.md#req-ops-comms-announcements-campaigns-referrals-and-templates) |  |  | 9 |
+| [REQ-OPS-FLAG: Rollout flags and guarded bulk actions](../product/requirements.md#req-ops-flag-rollout-flags-and-guarded-bulk-actions) |  |  | 5 |
+| [REQ-OPS-SYSTEM: Operator identity, policy, audit, and system settings](../product/requirements.md#req-ops-system-operator-identity-policy-audit-and-system-settings) |  |  | 7 |
+| [REQ-OPS-HEALTH: Tenant health, platform metrics, and alerts](../product/requirements.md#req-ops-health-tenant-health-platform-metrics-and-alerts) | 3 |  | 7 |
+| [REQ-OPS-RETENTION: Privacy operations and retention processing](../product/requirements.md#req-ops-retention-privacy-operations-and-retention-processing) |  |  | 3 |
+| [REQ-OPS-CONTENT: Public content and blog administration](../product/requirements.md#req-ops-content-public-content-and-blog-administration) |  |  | 4 |
 
 ## Capabilities evidenced in one source inventory
 
 These groups are retained in the consolidated scope. Source-specific variants also occur inside shared groups, such as Tailormate's cloth-photo metadata and NoolTech's measurement history comparisons.
 
-- [REQ-SCAN: Measurement-slip scanning with review](../requirements.md#req-scan-measurement-slip-scanning-with-review), Tailorman.
-- [REQ-PACKAGE: Service packages and bundle pricing](../requirements.md#req-package-service-packages-and-bundle-pricing), Tailorman.
-- [REQ-TASK: Task planning, duration, execution, and cost allocation](../requirements.md#req-task-task-planning-duration-execution-and-cost-allocation), Tailormate.
-- [REQ-GALLERY: Design gallery and reusable media](../requirements.md#req-gallery-design-gallery-and-reusable-media), Tailormate.
-- [REQ-RETURN: Retail returns, refunds, and exchanges](../requirements.md#req-return-retail-returns-refunds-and-exchanges), NoolTech.
-- [REQ-VENDOR: Vendor directory and supplier information](../requirements.md#req-vendor-vendor-directory-and-supplier-information), NoolTech.
-- [REQ-PO: Purchase orders, approval, and goods receiving](../requirements.md#req-po-purchase-orders-approval-and-goods-receiving), NoolTech.
-- [REQ-TRANSFER: Inter-location stock transfers](../requirements.md#req-transfer-inter-location-stock-transfers), NoolTech.
-- [REQ-COUNT: Physical stock reconciliation](../requirements.md#req-count-physical-stock-reconciliation), NoolTech.
-- [REQ-LABEL: Barcode, QR, scanning, and label printing](../requirements.md#req-label-barcode-qr-scanning-and-label-printing), NoolTech.
-- [REQ-INVREPORT: Inventory and supplier analytics](../requirements.md#req-invreport-inventory-and-supplier-analytics), NoolTech.
-- [REQ-LEDGER: Daybook, cashflow, and source-linked finance](../requirements.md#req-ledger-daybook-cashflow-and-source-linked-finance), Tailorman.
-- [REQ-CUSTOMREPORT: Saved custom reports](../requirements.md#req-customreport-saved-custom-reports), NoolTech.
-- [REQ-BACKUP: Scheduled business exports and recovery](../requirements.md#req-backup-scheduled-business-exports-and-recovery), Tailormate.
-- [REQ-CUSTAUTH: Customer identity and linked-shop selection](../requirements.md#req-custauth-customer-identity-and-linked-shop-selection), NoolTech.
-- [REQ-PORTAL: Customer orders, invoices, measurements, and profile](../requirements.md#req-portal-customer-orders-invoices-measurements-and-profile), NoolTech.
-- [REQ-BOOK: Public and customer appointment booking](../requirements.md#req-book-public-and-customer-appointment-booking), NoolTech.
-- [REQ-FIT: Shareable Fit Cards and reviewed measurement import](../requirements.md#req-fit-shareable-fit-cards-and-reviewed-measurement-import), NoolTech.
-- [REQ-CONNECT: Customer app invitations and connection approvals](../requirements.md#req-connect-customer-app-invitations-and-connection-approvals), NoolTech.
-- [REQ-ENGAGE: Shop achievements and activation challenges](../requirements.md#req-engage-shop-achievements-and-activation-challenges), NoolTech.
-- [REQ-TOOLS: Tailoring calculators and advice](../requirements.md#req-tools-tailoring-calculators-and-advice), NoolTech.
-- [REQ-PRIVACY: Consent, sharing, personal exports, and deletion requests](../requirements.md#req-privacy-consent-sharing-personal-exports-and-deletion-requests), NoolTech.
-- [REQ-OPS-SUPPORT: Platform support and shared messaging inbox](../requirements.md#req-ops-support-platform-support-and-shared-messaging-inbox), NoolTech.
-- [REQ-OPS-COMMS: Announcements, campaigns, referrals, and templates](../requirements.md#req-ops-comms-announcements-campaigns-referrals-and-templates), NoolTech.
-- [REQ-OPS-FLAG: Rollout flags and guarded bulk actions](../requirements.md#req-ops-flag-rollout-flags-and-guarded-bulk-actions), NoolTech.
-- [REQ-OPS-SYSTEM: Operator identity, policy, audit, and system settings](../requirements.md#req-ops-system-operator-identity-policy-audit-and-system-settings), NoolTech.
-- [REQ-OPS-RETENTION: Privacy operations and retention processing](../requirements.md#req-ops-retention-privacy-operations-and-retention-processing), NoolTech.
-- [REQ-OPS-CONTENT: Public content and blog administration](../requirements.md#req-ops-content-public-content-and-blog-administration), NoolTech.
+- [REQ-SCAN: Measurement-slip scanning with review](../product/requirements.md#req-scan-measurement-slip-scanning-with-review), Tailorman.
+- [REQ-PACKAGE: Service packages and bundle pricing](../product/requirements.md#req-package-service-packages-and-bundle-pricing), Tailorman.
+- [REQ-TASK: Task planning, duration, execution, and cost allocation](../product/requirements.md#req-task-task-planning-duration-execution-and-cost-allocation), Tailormate.
+- [REQ-GALLERY: Design gallery and reusable media](../product/requirements.md#req-gallery-design-gallery-and-reusable-media), Tailormate.
+- [REQ-RETURN: Retail returns, refunds, and exchanges](../product/requirements.md#req-return-retail-returns-refunds-and-exchanges), NoolTech.
+- [REQ-VENDOR: Vendor directory and supplier information](../product/requirements.md#req-vendor-vendor-directory-and-supplier-information), NoolTech.
+- [REQ-PO: Purchase orders, approval, and goods receiving](../product/requirements.md#req-po-purchase-orders-approval-and-goods-receiving), NoolTech.
+- [REQ-TRANSFER: Inter-location stock transfers](../product/requirements.md#req-transfer-inter-location-stock-transfers), NoolTech.
+- [REQ-COUNT: Physical stock reconciliation](../product/requirements.md#req-count-physical-stock-reconciliation), NoolTech.
+- [REQ-LABEL: Barcode, QR, scanning, and label printing](../product/requirements.md#req-label-barcode-qr-scanning-and-label-printing), NoolTech.
+- [REQ-INVREPORT: Inventory and supplier analytics](../product/requirements.md#req-invreport-inventory-and-supplier-analytics), NoolTech.
+- [REQ-LEDGER: Daybook, cashflow, and source-linked finance](../product/requirements.md#req-ledger-daybook-cashflow-and-source-linked-finance), Tailorman.
+- [REQ-CUSTOMREPORT: Saved custom reports](../product/requirements.md#req-customreport-saved-custom-reports), NoolTech.
+- [REQ-BACKUP: Scheduled business exports and recovery](../product/requirements.md#req-backup-scheduled-business-exports-and-recovery), Tailormate.
+- [REQ-CUSTAUTH: Customer identity and linked-shop selection](../product/requirements.md#req-custauth-customer-identity-and-linked-shop-selection), NoolTech.
+- [REQ-PORTAL: Customer orders, invoices, measurements, and profile](../product/requirements.md#req-portal-customer-orders-invoices-measurements-and-profile), NoolTech.
+- [REQ-BOOK: Public and customer appointment booking](../product/requirements.md#req-book-public-and-customer-appointment-booking), NoolTech.
+- [REQ-FIT: Shareable Fit Cards and reviewed measurement import](../product/requirements.md#req-fit-shareable-fit-cards-and-reviewed-measurement-import), NoolTech.
+- [REQ-CONNECT: Customer app invitations and connection approvals](../product/requirements.md#req-connect-customer-app-invitations-and-connection-approvals), NoolTech.
+- [REQ-ENGAGE: Shop achievements and activation challenges](../product/requirements.md#req-engage-shop-achievements-and-activation-challenges), NoolTech.
+- [REQ-TOOLS: Tailoring calculators and advice](../product/requirements.md#req-tools-tailoring-calculators-and-advice), NoolTech.
+- [REQ-PRIVACY: Consent, sharing, personal exports, and deletion requests](../product/requirements.md#req-privacy-consent-sharing-personal-exports-and-deletion-requests), NoolTech.
+- [REQ-OPS-SUPPORT: Platform support and shared messaging inbox](../product/requirements.md#req-ops-support-platform-support-and-shared-messaging-inbox), NoolTech.
+- [REQ-OPS-COMMS: Announcements, campaigns, referrals, and templates](../product/requirements.md#req-ops-comms-announcements-campaigns-referrals-and-templates), NoolTech.
+- [REQ-OPS-FLAG: Rollout flags and guarded bulk actions](../product/requirements.md#req-ops-flag-rollout-flags-and-guarded-bulk-actions), NoolTech.
+- [REQ-OPS-SYSTEM: Operator identity, policy, audit, and system settings](../product/requirements.md#req-ops-system-operator-identity-policy-audit-and-system-settings), NoolTech.
+- [REQ-OPS-RETENTION: Privacy operations and retention processing](../product/requirements.md#req-ops-retention-privacy-operations-and-retention-processing), NoolTech.
+- [REQ-OPS-CONTENT: Public content and blog administration](../product/requirements.md#req-ops-content-public-content-and-blog-administration), NoolTech.
 
 ## Detailed source entries
 
 ## REQ-HOME: Operational dashboard and global search
 
-Target behavior and acceptance: [REQ-HOME](../requirements.md#req-home-operational-dashboard-and-global-search).
+Target behavior and acceptance: [REQ-HOME](../product/requirements.md#req-home-operational-dashboard-and-global-search).
 
 ### Tailorman F001: Daily operational counters
 
@@ -504,7 +506,7 @@ Original record: `nooltech:F007` in [the frozen reference baseline](reference_ba
 
 ## REQ-CRM: Customer register, profile, and history
 
-Target behavior and acceptance: [REQ-CRM](../requirements.md#req-crm-customer-register-profile-and-history).
+Target behavior and acceptance: [REQ-CRM](../product/requirements.md#req-crm-customer-register-profile-and-history).
 
 ### Tailorman F009: Customer directory and pagination
 
@@ -934,7 +936,7 @@ Original record: `nooltech:F017` in [the frozen reference baseline](reference_ba
 
 ## REQ-MEASURE: Versioned body and garment measurements
 
-Target behavior and acceptance: [REQ-MEASURE](../requirements.md#req-measure-versioned-body-and-garment-measurements).
+Target behavior and acceptance: [REQ-MEASURE](../product/requirements.md#req-measure-versioned-body-and-garment-measurements).
 
 ### Tailorman F020: Saved garment measurement profiles
 
@@ -1496,7 +1498,7 @@ Original record: `nooltech:F041` in [the frozen reference baseline](reference_ba
 
 ## REQ-SCAN: Measurement-slip scanning with review
 
-Target behavior and acceptance: [REQ-SCAN](../requirements.md#req-scan-measurement-slip-scanning-with-review).
+Target behavior and acceptance: [REQ-SCAN](../product/requirements.md#req-scan-measurement-slip-scanning-with-review).
 
 ### Tailorman F029: Photo capture and scan request
 
@@ -1550,7 +1552,7 @@ Original record: `tailorman:F031` in [the frozen reference baseline](reference_b
 
 ## REQ-MASTER: Garment, measurement, service, and add-on configuration
 
-Target behavior and acceptance: [REQ-MASTER](../requirements.md#req-master-garment-measurement-service-and-add-on-configuration).
+Target behavior and acceptance: [REQ-MASTER](../product/requirements.md#req-master-garment-measurement-service-and-add-on-configuration).
 
 ### Tailorman F032: Default garment library
 
@@ -1958,7 +1960,7 @@ Original record: `nooltech:F236` in [the frozen reference baseline](reference_ba
 
 ## REQ-PACKAGE: Service packages and bundle pricing
 
-Target behavior and acceptance: [REQ-PACKAGE](../requirements.md#req-package-service-packages-and-bundle-pricing).
+Target behavior and acceptance: [REQ-PACKAGE](../product/requirements.md#req-package-service-packages-and-bundle-pricing).
 
 ### Tailorman F039: Package catalog
 
@@ -2027,7 +2029,7 @@ Original record: `tailorman:F042` in [the frozen reference baseline](reference_b
 
 ## REQ-INTAKE: Guided order intake and garment detail
 
-Target behavior and acceptance: [REQ-INTAKE](../requirements.md#req-intake-guided-order-intake-and-garment-detail).
+Target behavior and acceptance: [REQ-INTAKE](../product/requirements.md#req-intake-guided-order-intake-and-garment-detail).
 
 ### Tailorman F043: Customer-first order intake
 
@@ -2463,7 +2465,7 @@ Original record: `nooltech:F050` in [the frozen reference baseline](reference_ba
 
 ## REQ-ORDER: Order register, detail, amendments, and lifecycle
 
-Target behavior and acceptance: [REQ-ORDER](../requirements.md#req-order-order-register-detail-amendments-and-lifecycle).
+Target behavior and acceptance: [REQ-ORDER](../product/requirements.md#req-order-order-register-detail-amendments-and-lifecycle).
 
 ### Tailorman F055: Searchable bill register
 
@@ -3165,7 +3167,7 @@ Original record: `nooltech:F078` in [the frozen reference baseline](reference_ba
 
 ## REQ-PRICE: Canonical quotes, tax, discounts, and numbering
 
-Target behavior and acceptance: [REQ-PRICE](../requirements.md#req-price-canonical-quotes-tax-discounts-and-numbering).
+Target behavior and acceptance: [REQ-PRICE](../product/requirements.md#req-price-canonical-quotes-tax-discounts-and-numbering).
 
 ### Tailorman F044: Automatic and manual bill numbers
 
@@ -3456,7 +3458,7 @@ Original record: `nooltech:F226` in [the frozen reference baseline](reference_ba
 
 ## REQ-COLLECT: Receipts, receivables, refunds, and corrections
 
-Target behavior and acceptance: [REQ-COLLECT](../requirements.md#req-collect-receipts-receivables-refunds-and-corrections).
+Target behavior and acceptance: [REQ-COLLECT](../product/requirements.md#req-collect-receipts-receivables-refunds-and-corrections).
 
 ### Tailorman F051: Advance and validation
 
@@ -3822,7 +3824,7 @@ Original record: `nooltech:F200` in [the frozen reference baseline](reference_ba
 
 ## REQ-DOC: Invoices, receipts, payment advice, and order documents
 
-Target behavior and acceptance: [REQ-DOC](../requirements.md#req-doc-invoices-receipts-payment-advice-and-order-documents).
+Target behavior and acceptance: [REQ-DOC](../product/requirements.md#req-doc-invoices-receipts-payment-advice-and-order-documents).
 
 ### Tailorman F068: Printable receipt
 
@@ -4078,7 +4080,7 @@ Original record: `nooltech:F089` in [the frozen reference baseline](reference_ba
 
 ## REQ-PRODUCTION: Item stages, assignments, and production board
 
-Target behavior and acceptance: [REQ-PRODUCTION](../requirements.md#req-production-item-stages-assignments-and-production-board).
+Target behavior and acceptance: [REQ-PRODUCTION](../product/requirements.md#req-production-item-stages-assignments-and-production-board).
 
 ### Tailorman F062: Garment assignment and execution controls
 
@@ -4478,7 +4480,7 @@ Original record: `nooltech:F100` in [the frozen reference baseline](reference_ba
 
 ## REQ-TASK: Task planning, duration, execution, and cost allocation
 
-Target behavior and acceptance: [REQ-TASK](../requirements.md#req-task-task-planning-duration-execution-and-cost-allocation).
+Target behavior and acceptance: [REQ-TASK](../product/requirements.md#req-task-task-planning-duration-execution-and-cost-allocation).
 
 ### Tailormate F066: Garment expense allocation
 
@@ -4719,7 +4721,7 @@ Original record: `tailormate:F135` in [the frozen reference baseline](reference_
 
 ## REQ-CALENDAR: Workload, trials, quantity delivery, and capacity
 
-Target behavior and acceptance: [REQ-CALENDAR](../requirements.md#req-calendar-workload-trials-quantity-delivery-and-capacity).
+Target behavior and acceptance: [REQ-CALENDAR](../product/requirements.md#req-calendar-workload-trials-quantity-delivery-and-capacity).
 
 ### Tailorman F072: Whole-bill Ready or Delivered confirmation
 
@@ -4989,7 +4991,7 @@ Original record: `nooltech:F091` in [the frozen reference baseline](reference_ba
 
 ## REQ-ALTER: Standalone alterations and rework
 
-Target behavior and acceptance: [REQ-ALTER](../requirements.md#req-alter-standalone-alterations-and-rework).
+Target behavior and acceptance: [REQ-ALTER](../product/requirements.md#req-alter-standalone-alterations-and-rework).
 
 ### Tailorman F091: Alteration register and statuses
 
@@ -5094,7 +5096,7 @@ Original record: `nooltech:F073` in [the frozen reference baseline](reference_ba
 
 ## REQ-JOB: Workshop job cards and visual construction sheets
 
-Target behavior and acceptance: [REQ-JOB](../requirements.md#req-job-workshop-job-cards-and-visual-construction-sheets).
+Target behavior and acceptance: [REQ-JOB](../product/requirements.md#req-job-workshop-job-cards-and-visual-construction-sheets).
 
 ### Tailorman F229: Authenticated garment reference sheet
 
@@ -5230,7 +5232,7 @@ Original record: `nooltech:F106` in [the frozen reference baseline](reference_ba
 
 ## REQ-GALLERY: Design gallery and reusable media
 
-Target behavior and acceptance: [REQ-GALLERY](../requirements.md#req-gallery-design-gallery-and-reusable-media).
+Target behavior and acceptance: [REQ-GALLERY](../product/requirements.md#req-gallery-design-gallery-and-reusable-media).
 
 ### Tailormate F082: Folder browse and search
 
@@ -5338,7 +5340,7 @@ Original record: `tailormate:F087` in [the frozen reference baseline](reference_
 
 ## REQ-PRODUCT: Retail catalog and stock master
 
-Target behavior and acceptance: [REQ-PRODUCT](../requirements.md#req-product-retail-catalog-and-stock-master).
+Target behavior and acceptance: [REQ-PRODUCT](../product/requirements.md#req-product-retail-catalog-and-stock-master).
 
 ### Tailorman F102: Sellable item master
 
@@ -5685,7 +5687,7 @@ Original record: `nooltech:F120` in [the frozen reference baseline](reference_ba
 
 ## REQ-POS: Retail/material checkout, held carts, and loyalty
 
-Target behavior and acceptance: [REQ-POS](../requirements.md#req-pos-retailmaterial-checkout-held-carts-and-loyalty).
+Target behavior and acceptance: [REQ-POS](../product/requirements.md#req-pos-retailmaterial-checkout-held-carts-and-loyalty).
 
 ### Tailorman F114: Stock selection and editable sale lines
 
@@ -6197,7 +6199,7 @@ Original record: `nooltech:F138` in [the frozen reference baseline](reference_ba
 
 ## REQ-RETURN: Retail returns, refunds, and exchanges
 
-Target behavior and acceptance: [REQ-RETURN](../requirements.md#req-return-retail-returns-refunds-and-exchanges).
+Target behavior and acceptance: [REQ-RETURN](../product/requirements.md#req-return-retail-returns-refunds-and-exchanges).
 
 ### NoolTech F082: Return selected quantities and refund
 
@@ -6249,7 +6251,7 @@ Original record: `nooltech:F084` in [the frozen reference baseline](reference_ba
 
 ## REQ-MATERIAL: Material inventory, variants, reservations, and consumption
 
-Target behavior and acceptance: [REQ-MATERIAL](../requirements.md#req-material-material-inventory-variants-reservations-and-consumption).
+Target behavior and acceptance: [REQ-MATERIAL](../product/requirements.md#req-material-material-inventory-variants-reservations-and-consumption).
 
 ### Tailorman F064: Material consumption when cutting starts
 
@@ -6628,7 +6630,7 @@ Original record: `nooltech:F160` in [the frozen reference baseline](reference_ba
 
 ## REQ-PURCHASE: Direct purchases, stock adjustments, and history
 
-Target behavior and acceptance: [REQ-PURCHASE](../requirements.md#req-purchase-direct-purchases-stock-adjustments-and-history).
+Target behavior and acceptance: [REQ-PURCHASE](../product/requirements.md#req-purchase-direct-purchases-stock-adjustments-and-history).
 
 ### Tailorman F108: Stock adjustments
 
@@ -6984,7 +6986,7 @@ Original record: `nooltech:F151` in [the frozen reference baseline](reference_ba
 
 ## REQ-VENDOR: Vendor directory and supplier information
 
-Target behavior and acceptance: [REQ-VENDOR](../requirements.md#req-vendor-vendor-directory-and-supplier-information).
+Target behavior and acceptance: [REQ-VENDOR](../product/requirements.md#req-vendor-vendor-directory-and-supplier-information).
 
 ### NoolTech F170: Vendor register and summary
 
@@ -7100,7 +7102,7 @@ Original record: `nooltech:F176` in [the frozen reference baseline](reference_ba
 
 ## REQ-PO: Purchase orders, approval, and goods receiving
 
-Target behavior and acceptance: [REQ-PO](../requirements.md#req-po-purchase-orders-approval-and-goods-receiving).
+Target behavior and acceptance: [REQ-PO](../product/requirements.md#req-po-purchase-orders-approval-and-goods-receiving).
 
 ### NoolTech F146: Automatic purchase-order configuration
 
@@ -7280,7 +7282,7 @@ Original record: `nooltech:F186` in [the frozen reference baseline](reference_ba
 
 ## REQ-TRANSFER: Inter-location stock transfers
 
-Target behavior and acceptance: [REQ-TRANSFER](../requirements.md#req-transfer-inter-location-stock-transfers).
+Target behavior and acceptance: [REQ-TRANSFER](../product/requirements.md#req-transfer-inter-location-stock-transfers).
 
 ### NoolTech F154: Dispatch inter-branch stock transfer
 
@@ -7316,7 +7318,7 @@ Original record: `nooltech:F155` in [the frozen reference baseline](reference_ba
 
 ## REQ-COUNT: Physical stock reconciliation
 
-Target behavior and acceptance: [REQ-COUNT](../requirements.md#req-count-physical-stock-reconciliation).
+Target behavior and acceptance: [REQ-COUNT](../product/requirements.md#req-count-physical-stock-reconciliation).
 
 ### NoolTech F161: Start or resume physical count
 
@@ -7368,7 +7370,7 @@ Original record: `nooltech:F163` in [the frozen reference baseline](reference_ba
 
 ## REQ-LABEL: Barcode, QR, scanning, and label printing
 
-Target behavior and acceptance: [REQ-LABEL](../requirements.md#req-label-barcode-qr-scanning-and-label-printing).
+Target behavior and acceptance: [REQ-LABEL](../product/requirements.md#req-label-barcode-qr-scanning-and-label-printing).
 
 ### NoolTech F117: Product barcode printing
 
@@ -7468,7 +7470,7 @@ Original record: `nooltech:F169` in [the frozen reference baseline](reference_ba
 
 ## REQ-INVREPORT: Inventory and supplier analytics
 
-Target behavior and acceptance: [REQ-INVREPORT](../requirements.md#req-invreport-inventory-and-supplier-analytics).
+Target behavior and acceptance: [REQ-INVREPORT](../product/requirements.md#req-invreport-inventory-and-supplier-analytics).
 
 ### NoolTech F153: Demand forecast and reorder suggestion
 
@@ -7568,7 +7570,7 @@ Original record: `nooltech:F167` in [the frozen reference baseline](reference_ba
 
 ## REQ-WORKER: Worker records, staff linkage, and assignments
 
-Target behavior and acceptance: [REQ-WORKER](../requirements.md#req-worker-worker-records-staff-linkage-and-assignments).
+Target behavior and acceptance: [REQ-WORKER](../product/requirements.md#req-worker-worker-records-staff-linkage-and-assignments).
 
 ### Tailorman F163: Employee directory
 
@@ -7872,7 +7874,7 @@ Original record: `nooltech:F191` in [the frozen reference baseline](reference_ba
 
 ## REQ-ROLE: Granular permissions and location membership
 
-Target behavior and acceptance: [REQ-ROLE](../requirements.md#req-role-granular-permissions-and-location-membership).
+Target behavior and acceptance: [REQ-ROLE](../product/requirements.md#req-role-granular-permissions-and-location-membership).
 
 ### Tailorman F187: Four shop roles and page guards
 
@@ -8079,7 +8081,7 @@ Original record: `nooltech:F234` in [the frozen reference baseline](reference_ba
 
 ## REQ-WAGE: Earnings, salary, advances, and payouts
 
-Target behavior and acceptance: [REQ-WAGE](../requirements.md#req-wage-earnings-salary-advances-and-payouts).
+Target behavior and acceptance: [REQ-WAGE](../product/requirements.md#req-wage-earnings-salary-advances-and-payouts).
 
 ### Tailorman F168: Per-piece cutting and stitching rates
 
@@ -8452,7 +8454,7 @@ Original record: `nooltech:F194` in [the frozen reference baseline](reference_ba
 
 ## REQ-EXPENSE: Categorized expenses and recurring schedules
 
-Target behavior and acceptance: [REQ-EXPENSE](../requirements.md#req-expense-categorized-expenses-and-recurring-schedules).
+Target behavior and acceptance: [REQ-EXPENSE](../product/requirements.md#req-expense-categorized-expenses-and-recurring-schedules).
 
 ### Tailorman F143: Expense date and category filters
 
@@ -8733,7 +8735,7 @@ Original record: `nooltech:F206` in [the frozen reference baseline](reference_ba
 
 ## REQ-LEDGER: Daybook, cashflow, and source-linked finance
 
-Target behavior and acceptance: [REQ-LEDGER](../requirements.md#req-ledger-daybook-cashflow-and-source-linked-finance).
+Target behavior and acceptance: [REQ-LEDGER](../product/requirements.md#req-ledger-daybook-cashflow-and-source-linked-finance).
 
 ### Tailorman F136: Date-range daybook
 
@@ -8854,7 +8856,7 @@ Original record: `tailorman:F142` in [the frozen reference baseline](reference_b
 
 ## REQ-REPORT: Standard reports and business insights
 
-Target behavior and acceptance: [REQ-REPORT](../requirements.md#req-report-standard-reports-and-business-insights).
+Target behavior and acceptance: [REQ-REPORT](../product/requirements.md#req-report-standard-reports-and-business-insights).
 
 ### Tailorman F149: Report date ranges and entitlement-aware tabs
 
@@ -9433,7 +9435,7 @@ Original record: `nooltech:F218` in [the frozen reference baseline](reference_ba
 
 ## REQ-CUSTOMREPORT: Saved custom reports
 
-Target behavior and acceptance: [REQ-CUSTOMREPORT](../requirements.md#req-customreport-saved-custom-reports).
+Target behavior and acceptance: [REQ-CUSTOMREPORT](../product/requirements.md#req-customreport-saved-custom-reports).
 
 ### NoolTech F219: Saved report catalog
 
@@ -9517,7 +9519,7 @@ Original record: `nooltech:F223` in [the frozen reference baseline](reference_ba
 
 ## REQ-AUTH: Business sign-in, account security, and sessions
 
-Target behavior and acceptance: [REQ-AUTH](../requirements.md#req-auth-business-sign-in-account-security-and-sessions).
+Target behavior and acceptance: [REQ-AUTH](../product/requirements.md#req-auth-business-sign-in-account-security-and-sessions).
 
 ### Tailorman F167: Set staff password
 
@@ -10048,7 +10050,7 @@ Original record: `nooltech:F270` in [the frozen reference baseline](reference_ba
 
 ## REQ-ONBOARD: Shop creation, setup, and first-use guidance
 
-Target behavior and acceptance: [REQ-ONBOARD](../requirements.md#req-onboard-shop-creation-setup-and-first-use-guidance).
+Target behavior and acceptance: [REQ-ONBOARD](../product/requirements.md#req-onboard-shop-creation-setup-and-first-use-guidance).
 
 ### Tailorman F190: Optional owner phone and shop setup
 
@@ -10285,7 +10287,7 @@ Original record: `nooltech:F269` in [the frozen reference baseline](reference_ba
 
 ## REQ-WORKSPACE: Tenant workspace, stores, and navigation
 
-Target behavior and acceptance: [REQ-WORKSPACE](../requirements.md#req-workspace-tenant-workspace-stores-and-navigation).
+Target behavior and acceptance: [REQ-WORKSPACE](../product/requirements.md#req-workspace-tenant-workspace-stores-and-navigation).
 
 ### Tailorman F193: Tenant-scoped business records
 
@@ -10536,7 +10538,7 @@ Original record: `nooltech:F237` in [the frozen reference baseline](reference_ba
 
 ## REQ-SETTINGS: Business, appearance, and document preferences
 
-Target behavior and acceptance: [REQ-SETTINGS](../requirements.md#req-settings-business-appearance-and-document-preferences).
+Target behavior and acceptance: [REQ-SETTINGS](../product/requirements.md#req-settings-business-appearance-and-document-preferences).
 
 ### Tailorman F207: Business and receipt profile
 
@@ -10730,7 +10732,7 @@ Original record: `nooltech:F229` in [the frozen reference baseline](reference_ba
 
 ## REQ-BACKUP: Scheduled business exports and recovery
 
-Target behavior and acceptance: [REQ-BACKUP](../requirements.md#req-backup-scheduled-business-exports-and-recovery).
+Target behavior and acceptance: [REQ-BACKUP](../product/requirements.md#req-backup-scheduled-business-exports-and-recovery).
 
 ### Tailormate F186: Backup activation and frequency
 
@@ -10786,7 +10788,7 @@ Original record: `tailormate:F188` in [the frozen reference baseline](reference_
 
 ## REQ-AUDIT: Business audit and change history
 
-Target behavior and acceptance: [REQ-AUDIT](../requirements.md#req-audit-business-audit-and-change-history).
+Target behavior and acceptance: [REQ-AUDIT](../product/requirements.md#req-audit-business-audit-and-change-history).
 
 ### Tailorman F177: Audit activity viewer and action filter
 
@@ -10856,7 +10858,7 @@ Original record: `nooltech:F238` in [the frozen reference baseline](reference_ba
 
 ## REQ-PLAN: Plans, usage limits, trial, and account access
 
-Target behavior and acceptance: [REQ-PLAN](../requirements.md#req-plan-plans-usage-limits-trial-and-account-access).
+Target behavior and acceptance: [REQ-PLAN](../product/requirements.md#req-plan-plans-usage-limits-trial-and-account-access).
 
 ### Tailorman F052: Monthly bill-cap check
 
@@ -11164,7 +11166,7 @@ Original record: `nooltech:F273` in [the frozen reference baseline](reference_ba
 
 ## REQ-BILLING: Subscription payment, invoices, and referral credits
 
-Target behavior and acceptance: [REQ-BILLING](../requirements.md#req-billing-subscription-payment-invoices-and-referral-credits).
+Target behavior and acceptance: [REQ-BILLING](../product/requirements.md#req-billing-subscription-payment-invoices-and-referral-credits).
 
 ### Tailorman F203: Owner renewal and plan selection
 
@@ -11284,7 +11286,7 @@ Original record: `nooltech:F268` in [the frozen reference baseline](reference_ba
 
 ## REQ-CACHE: Installable web access and offline boundaries
 
-Target behavior and acceptance: [REQ-CACHE](../requirements.md#req-cache-installable-web-access-and-offline-boundaries).
+Target behavior and acceptance: [REQ-CACHE](../product/requirements.md#req-cache-installable-web-access-and-offline-boundaries).
 
 ### Tailorman F236: Installable web-app declaration and shortcuts
 
@@ -11373,7 +11375,7 @@ Original record: `nooltech:F055` in [the frozen reference baseline](reference_ba
 
 ## REQ-PUBLIC: Public shop, showcase, and limited tracking
 
-Target behavior and acceptance: [REQ-PUBLIC](../requirements.md#req-public-public-shop-showcase-and-limited-tracking).
+Target behavior and acceptance: [REQ-PUBLIC](../product/requirements.md#req-public-public-shop-showcase-and-limited-tracking).
 
 ### Tailorman F070: Share order tracker link
 
@@ -11624,7 +11626,7 @@ Original record: `nooltech:F312` in [the frozen reference baseline](reference_ba
 
 ## REQ-CUSTAUTH: Customer identity and linked-shop selection
 
-Target behavior and acceptance: [REQ-CUSTAUTH](../requirements.md#req-custauth-customer-identity-and-linked-shop-selection).
+Target behavior and acceptance: [REQ-CUSTAUTH](../product/requirements.md#req-custauth-customer-identity-and-linked-shop-selection).
 
 ### NoolTech F274: Shop-specific phone OTP login
 
@@ -11756,7 +11758,7 @@ Original record: `nooltech:F281` in [the frozen reference baseline](reference_ba
 
 ## REQ-PORTAL: Customer orders, invoices, measurements, and profile
 
-Target behavior and acceptance: [REQ-PORTAL](../requirements.md#req-portal-customer-orders-invoices-measurements-and-profile).
+Target behavior and acceptance: [REQ-PORTAL](../product/requirements.md#req-portal-customer-orders-invoices-measurements-and-profile).
 
 ### NoolTech F228: Customer portal link sharing
 
@@ -12048,7 +12050,7 @@ Original record: `nooltech:F298` in [the frozen reference baseline](reference_ba
 
 ## REQ-BOOK: Public and customer appointment booking
 
-Target behavior and acceptance: [REQ-BOOK](../requirements.md#req-book-public-and-customer-appointment-booking).
+Target behavior and acceptance: [REQ-BOOK](../product/requirements.md#req-book-public-and-customer-appointment-booking).
 
 ### NoolTech F299: Shop booking information
 
@@ -12148,7 +12150,7 @@ Original record: `nooltech:F304` in [the frozen reference baseline](reference_ba
 
 ## REQ-FIT: Shareable Fit Cards and reviewed measurement import
 
-Target behavior and acceptance: [REQ-FIT](../requirements.md#req-fit-shareable-fit-cards-and-reviewed-measurement-import).
+Target behavior and acceptance: [REQ-FIT](../product/requirements.md#req-fit-shareable-fit-cards-and-reviewed-measurement-import).
 
 ### NoolTech F313: Read a shared Fit Card
 
@@ -12248,7 +12250,7 @@ Original record: `nooltech:F318` in [the frozen reference baseline](reference_ba
 
 ## REQ-CONNECT: Customer app invitations and connection approvals
 
-Target behavior and acceptance: [REQ-CONNECT](../requirements.md#req-connect-customer-app-invitations-and-connection-approvals).
+Target behavior and acceptance: [REQ-CONNECT](../product/requirements.md#req-connect-customer-app-invitations-and-connection-approvals).
 
 ### NoolTech F018: Customer app connection status
 
@@ -12412,7 +12414,7 @@ Original record: `nooltech:F324` in [the frozen reference baseline](reference_ba
 
 ## REQ-NOTIFY: Reminders, campaigns, messaging, and notification center
 
-Target behavior and acceptance: [REQ-NOTIFY](../requirements.md#req-notify-reminders-campaigns-messaging-and-notification-center).
+Target behavior and acceptance: [REQ-NOTIFY](../product/requirements.md#req-notify-reminders-campaigns-messaging-and-notification-center).
 
 ### Tailorman F075: Ready-for-pickup WhatsApp nudge
 
@@ -12690,7 +12692,7 @@ Original record: `nooltech:F334` in [the frozen reference baseline](reference_ba
 
 ## REQ-ENGAGE: Shop achievements and activation challenges
 
-Target behavior and acceptance: [REQ-ENGAGE](../requirements.md#req-engage-shop-achievements-and-activation-challenges).
+Target behavior and acceptance: [REQ-ENGAGE](../product/requirements.md#req-engage-shop-achievements-and-activation-challenges).
 
 ### NoolTech F325: Achievement levels and progress
 
@@ -12806,7 +12808,7 @@ Original record: `nooltech:F331` in [the frozen reference baseline](reference_ba
 
 ## REQ-TOOLS: Tailoring calculators and advice
 
-Target behavior and acceptance: [REQ-TOOLS](../requirements.md#req-tools-tailoring-calculators-and-advice).
+Target behavior and acceptance: [REQ-TOOLS](../product/requirements.md#req-tools-tailoring-calculators-and-advice).
 
 ### NoolTech F335: Explore tools entry point
 
@@ -12938,7 +12940,7 @@ Original record: `nooltech:F342` in [the frozen reference baseline](reference_ba
 
 ## REQ-SUPPORT: Help, tours, spoken guidance, and support tickets
 
-Target behavior and acceptance: [REQ-SUPPORT](../requirements.md#req-support-help-tours-spoken-guidance-and-support-tickets).
+Target behavior and acceptance: [REQ-SUPPORT](../product/requirements.md#req-support-help-tours-spoken-guidance-and-support-tickets).
 
 ### Tailorman F096: Localized spoken walkthroughs
 
@@ -13164,7 +13166,7 @@ Original record: `nooltech:F251` in [the frozen reference baseline](reference_ba
 
 ## REQ-PRIVACY: Consent, sharing, personal exports, and deletion requests
 
-Target behavior and acceptance: [REQ-PRIVACY](../requirements.md#req-privacy-consent-sharing-personal-exports-and-deletion-requests).
+Target behavior and acceptance: [REQ-PRIVACY](../product/requirements.md#req-privacy-consent-sharing-personal-exports-and-deletion-requests).
 
 ### NoolTech F239: Privacy rights reference and consent preferences
 
@@ -13232,7 +13234,7 @@ Original record: `nooltech:F242` in [the frozen reference baseline](reference_ba
 
 ## REQ-OPS-TENANT: Tenant directory, lifecycle, overrides, and trials
 
-Target behavior and acceptance: [REQ-OPS-TENANT](../requirements.md#req-ops-tenant-tenant-directory-lifecycle-overrides-and-trials).
+Target behavior and acceptance: [REQ-OPS-TENANT](../product/requirements.md#req-ops-tenant-tenant-directory-lifecycle-overrides-and-trials).
 
 ### Tailorman F214: Separate super administrator console
 
@@ -13597,7 +13599,7 @@ Original record: `nooltech:F408` in [the frozen reference baseline](reference_ba
 
 ## REQ-OPS-PLAN: Platform plans, subscriptions, and billing administration
 
-Target behavior and acceptance: [REQ-OPS-PLAN](../requirements.md#req-ops-plan-platform-plans-subscriptions-and-billing-administration).
+Target behavior and acceptance: [REQ-OPS-PLAN](../product/requirements.md#req-ops-plan-platform-plans-subscriptions-and-billing-administration).
 
 ### Tailorman F219: Edit per-tier feature flags and usage limits
 
@@ -13829,7 +13831,7 @@ Original record: `nooltech:F369` in [the frozen reference baseline](reference_ba
 
 ## REQ-OPS-SUPPORT: Platform support and shared messaging inbox
 
-Target behavior and acceptance: [REQ-OPS-SUPPORT](../requirements.md#req-ops-support-platform-support-and-shared-messaging-inbox).
+Target behavior and acceptance: [REQ-OPS-SUPPORT](../product/requirements.md#req-ops-support-platform-support-and-shared-messaging-inbox).
 
 ### NoolTech F375: Ticket directory and filters
 
@@ -13961,7 +13963,7 @@ Original record: `nooltech:F382` in [the frozen reference baseline](reference_ba
 
 ## REQ-OPS-COMMS: Announcements, campaigns, referrals, and templates
 
-Target behavior and acceptance: [REQ-OPS-COMMS](../requirements.md#req-ops-comms-announcements-campaigns-referrals-and-templates).
+Target behavior and acceptance: [REQ-OPS-COMMS](../product/requirements.md#req-ops-comms-announcements-campaigns-referrals-and-templates).
 
 ### NoolTech F371: Create and edit announcements
 
@@ -14109,7 +14111,7 @@ Original record: `nooltech:F406` in [the frozen reference baseline](reference_ba
 
 ## REQ-OPS-FLAG: Rollout flags and guarded bulk actions
 
-Target behavior and acceptance: [REQ-OPS-FLAG](../requirements.md#req-ops-flag-rollout-flags-and-guarded-bulk-actions).
+Target behavior and acceptance: [REQ-OPS-FLAG](../product/requirements.md#req-ops-flag-rollout-flags-and-guarded-bulk-actions).
 
 ### NoolTech F383: Create and edit rollout flags
 
@@ -14193,7 +14195,7 @@ Original record: `nooltech:F387` in [the frozen reference baseline](reference_ba
 
 ## REQ-OPS-SYSTEM: Operator identity, policy, audit, and system settings
 
-Target behavior and acceptance: [REQ-OPS-SYSTEM](../requirements.md#req-ops-system-operator-identity-policy-audit-and-system-settings).
+Target behavior and acceptance: [REQ-OPS-SYSTEM](../product/requirements.md#req-ops-system-operator-identity-policy-audit-and-system-settings).
 
 ### NoolTech F370: Search platform activity
 
@@ -14309,7 +14311,7 @@ Original record: `nooltech:F395` in [the frozen reference baseline](reference_ba
 
 ## REQ-OPS-HEALTH: Tenant health, platform metrics, and alerts
 
-Target behavior and acceptance: [REQ-OPS-HEALTH](../requirements.md#req-ops-health-tenant-health-platform-metrics-and-alerts).
+Target behavior and acceptance: [REQ-OPS-HEALTH](../product/requirements.md#req-ops-health-tenant-health-platform-metrics-and-alerts).
 
 ### Tailorman F223: Per-shop usage dashboard
 
@@ -14477,7 +14479,7 @@ Original record: `nooltech:F400` in [the frozen reference baseline](reference_ba
 
 ## REQ-OPS-RETENTION: Privacy operations and retention processing
 
-Target behavior and acceptance: [REQ-OPS-RETENTION](../requirements.md#req-ops-retention-privacy-operations-and-retention-processing).
+Target behavior and acceptance: [REQ-OPS-RETENTION](../product/requirements.md#req-ops-retention-privacy-operations-and-retention-processing).
 
 ### NoolTech F401: Review deletion and export requests
 
@@ -14529,7 +14531,7 @@ Original record: `nooltech:F403` in [the frozen reference baseline](reference_ba
 
 ## REQ-OPS-CONTENT: Public content and blog administration
 
-Target behavior and acceptance: [REQ-OPS-CONTENT](../requirements.md#req-ops-content-public-content-and-blog-administration).
+Target behavior and acceptance: [REQ-OPS-CONTENT](../product/requirements.md#req-ops-content-public-content-and-blog-administration).
 
 ### NoolTech F409: Create and edit blog articles
 

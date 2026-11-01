@@ -1,0 +1,197 @@
+name: fitloom
+
+x-logging: &logging
+  driver: json-file
+  options: {max-size: "10m", max-file: "3"}
+
+x-app: &app
+  build:
+    context: .
+    dockerfile: Dockerfile.dev
+  init: true
+  logging: *logging
+  security_opt: ["no-new-privileges:true"]
+  stop_grace_period: 30s
+  environment:
+    NODE_ENV: development
+    NEXT_TELEMETRY_DISABLED: "1"
+    TURBO_TELEMETRY_DISABLED: "1"
+
+x-watch: &watch
+  watch:
+    - action: sync
+      path: .
+      target: /workspace
+      initial_sync: true
+      ignore:
+        - "**/package.json"
+        - pnpm-lock.yaml
+        - pnpm-workspace.yaml
+        - Dockerfile.dev
+        - compose.yaml
+        - docs/
+        - "**/*.md"
+    - action: rebuild
+      path: .
+      include:
+        - "**/package.json"
+        - pnpm-lock.yaml
+        - pnpm-workspace.yaml
+        - Dockerfile.dev
+
+services:
+  postgres:
+    image: postgres:18@sha256:979bccfde35445db618c65107d27d08c6c21339d8dc3ad4c830c6633947be0e4
+    command: ["postgres", "-p", "24430"]
+    restart: unless-stopped
+    logging: *logging
+    environment:
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+    secrets: [postgres_password]
+    ports: ["127.0.0.1:24430:24430"]
+    volumes: ["postgres-data:/var/lib/postgresql"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -p 24430"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  mailpit:
+    image: axllent/mailpit:v1.33.0@sha256:9b3a463be15354c0f0eba91697d80e3e0d8a5623ef0e627cacc836bc17fd5231
+    restart: unless-stopped
+    logging: *logging
+    environment:
+      MP_DATABASE: /data/mailpit.db
+      MP_UI_BIND_ADDR: "0.0.0.0:24420"
+      MP_SMTP_BIND_ADDR: "0.0.0.0:24421"
+      MP_LABEL: Fitloom development
+      MP_DISABLE_VERSION_CHECK: "true"
+    ports: ["127.0.0.1:24420:24420", "127.0.0.1:24421:24421"]
+    volumes: ["mailpit-data:/data"]
+    healthcheck:
+      test: ["CMD", "/mailpit", "readyz"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  mailpit-test:
+    image: axllent/mailpit:v1.33.0@sha256:9b3a463be15354c0f0eba91697d80e3e0d8a5623ef0e627cacc836bc17fd5231
+    restart: unless-stopped
+    logging: *logging
+    environment:
+      MP_DATABASE: /data/mailpit.db
+      MP_UI_BIND_ADDR: "0.0.0.0:24422"
+      MP_SMTP_BIND_ADDR: "0.0.0.0:24423"
+      MP_LABEL: Fitloom isolated tests
+      MP_DISABLE_VERSION_CHECK: "true"
+    ports: ["127.0.0.1:24422:24422", "127.0.0.1:24423:24423"]
+    volumes: ["mailpit-test-data:/data"]
+    healthcheck:
+      test: ["CMD", "/mailpit", "readyz"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  seaweedfs:
+    image: chrislusf/seaweedfs:4.51@sha256:f7a49e3f3972ebed5be2ed4befa4a0c68eb7bdddba6e692d42729ceb545134b8
+    restart: unless-stopped
+    logging: *logging
+    command: ["server", "-dir=/data", "-ip=seaweedfs", "-ip.bind=0.0.0.0", "-master.port=24450", "-master.port.grpc=34450", "-master.volumeSizeLimitMB=256", "-master.telemetry=false", "-volume.port=24451", "-volume.port.grpc=34451", "-volume.max=16", "-filer", "-filer.port=24452", "-filer.port.grpc=34452", "-filer.disableDirListing", "-s3", "-s3.port=24453", "-s3.port.grpc=34453", "-s3.port.iceberg=0", "-s3.port.lance=0", "-s3.config=/run/secrets/seaweed_s3_config", "-s3.iam=false"]
+    volumes: ["seaweed-data:/data"]
+    secrets: [seaweed_s3_config]
+    configs: [{source: seaweed_master_config, target: /etc/seaweedfs/master.toml}]
+    ports: ["127.0.0.1:24453:24453"]
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:24450/cluster/status"]
+      interval: 5s
+      timeout: 3s
+      start_period: 20s
+      retries: 20
+
+  storage-init:
+    <<: *app
+    restart: "no"
+    env_file: .local/storage-init.env
+    command: ["node", "scripts/initialize-storage.mjs"]
+    depends_on:
+      seaweedfs: {condition: service_healthy}
+
+  bootstrap:
+    <<: *app
+    restart: "no"
+    env_file: .local/bootstrap.env
+    command: ["node", "scripts/bootstrap-db.mjs"]
+    depends_on:
+      postgres: {condition: service_healthy}
+
+  migrate:
+    <<: *app
+    restart: "no"
+    env_file: .local/migrate.env
+    command: ["node", "packages/db/scripts/migrate.mjs"]
+    depends_on:
+      bootstrap: {condition: service_completed_successfully}
+
+  web:
+    <<: *app
+    restart: unless-stopped
+    env_file: .local/web.env
+    command: ["pnpm", "exec", "turbo", "run", "dev", "--filter=@fitloom/web...", "--ui=stream"]
+    ports: ["127.0.0.1:24410:24410"]
+    depends_on:
+      storage-init: {condition: service_completed_successfully}
+      migrate: {condition: service_completed_successfully}
+      mailpit: {condition: service_healthy}
+    develop: *watch
+    healthcheck:
+      test: ["CMD", "node", "scripts/healthcheck.mjs", "web"]
+      interval: 10s
+      timeout: 8s
+      start_period: 60s
+      retries: 6
+
+  worker:
+    <<: *app
+    restart: unless-stopped
+    env_file: .local/worker.env
+    command: ["pnpm", "exec", "turbo", "run", "dev", "--filter=@fitloom/worker...", "--ui=stream"]
+    volumes: ["private-files:/var/lib/fitloom/private-files"]
+    depends_on:
+      storage-init: {condition: service_completed_successfully}
+      migrate: {condition: service_completed_successfully}
+      mailpit: {condition: service_healthy}
+    develop: *watch
+    healthcheck:
+      test: ["CMD", "node", "scripts/healthcheck.mjs", "worker"]
+      interval: 10s
+      timeout: 5s
+      start_period: 30s
+      retries: 6
+
+  tools:
+    <<: *app
+    restart: "no"
+    profiles: [tools]
+    env_file: .local/tools.env
+    command: ["pnpm", "test:workspace"]
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+      mailpit-test: {condition: service_healthy}
+
+volumes:
+  seaweed-data:
+  private-files:
+  postgres-data: {external: true, name: fitloom-postgres-local}
+  mailpit-data: {external: true, name: fitloom-mailpit-local}
+  mailpit-test-data: {external: true, name: fitloom-mailpit-test}
+
+secrets:
+  postgres_password:
+    file: .local/postgres-password
+
+  seaweed_s3_config:
+    file: .local/seaweed-s3.json
+
+configs:
+  seaweed_master_config:
+    file: config/seaweedfs/master.toml

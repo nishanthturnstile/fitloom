@@ -1,7 +1,5 @@
-# Fitloom db
+# Fitloom database package
 
-Database schemas, reviewed migrations, and transaction helpers. PostgreSQL and Drizzle setup arrive in roadmap 1B.
+Read the [database package guide](../../docs/development/database.md) for implementation details and verification.
 
-This package currently exports an empty module. Add real implementation with its owning feature. TypeScript emits JavaScript and declarations into `dist/`; package exports permit Node consumers.
-
-See the [root README](../../README.md) for setup and commands.
+Project documentation, implementation status, and plans live in [docs](../../docs/README.md). Run project commands from the repository root as documented in the guide.

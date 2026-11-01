@@ -1,14 +1,14 @@
 # Fitloom implementation roadmap
 
-Build the production multi-tenant SaaS application in dependency order, starting with its SaaS foundation and the tailor's workflow. Continue into workshop management, inventory, boutique retail, customer access, and full platform operations. Every phase extends the same product and retains its code, records, and integrations.
+Build the internal multi-tenant business application in dependency order, starting with its verified foundation and the tailor's workflow. Continue into workshop management, inventory, boutique retail, customer access, and full platform operations. Every phase extends the same product and retains its code, records, and integrations.
 
-This roadmap sequences the [product requirements](requirements.md) using the selected stack and contracts in [the architecture](architecture.md). Phases 1–9 describe implementation order within one complete application. They are ordered implementation groups within the same retained application. The requirements' P1/P2/P3 groups summarize these dependencies at a broader level.
+This roadmap sequences the [product requirements](requirements.md) using the selected stack and contracts in [the architecture](../architecture/overview.md). Phases 1–9 describe implementation order within one complete application. They are ordered implementation groups within the same retained application. The requirements' P1/P2/P3 groups summarize these dependencies at a broader level.
 
-The current environment is the local development machine. Run builds, tests, web, worker, PostgreSQL, and private files locally. The user manages Linux servers, deployment platforms, host schedulers, server backup automation, and VPS moves separately from Fitloom. No infrastructure or deployment tooling is planned in this repository. Deployment is deferred until the application is in good shape and is not a prerequisite for subscriptions or business features. Preserve the application runtime and recovery contracts needed for that future environment.
+The current environment is the local development machine. Run builds, tests, web, worker, PostgreSQL, and private files locally. The user manages Linux servers, deployment platforms, host schedulers, server backup automation, and VPS moves separately from Fitloom. No infrastructure or deployment tooling is planned in this repository. Deployment is deferred until the application is in good shape and is not a prerequisite for internal business features. Preserve the application runtime and recovery contracts needed for that future environment.
 
-## Start with the tailor's workflow on the SaaS foundation
+## Start with the tailor's workflow on the internal foundation
 
-Support independent business tenants from the start, each with authorized members, its own initial location, settings, and subscription. Build the tailoring owner workflow first. The owner can take orders, do the work, and collect payments. Optional workers can receive assignments without needing accounts. Record customer-supplied cloth receipt and images without treating that cloth as shop-owned inventory.
+Support independent business tenants from the start, each with authorized members, its own initial location, settings, and operational records. The internal product has no platform subscription. Shop payments are recorded manually; payment-provider integration is deferred. Build the tailoring owner workflow first. The owner can take orders, do the work, and collect payments. Optional workers can receive assignments without needing accounts. Record customer-supplied cloth receipt and images without treating that cloth as shop-owned inventory.
 
 The first operational dependency chain is:
 
@@ -26,8 +26,8 @@ Keep tenant and location identity, typed order lines, and module boundaries in t
 
 | Phase | Build | Result | Depends on |
 | --- | --- | --- | --- |
-| 1 | Project structure, shared foundations, and subscriptions | Locally runnable application, safe records, independent tenants, and billing | Implement 1A → 1B → 1D locally; 1C is a deferred external handoff |
-| 2 | Customers, garment masters, and measurements | A tailor can record reusable, versioned cutting information | 1 |
+| 1 | Project structure and internal application foundations | Locally runnable application, safe records, independent tenants | 1A → 1B complete locally; 1C and 1D are deferred |
+| 2 | Customers, garment masters, and measurements | A tailor can record reusable, versioned cutting information | 1B; next implementation phase |
 | 3 | Orders, pricing, collections, and documents | A tailor can accept and bill a real order | 2 |
 | 4 | Production, trials, delivery, and daily control | Complete tailoring workflow within the production application | 3 |
 | 5 | Workshop depth and workforce finance | A team can plan work, handle rework, and pay workers | 4 |
@@ -36,15 +36,15 @@ Keep tenant and location identity, typed order lines, and module boundaries in t
 | 8 | Customer identity, portal, booking, and sharing | Customers can safely interact with linked shops | 4–5 and availability policy |
 | 9 | Advanced insights, engagement, and full operator suite | Complete consolidated product scope | Owning operational modules |
 
-Follow this sequence while preserving each feature's dependencies. SaaS identity, tenancy, subscriptions, entitlement checks, and core billing operations start in phase 1. Advanced operator interfaces arrive later. Phase numbers express dependencies. Implement each capability and resolve issues within its owning work before continuing to dependent code.
+Follow this sequence while preserving each feature's dependencies. Identity, tenancy, permissions, security, and audit start in phase 1. Subscriptions, commercial entitlements/quotas, platform billing, and payment-provider integrations are deferred. Shop collections, refunds, and other business payments remain in their owning phases as manual records. Advanced operator interfaces arrive later. Phase numbers express dependencies. Implement each capability and resolve issues within its owning work before continuing to dependent code.
 
-## Phase 1: Build the production SaaS foundation
+## Phase 1: Build the internal application foundation
 
-Start with the retained product repository and implement application code locally. Handle installation, framework, database, and integration issues within their owning work. Continue 1A → 1B → 1D without waiting for server provisioning. Keep 1C as a deferred external handoff, not an application implementation dependency. No preliminary feasibility build, trial workspace, or disposable feature slice is required.
+Start with the retained product repository and implement application code locally. Handle installation, framework, database, and integration issues within their owning work. Continue 1A → 1B → phase 2 without waiting for server provisioning or subscription work. Keep 1C as a deferred external handoff, not an application implementation dependency. No preliminary feasibility build, trial workspace, or disposable feature slice is required.
 
 ### 1A. Create the project structure and pnpm workspace
 
-The initial structure is implemented with Turborepo. Current work status lives in [IN_PROGRESS.md](../IN_PROGRESS.md); runnable commands live in the [root README](../README.md).
+The initial structure is implemented with Turborepo. Current work status lives in [Implementation status](../implementation/status.md); runnable commands live in the [root README](../../README.md).
 
 1. Keep the existing Git repository and `docs/`. Use the official `create-turbo` CLI, then adapt root `package.json`, `pnpm-workspace.yaml`, `turbo.json`, one `pnpm-lock.yaml`, Node/package-manager version pins, shared TypeScript/Biome configuration, `.gitignore`, and `.env.example` files with placeholder names only.
 2. Scaffold `apps/web` using the official `create-next-app` template for the selected Next.js release. Choose TypeScript, App Router, Tailwind, Biome, `src/`, and the standard import alias. Keep workspace and lockfile ownership at the repository root and avoid nested Git repositories or duplicate lockfiles.
@@ -55,6 +55,8 @@ This creates Fitloom's own reusable repository structure. Do not create a separa
 
 ### 1B. Implement the database, identity, and shared application foundations
 
+Status: Done locally on 2026-11-01. [Foundation operations and evidence](../operations/foundation-operations.md) records complete verification and remaining external responsibilities. Continue to phase 2.
+
 1. Add PostgreSQL/Drizzle schemas, reviewed migrations, explicit runtime/migration roles, and the same-connection transaction helper.
 2. Implement Better Auth email/password, verification/recovery, database sessions, and operator MFA. Add principals, tenants, locations, memberships, role grants, resumable onboarding, and authorized workspace selection as real product features.
 3. Add tenant-qualified relationships, scoped uniqueness/indexes, RLS, field projections, and fresh permission/session checks. Tenant context is resolved from authorized membership; connection reuse cannot broaden access.
@@ -63,7 +65,7 @@ This creates Fitloom's own reusable repository structure. Do not create a separa
 
 ### 1C. Defer infrastructure and deployment to a separate user-managed project
 
-Status: Deferred. This identifier remains for traceability and is not a dependency between 1B and 1D.
+Status: Deferred. This identifier remains for traceability and is not a dependency between 1B and the internal business phases.
 
 The user plans and implements Linux provisioning, deployment-platform selection, server routing/TLS, host timers, monitoring infrastructure, backups, and VPS migration separately. Do not add a deployment center, infrastructure administration, Ansible playbooks, server Compose stacks, proxy configuration, or host scheduling tools to Fitloom as part of this roadmap.
 
@@ -73,13 +75,13 @@ Notify the user at the milestones in the [deployment readiness checkpoint](#depl
 
 ### 1D. Implement subscription and platform foundations
 
-Implement after 1B locally. External deployment in 1C is not a prerequisite. Use provider development mode where configured and record callbacks or delivery checks that still need an external environment.
+Status: Deferred in full by user decision on 2026-11-01. Fitloom is currently an internal product with no platform subscription or platform billing. This retained identifier is not a prerequisite for phase 2 or any subsequent business phase. There is no scheduled return phase, including phase 9. Reopen only on explicit user instruction.
 
-1. Add versioned plans, trial/active/grace/expired/suspended lifecycle, effective entitlements, overrides, atomic usage admission, and separate platform accounting.
-2. Implement plan selection/renewal, provider checkout and signed events, durable deduplication, pending/failed activation, reconciliation, invoices/history, and minimum operator billing commands. Use the provider's development mode when implementing its integration; it is part of the integration, not a preliminary product experiment.
-3. Implement owner renewal/manual export during ordinary commercial lockout and restricted operator recovery during security suspension. Scheduled business exports and broader consoles retain their later phase owners.
+Do not implement versioned commercial plans, trials, subscription lifecycle, commercial entitlements/quotas/overrides, pricing comparisons, plan selection/renewal, platform checkout, subscription invoices, billing administration, subscription promotions/referrals, or payment-provider integrations. Existing foundation interfaces and signed inbox fixtures do not authorize that work.
 
-Resolve missing accounts, adapter incompatibilities, and provider issues within the affected integration. Continue independent modules while a provider dependency is unavailable. Record the actual limitation instead of presenting simulated checkout as completed billing. Remaining business decisions have owners and deadlines in [the requirements](requirements.md#open-decisions).
+Shop payments remain required and are recorded manually. Phase 3 owns customer advances, partial/full collections, receivables, receipts, credit/refund obligations, manual settlements, and corrections. Workforce payouts, expenses, supplier payments, and retail collections remain in their respective phases. Capture amount/currency, method, date, reference, actor, allocations, and audit history. Cash/UPI/card/bank are recorded methods for payments handled outside Fitloom. No gateway calls or automatic payment verification are required.
+
+Continue 1B → phase 2 → phase 3 and onward. Keep identity, security suspension, current permissions, tenant/location isolation, and technical resource limits. No subscription selection or commercial expiry should govern the internal business workflows. A later internal deployment must resolve the existing development-only admission guard without introducing subscription billing.
 
 ## Phase 2: Build the customer and measurement book
 
@@ -98,11 +100,11 @@ Measurement-slip scanning comes in phase 5. Manual measurement entry must alread
 
 Build the server quote and financial records together with intake. A displayed total alone is insufficient for accepting an order.
 
-1. Extend the finance primitives with shop charge/credit, receipt/allocation, refund/exchange-credit liability, and balanced journal posting contracts. Keep shop and subscription accounts separate. Define the real-document policy gate and use explicit INR test fixtures until it is resolved.
+1. Extend the finance primitives with shop charge/credit, receipt/allocation, refund/exchange-credit liability, and balanced journal posting contracts. Use shop accounting owners for manually recorded business money. Retain the existing owner-separation contract; platform subscription workflows are deferred. Define the real-document policy gate and use explicit INR test fixtures until it is resolved.
 2. Implement canonical quotes, add-ons, express charges, package-ready allocations, fixed/percentage discounts, inclusive/exclusive tax, deterministic rounding, and owner/kind/fiscal-period numbering. Retain currency and the complete calculation breakdown before order confirmation uses it.
 3. Build customer → garments/measurements → dates/prices → review. Save drafts, multiple garments, stitch choices, urgency, images, instructions, trials, and customer-cloth receipt/custody. Model integer production units under each garment line; separate lines with different wearer/measurement/design snapshots.
 4. Confirm immutable measurement/design/price/tax/schema snapshots. Enforce confirmed measurement or the explicit pending policy. Validate line amendments/cancellations against existing units and financial state.
-5. Record advances and later split-method collections, allocations, references, receipts, and balances. Implement reversal/replacement, charge credits, refund obligations, settlement attempts, and truthful pending/failed/succeeded outcomes with order acceptance.
+5. Manually record advances and later split-method collections, allocations, references, dates, receipts, and balances. Retain amount/currency, actor, notes/evidence, and payment history. Record cash/UPI/card/bank movement handled outside Fitloom without a payment-provider integration. Implement reversal/replacement, charge credits, refund obligations, manual settlement records, and truthful pending/failed/succeeded outcomes with order acceptance.
 6. Generate versioned confirmations, advance receipts, invoices, credit adjustments, payment advice, and order references. Test tailoring A4/A5 layouts and bundled local-language fonts. Issued invoice corrections use linked documents; order-display correction cannot rewrite them.
 7. Add registers/direct detail, filters/pagination, history, amendments, cancellation, repeat/clone, and authorized reopening. Copies do not inherit payments, delivery, or completed work.
 8. Project the source-linked daybook from the journal/cash records. Add basic expenses, receivables, and full-scope totals. Test import reconciliation for every supported finance/order input format; do not claim complete legacy migration by implication.
@@ -162,7 +164,7 @@ Reuse orders, quotes, collections, documents, and stock commands to add retail b
 - Complete the readymade catalog, price/quantity tiers, size guides, retail/material checkout, anonymous paid sales, identified credit sales, cash change, split payment, and tested 58/80 mm thermal receipts.
 - Enable mixed orders containing tailoring, retail, material, and alteration lines. Preserve each line's stock, measurement, production, pricing, and fulfillment rules.
 - Add server-saved held carts with customer/branch/discount state and permitted margin estimates. Resume revalidates price/stock. Implement the server-owned loyalty ledger, versioned rules, concurrent redemption limits, original-allocation return reversal, and points-debt treatment; carts do not reserve points implicitly.
-- Add returns against original sold quantities, resellable/damaged disposition, original tax/discount/loyalty/cost allocation, charge credits, refund/exchange-credit liabilities, and retryable external settlement. Complete the correction path alongside checkout. A return does not reopen fulfillment; replacements create explicit linked obligations.
+- Add returns against original sold quantities, resellable/damaged disposition, original tax/discount/loyalty/cost allocation, charge credits, refund/exchange-credit liabilities, and retryable manual settlement recording. Payment-provider execution is deferred. Complete the correction path alongside checkout. A return does not reopen fulfillment; replacements create explicit linked obligations.
 - Add dispatch, in-transit stock, destination receiving, and cancellation for inter-location transfers only after location switching and grants work.
 
 This phase completes the retail and advanced location workflows in implementation group P2.
@@ -186,15 +188,15 @@ These capabilities grow around operational data and integrations that already wo
 - Add versioned saved custom reports with approved sources, columns, filters, grouping, sorting, charts, and scoped exports.
 - Extend manual reminders into consented provider messaging, automatic status/pickup/payment updates, push, bulk preparation, inactivity/recovery campaigns, and visible execution outcomes.
 - Add achievements, activation challenges, one-time rewards, tailoring calculators, size references, conversions, fabric estimates, and advice. Estimates cannot become confirmed measurements automatically.
-- Complete tenant lifecycle/security/usage tooling, demo access, overrides, trial management, versioned plans, subscription administration, invoice/failed-payment handling, revenue reports, and billing exports.
+- Complete tenant security lifecycle, technical resource/usage diagnostics, demo access, and audited recovery tooling. Versioned commercial plans, trials, subscription administration, commercial overrides, platform invoices/revenue/billing exports remain deferred under 1D and are not phase 9 work.
 - Complete operator support ticket administration and shared messaging inbox, templates, media replies, and failed-webhook retry.
-- Add announcements, promotions/referrals, email campaigns, template preview/tests, public content/blog authoring, and draft/publication control.
+- Add announcements, business engagement, email campaigns, template preview/tests, public content/blog authoring, and draft/publication control. Subscription promotions/referrals remain deferred.
 - Complete operator identity/permissions/settings/audit, rollout targeting, exact bulk-action previews, bounded jobs, per-tenant outcomes, and required destructive-action confirmations.
 - Add health/usage dashboards, alert rules/events/acknowledgement, privacy/retention console, and scheduled processing. Missing telemetry must remain unknown, not healthy.
 
 ## Extend the shared foundation with each feature
 
-Keep tenant/location authority, effective plans, usage admission, owner renewal/export, immutable billing history, and audited operator actions in the actual commands as modules are added. Provider callbacks retain deduplication and state-aware recovery. Resolve defects in the owning implementation and continue in dependency order.
+Keep tenant/location authority, current permissions, immutable manual payment/history records, authorized business exports, and audited operator actions in the actual commands as modules are added. Subscription and payment-provider work remains deferred. Nonpayment provider callbacks retain deduplication and state-aware recovery. Resolve defects in the owning implementation and continue in dependency order.
 
 ## Keep the architecture rules through every phase
 
@@ -213,7 +215,7 @@ Keep the modular monolith until measured scale or independent module ownership j
 
 ## Requirement coverage and completion ownership
 
-Every canonical capability has an initial build point and a completion owner. A phase reference assigns remaining scope; it does not waive any subfeature or acceptance criterion. When preparing implementation tasks, expand each row using its required behavior and mapped entries in the normative [source appendix](references/source_feature_details.md). Record accepted/modified/inapplicable source details, policy gates, dependencies, and actual acceptance evidence. Resolve conflicting source behaviors through the canonical requirements and architecture. Every supported importer/exporter includes format/version, dry-run or validation, source identity, row outcomes, and reconciliation before support is claimed.
+Every canonical capability has an initial build point and a completion owner. A phase reference assigns remaining scope; it does not waive any subfeature or acceptance criterion. When preparing implementation tasks, expand each row using its required behavior and mapped entries in the normative [source appendix](../references/source_feature_details.md). Record accepted/modified/inapplicable source details, policy gates, dependencies, and actual acceptance evidence. Resolve conflicting source behaviors through the canonical requirements and architecture. Every supported importer/exporter includes format/version, dry-run or validation, source identity, row outcomes, and reconciliation before support is claimed.
 
 | Requirement | Initial build | Remaining scope / completion owner |
 | --- | --- | --- |
@@ -253,13 +255,13 @@ Every canonical capability has an initial build point and a completion owner. A 
 | REQ-REPORT | 4: tailoring/financial reporting | 5–7: owning-domain reports; 9: full insights and export formats |
 | REQ-CUSTOMREPORT | 9 | 9: saved definitions, charts, authorized exports |
 | REQ-AUTH | 1: production sign-in/security | 5: remaining configured login methods and account-security UI |
-| REQ-ONBOARD | 1: retained tenant onboarding and subscription selection | Each import: source IDs/preview/reconciliation; 5: tours/sample UI; 7: boutique/both setup; 9: offers |
+| REQ-ONBOARD | 1: retained internal tenant onboarding; subscription selection deferred | Each import: source IDs/preview/reconciliation; 5: tours/sample UI; 7: boutique/both setup; 9: offers |
 | REQ-WORKSPACE | 1: multiple tenants, authorized selection, initial location per tenant | 7: advanced location directory/switching and tenant-wide reports |
 | REQ-SETTINGS | 1: shop/user settings | 2–7: domain/document preferences; 9: remaining notification settings |
 | REQ-BACKUP | External deployment handoff: server backup/restore owned by user | 5: application scheduled business exports; before remote or real-data use: verified recovery and retention |
 | REQ-AUDIT | 1: critical event capture | Every phase: new writes; 5: general audit viewer |
-| REQ-PLAN | 1: effective plans, atomic limits, lifecycle, protected owner export/renewal | 9: expanded comparison/admin UI |
-| REQ-BILLING | 1: verified subscription payments and history | 9: referral/promo credits and expanded commercial UI |
+| REQ-PLAN | Deferred; no current phase | Reopen only on explicit user decision; no commercial plan/limit requirement for internal use |
+| REQ-BILLING | Deferred; no current phase | All platform billing and payment-provider integration deferred; manual shop payments remain under REQ-COLLECT |
 | REQ-CACHE | 5 | 5: public shell, allowlisted scoped drafts, cleanup/conflicts; 8: customer scope |
 | REQ-PUBLIC | 5: shop/showcase/tracking | 8: working booking/app links; 9: public help/product content |
 | REQ-CUSTAUTH | 8 | 8: customer sign-in and linked-shop selection |
@@ -272,8 +274,8 @@ Every canonical capability has an initial build point and a completion owner. A 
 | REQ-TOOLS | 9 | 9: verified-input estimates, conversions, references, advice |
 | REQ-SUPPORT | 4: written help/contact | 5: tours/audio/tickets; 9: full operator support integration |
 | REQ-PRIVACY | 1: consent/access and manual request handling | 8: self-service; 9: complete operational console |
-| REQ-OPS-TENANT | 1: minimum lifecycle/support | 9: full tenant/security/usage/override console |
-| REQ-OPS-PLAN | 1: core plan/subscription/billing administration | 9: full administration and analytics |
+| REQ-OPS-TENANT | 1: minimum lifecycle/support | 9: full internal tenant/security/technical-usage console; commercial overrides/trials deferred |
+| REQ-OPS-PLAN | Deferred; no current phase | No subscription/billing console or manual platform subscription payments |
 | REQ-OPS-SUPPORT | 5: ticket intake and minimum operator triage | 9: complete operator ticket tools and shared messaging inbox |
 | REQ-OPS-COMMS | 9 | 9: announcements, templates, campaigns, referrals |
 | REQ-OPS-FLAG | 9 | 9: rollout rules, targeting, guarded bulk jobs |
@@ -287,9 +289,9 @@ Every canonical capability has an initial build point and a completion owner. A 
 | Requirement | Start | Required implementation behavior |
 | --- | --- | --- |
 | NFR-ACCESS | 1 | Two tenants, roles, locations, private files, and later customer links remain isolated. |
-| NFR-CONSISTENCY | 1, extended with each module | Retry, concurrent writes, and injected failure cannot duplicate or half-post local subscription/money/stock/work effects. |
-| NFR-MONEY | 1, extended with order finance in 3 | Decimal totals, rounding, discounts, tax, allocations, and currency agree across subscription and business records/documents. |
-| NFR-HISTORY | 1, extended from 2 onward | Billing/plan/audit history starts in phase 1; measurement, quote, rate, correction, and document versions extend it. |
+| NFR-CONSISTENCY | 1, extended with each module | Retry, concurrent writes, and injected failure cannot duplicate or half-post local manual-payment/money/stock/work effects. |
+| NFR-MONEY | 1, extended with order finance in 3 | Decimal totals, rounding, discounts, tax, allocations, and currency agree across business records/documents; subscription records deferred. |
+| NFR-HISTORY | 1, extended from 2 onward | Critical audit starts in phase 1; manual payment history arrives with its business module; subscription billing/plan history is deferred; measurement, quote, rate, correction, and document versions extend it. |
 | NFR-QUERY | 1, extended with domain queries | Search, counters, reports, and exports cover the full authorized filter scope. |
 | NFR-USABILITY | 1 | Each interface supports mobile/desktop, keyboard/touch, readable contrast, validation, and truthful loading/error/retry states. Apply the proposed WCAG 2.2 AA accessibility target. |
 | NFR-FILES | 1 | Upload validation, private retrieval, expiry, scope checks, and orphan cleanup work. |
