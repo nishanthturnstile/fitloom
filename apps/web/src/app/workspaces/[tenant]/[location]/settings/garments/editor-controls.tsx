@@ -1,6 +1,7 @@
 "use client";
 import * as c from "@fitloom/application/master-contracts";
 import type { ReactNode } from "react";
+import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 
 type Definition = c.GarmentDefinition;
 type Choice = Definition["constructionGroups"][number]["choices"][number];
@@ -41,8 +42,8 @@ export function Control({
   const errors = issues.filter((i) => i.path.join(".") === path.join("."));
   const id = controlId(path);
   return (
-    <label className="master-control" htmlFor={id}>
-      <span>{label}</span>
+    <Field className="master-control" data-invalid={errors.length > 0}>
+      <FieldLabel htmlFor={id}>{label}</FieldLabel>
       {children({
         id,
         "aria-label": label,
@@ -50,11 +51,11 @@ export function Control({
         "aria-describedby": errors.length ? `${id}-error` : undefined,
       })}
       {errors.length > 0 && (
-        <span id={`${id}-error`} className="master-error">
+        <FieldError id={`${id}-error`} className="master-error">
           {errors.map((i) => i.message).join(". ")}
-        </span>
+        </FieldError>
       )}
-    </label>
+    </Field>
   );
 }
 export function Ordered({
@@ -320,7 +321,11 @@ export function FieldEditor({
 }) {
   const path = ["definition", "fields", index];
   return (
-    <fieldset className="master-node" aria-label={`Dimension ${index + 1}`}>
+    <fieldset
+      className="master-node"
+      data-schema-node-id={field.id}
+      aria-label={`Dimension ${index + 1}`}
+    >
       <legend>Dimension {index + 1}</legend>
       <Ordered
         label={field.label || "dimension"}
@@ -619,6 +624,7 @@ export function GroupEditor({
   return (
     <fieldset
       className="master-node"
+      data-schema-node-id={group.id}
       aria-label={`Construction group ${index + 1}`}
     >
       <legend>Construction group {index + 1}</legend>

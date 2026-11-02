@@ -45,6 +45,7 @@ docs/
 | --- | --- |
 | [Implementation status](implementation/status.md) | Work areas, completion evidence, current scope decisions, and next steps |
 | [Phase 1B implementation plan](implementation/plans/phase-1b-implementation-plan.md) | Retained seven-day foundation plan, acceptance checks, and completion criteria |
+| [UI foundation v3 implementation plan](implementation/plans/ui-foundation-v3-implementation-plan.md) | Planned redesign increments, route and component ownership, mockup data mapping, and acceptance checks |
 
 ## Operations
 

@@ -12,8 +12,22 @@ export async function exerciseCatalogUI(page, fixture) {
     check(r.ok(), `GET ${path}: ${r.status()}`);
     return r.json();
   };
-  const click = async (name) =>
-    page.getByRole("button", { name, exact: true }).click();
+  const step = async (label) =>
+    page.getByRole("button", { name: `${label} step`, exact: true }).click();
+  const click = async (name) => {
+    const back = page.getByRole("button", {
+      name: "← Back to garments",
+      exact: true,
+    });
+    if (
+      ["Services", "Garments", "Add-ons"].includes(name) &&
+      (await back.isVisible())
+    )
+      await back.click();
+    if (name.startsWith("Revision ") && (await back.isVisible()))
+      await page.getByRole("tab", { name: "History", exact: true }).click();
+    await page.getByRole("button", { name, exact: true }).click();
+  };
   const saved = async (revision) =>
     page.getByText(`Saved revision ${revision}.`, { exact: true }).waitFor();
   const serviceLabel = `UI service ${Date.now()}`,
@@ -30,9 +44,9 @@ export async function exerciseCatalogUI(page, fixture) {
   await click("Create custom service");
   await page.getByLabel("Service name", { exact: true }).fill(serviceLabel);
   // A response is lost after the real transaction commits. Replay must keep the exact operation key.
-  let originalKey;
+  let originalBody;
   await page.route("**/masters/commands/service.save", async (route) => {
-    originalKey = route.request().postDataJSON().operationKey;
+    originalBody = route.request().postData();
     const r = await route.fetch();
     check(r.ok(), "Service transaction failed");
     await route.abort("failed");
@@ -44,11 +58,22 @@ export async function exerciseCatalogUI(page, fixture) {
     "Uncertain service save allowed edits",
   );
   await page.unroute("**/masters/commands/service.save");
+  await click("Refresh access");
+  await page
+    .getByText(
+      "Access refreshed. Retry the same operation to reconcile the pending result.",
+      { exact: true },
+    )
+    .waitFor();
+  check(
+    await page.getByLabel("Service name", { exact: true }).isDisabled(),
+    "Access refresh unlocked an unresolved command",
+  );
   let replay;
   await page.route("**/masters/commands/service.save", async (route) => {
     check(
-      route.request().postDataJSON().operationKey === originalKey,
-      "Service retry changed key",
+      route.request().postData() === originalBody,
+      "Service retry changed the serialized command envelope",
     );
     const r = await route.fetch();
     replay = await r.json();
@@ -81,6 +106,7 @@ export async function exerciseCatalogUI(page, fixture) {
   await click("Garments");
   await click("Create custom garment");
   await page.getByLabel("Garment name", { exact: true }).fill(garmentLabel);
+  await step("Services & rates");
   const eligibility = page.getByRole("region", {
     name: "Rates and eligibility",
     exact: true,
@@ -98,11 +124,13 @@ export async function exerciseCatalogUI(page, fixture) {
     .fill(serviceLabel);
   await click("Find services");
   await click(`Add ${serviceLabel}`);
+  await step("Add-ons");
   await page
     .getByLabel("Find eligible add-ons by name prefix", { exact: true })
     .fill(addonLabel);
   await click("Find add-ons");
   await click(`Add ${addonLabel}`);
+  await step("Services & rates");
   await eligibility
     .locator(".master-binding")
     .first()
@@ -136,6 +164,20 @@ export async function exerciseCatalogUI(page, fixture) {
     .getByRole("region", { name: "Historical catalog record" })
     .getByText(serviceLabel, { exact: true })
     .waitFor();
+  await page.screenshot({
+    path: `${fixture.artifacts}/service-editor-desktop.png`,
+  });
+  await page.setViewportSize({ width: 390, height: 1000 });
+  check(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= innerWidth + 1,
+    ),
+    "Service editor overflows narrow viewport",
+  );
+  await page.screenshot({
+    path: `${fixture.artifacts}/service-editor-narrow.png`,
+  });
+  await page.setViewportSize({ width: 1440, height: 1000 });
   await page
     .getByLabel("Service name", { exact: true })
     .fill(`${serviceLabel} local`);
@@ -191,9 +233,11 @@ export async function exerciseCatalogUI(page, fixture) {
   await click("Garments");
   await search(garmentLabel);
   await click(garmentLabel);
+  await step("Services & rates");
   await eligibility
     .getByText(`${serviceLabel} renamed`, { exact: true })
     .waitFor();
+  await step("Add-ons");
   await page
     .getByText("Current add-on price: 12.345678 INR", { exact: true })
     .waitFor();
@@ -215,6 +259,7 @@ export async function exerciseCatalogUI(page, fixture) {
     "Historical garment leaked current add-on price",
   );
   await click("Preview draft");
+  await step("Services & rates");
   // Unset override falls back to base. Explicit zero base remains different from unset.
   await eligibility
     .locator(".master-binding")
@@ -258,7 +303,9 @@ export async function exerciseCatalogUI(page, fixture) {
   await click("Garments");
   await search(garmentLabel);
   await click(garmentLabel);
+  await step("Services & rates");
   await page.getByText(/Inactive service retained/).waitFor();
+  await step("Add-ons");
   await page.getByText(/Inactive add-on retained/).waitFor();
   check(
     await page
@@ -266,6 +313,7 @@ export async function exerciseCatalogUI(page, fixture) {
       .isDisabled(),
     "Retired override editable",
   );
+  await step("Identity");
   await page
     .getByLabel("Category", { exact: true })
     .fill("Retained inactive references");
@@ -277,7 +325,9 @@ export async function exerciseCatalogUI(page, fixture) {
       retained.definition.addons[0].addonId === addon.id,
     "Retired binding lost",
   );
+  await step("Services & rates");
   await click("Remove service 1");
+  await step("Add-ons");
   await click("Remove add-on 1");
   await click("Save new version");
   await saved(5);
@@ -285,8 +335,9 @@ export async function exerciseCatalogUI(page, fixture) {
     (await get(`/garments/${garment.id}`)).definition.services.length === 0,
     "Retired service removal failed",
   );
+  await click("← Back to garments");
   // Catalog token changes, visibility, no-op install, and committed-install replay.
-  await page.locator(".master-library summary").click();
+  await page.locator(".catalog-library summary").click();
   const hide = page.getByLabel("Hide standard garments", { exact: true });
   const wasHidden = await hide.isChecked();
   await hide.setChecked(!wasHidden);
@@ -385,8 +436,15 @@ export async function exerciseStarterUI(page, fixture) {
   };
   const api = `${fixture.base}/api/workspaces/${fixture.tenant}/${fixture.location}/masters`;
   const get = async (path) => (await page.request.get(`${api}${path}`)).json();
-  const click = async (name) =>
-    page.getByRole("button", { name, exact: true }).click();
+  const click = async (name) => {
+    const back = page.getByRole("button", {
+      name: "← Back to garments",
+      exact: true,
+    });
+    if (name === "Install starter library" && (await back.isVisible()))
+      await back.click();
+    await page.getByRole("button", { name, exact: true }).click();
+  };
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.goto(
     `${fixture.base}/workspaces/${fixture.tenant}/${fixture.location}/settings/garments`,
@@ -395,7 +453,7 @@ export async function exerciseStarterUI(page, fixture) {
     (await get("/catalog")).catalogVersion === 0,
     "Starter fixture is not empty",
   );
-  await page.locator(".master-library summary").click();
+  await page.locator(".catalog-library summary").click();
   await page
     .getByText("No starter library installed yet.", { exact: true })
     .waitFor();
@@ -419,6 +477,7 @@ export async function exerciseStarterUI(page, fixture) {
     (await get("/services?visibility=all")).total === 0,
     "Colliding starter install added services",
   );
+  await page.getByRole("button", { name: /^Resume editing / }).click();
   await page
     .getByLabel("Garment name", { exact: true })
     .fill("My custom shirt");
@@ -505,7 +564,7 @@ export async function exerciseCatalogReadonlyUI(page, fixture) {
       "Schema-only history contains price",
     );
   }
-  await page.locator(".master-library summary").click();
+  await page.locator(".catalog-library summary").click();
   check(
     (await page
       .getByRole("button", { name: "Install starter library", exact: true })

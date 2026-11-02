@@ -27,15 +27,76 @@ export async function exerciseGarmentUI(page, fixture) {
   await page.setViewportSize({ width: 1440, height: 1000 });
   if (fixture.phase === "build" || fixture.phase === "readonly")
     await page.goto(settings);
-  await page
-    .getByRole("heading", { name: "Garments and services", exact: true })
-    .waitFor();
+  if (fixture.phase === "build" || fixture.phase === "readonly")
+    await page
+      .getByRole("heading", { name: "Garments and services", exact: true })
+      .waitFor();
+  else {
+    const resumeButton = page.getByRole("button", { name: /^Resume editing / });
+    if (await resumeButton.isVisible()) await resumeButton.click();
+  }
+  const step = async (label) =>
+    page.getByRole("button", { name: `${label} step`, exact: true }).click();
+  const resume = async () => {
+    const button = page.getByRole("button", { name: /^Resume editing / });
+    if (await button.isVisible()) await button.click();
+  };
+  const back = async () => {
+    const button = page.getByRole("button", {
+      name: "← Back to garments",
+      exact: true,
+    });
+    if (await button.isVisible()) await button.click();
+  };
   const name = () => page.getByLabel("Garment name", { exact: true });
   const dimension = (index) =>
     page.getByRole("group", { name: `Dimension ${index}`, exact: true });
   const saved = (revision) =>
     page.getByText(`Saved revision ${revision}.`, { exact: true }).waitFor();
   if (fixture.phase === "capture") {
+    const foundation = await page.evaluate(async () => {
+      await document.fonts.ready;
+      const heading = document.querySelector(".garment-editor h1");
+      const shell = document.querySelector(".workspace-foundation");
+      const compatibility = document.querySelector(".garment-shell");
+      const switcher = document.getElementById("shell-workspace");
+      if (!heading || !shell || !compatibility || !switcher) return null;
+      return {
+        headingFont: getComputedStyle(heading).fontFamily,
+        headingSize: getComputedStyle(heading).fontSize,
+        controlFont: getComputedStyle(switcher).fontFamily,
+        outsideLegacy: !heading.closest(".workspace-shell"),
+        semanticMuted: getComputedStyle(compatibility)
+          .getPropertyValue("--muted")
+          .trim(),
+        legacyMuted: getComputedStyle(compatibility)
+          .getPropertyValue("--legacy-muted")
+          .trim(),
+        monoLoaded:
+          getComputedStyle(document.documentElement)
+            .getPropertyValue("--font-ibm-plex-mono")
+            .trim().length > 0,
+      };
+    });
+    check(
+      foundation?.outsideLegacy,
+      "Preset header inherited legacy workspace styles",
+    );
+    check(
+      foundation?.headingSize === "24px" &&
+        foundation.headingFont.includes("Noto"),
+      "Heading typography differs from the foundation",
+    );
+    check(
+      foundation?.controlFont.includes("IBM"),
+      "Workspace control lost its Sans font",
+    );
+    check(
+      foundation?.semanticMuted !== foundation?.legacyMuted &&
+        foundation?.legacyMuted === "#65746a",
+      "Legacy text token shadows preset muted background",
+    );
+    check(foundation?.monoLoaded, "IBM Plex Mono variable is missing");
     await page.waitForFunction(
       (expected) =>
         document.querySelector('input[id="master-definition-label"]')?.value ===
@@ -43,13 +104,15 @@ export async function exerciseGarmentUI(page, fixture) {
       `${fixture.pricedLabel} remote`,
     );
     await page
-      .getByRole("button", {
+      .getByRole("heading", {
         name: `${fixture.pricedLabel} remote`,
+        level: 1,
         exact: true,
       })
       .waitFor();
     await page.screenshot({ path: `${fixture.artifacts}/desktop.png` });
     await page.setViewportSize({ width: 390, height: 844 });
+    await step("Identity");
     await name().scrollIntoViewIfNeeded();
     check(
       await page.evaluate(
@@ -86,6 +149,24 @@ export async function exerciseGarmentUI(page, fixture) {
     );
     const source = await page.content();
     check(!source.includes("88.123456"), "A price reached the read-only page");
+    const register = page.getByRole("region", {
+      name: "Master register",
+      exact: true,
+    });
+    check(
+      (await register.getByRole("columnheader", { name: /INR/ }).count()) === 0,
+      "Schema-only table exposes a price column",
+    );
+    await back();
+    await page.getByRole("button", { name: "Card view", exact: true }).click();
+    check(
+      !(await page.content()).includes("88.123456"),
+      "A price reached schema-only cards",
+    );
+    await page.screenshot({
+      path: `${fixture.artifacts}/register-schema-only-cards.png`,
+    });
+    await page.getByRole("button", { name: "Table view", exact: true }).click();
     return { garmentUiPassed: true, phase: "readonly" };
   }
   if (fixture.phase === "denied")
@@ -93,19 +174,20 @@ export async function exerciseGarmentUI(page, fixture) {
   if (fixture.phase === "build") {
     await page.getByRole("button", { name: "Next page", exact: true }).click();
     await page.waitForFunction(
-      () => document.querySelectorAll(".master-rows > li").length === 2,
+      () => document.querySelectorAll("[data-master-row]").length === 2,
     );
     await page
       .getByRole("button", { name: "Previous page", exact: true })
       .click();
     await page.waitForFunction(
-      () => document.querySelectorAll(".master-rows > li").length === 50,
+      () => document.querySelectorAll("[data-master-row]").length === 50,
     );
 
     await page
       .getByRole("button", { name: "Create custom garment", exact: true })
       .click();
     await name().fill(fixture.newLabel);
+    await step("Measurements");
     await page
       .getByText("No dimensions are required.", { exact: true })
       .waitFor();
@@ -170,6 +252,7 @@ export async function exerciseGarmentUI(page, fixture) {
     await page
       .getByRole("button", { name: "Move Garment up", exact: true })
       .click();
+    await step("Construction");
     for (let n = 1; n <= 2; n++) {
       await page
         .getByRole("button", { name: "Add construction group", exact: true })
@@ -210,6 +293,8 @@ export async function exerciseGarmentUI(page, fixture) {
     }),
     "Dirty form has no unload guard",
   );
+  await resume();
+  await step("Measurements");
   await dimension(1).getByLabel("Minimum", { exact: true }).fill("11");
   await page
     .getByRole("button", { name: "Save new version", exact: true })
@@ -227,6 +312,34 @@ export async function exerciseGarmentUI(page, fixture) {
     (await dimension(1).getByLabel("Minimum", { exact: true }).inputValue()) ===
       "11",
     "Invalid bounds erased local input",
+  );
+  check(
+    (await page
+      .getByRole("button", { name: "Measurements step", exact: true })
+      .getAttribute("aria-current")) === "step",
+    "Validation did not open the Measurements step",
+  );
+  await page.waitForFunction(
+    () => document.activeElement?.getAttribute("aria-invalid") === "true",
+  );
+  check(
+    await page.evaluate(() => {
+      const field = document.activeElement?.getBoundingClientRect();
+      const header = document
+        .querySelector(".editor-heading")
+        ?.getBoundingClientRect();
+      const footer = document
+        .querySelector(".editor-save-bar")
+        ?.getBoundingClientRect();
+      return (
+        field &&
+        header &&
+        footer &&
+        field.top >= header.bottom &&
+        field.bottom <= footer.top
+      );
+    }),
+    "Sticky chrome covers the focused invalid field",
   );
   await dimension(1).getByLabel("Minimum", { exact: true }).fill("0");
   await page
@@ -256,6 +369,7 @@ export async function exerciseGarmentUI(page, fixture) {
     "Choice order did not persist",
   );
   const chestId = first.definition.fields.find((f) => f.label === "Chest").id;
+  await step("Identity");
   await name().fill("");
   await page
     .getByRole("button", { name: "Save new version", exact: true })
@@ -269,7 +383,7 @@ export async function exerciseGarmentUI(page, fixture) {
   // Commit through the real API, then lose the response before the UI receives it.
   let lostBody;
   await page.route("**/masters/commands/garment.save", async (route) => {
-    lostBody = route.request().postDataJSON();
+    lostBody = route.request().postData();
     const response = await route.fetch();
     check(response.status() === 200, "Lost-response save did not commit");
     await route.abort();
@@ -291,19 +405,21 @@ export async function exerciseGarmentUI(page, fixture) {
     .click();
   const retried = await retryResponse;
   check(
-    retried.request().postDataJSON().operationKey === lostBody.operationKey,
-    "Retry used a different operation key",
+    retried.request().postData() === lostBody,
+    "Retry changed the serialized command envelope",
   );
   check(
     (await retried.json()).replayed,
     "Retry did not replay the committed operation",
   );
   await saved(2);
+  await step("Measurements");
   await page.getByRole("button", { name: "Remove Chest", exact: true }).click();
   await page
     .getByRole("button", { name: "Save new version", exact: true })
     .click();
   await saved(3);
+  await page.getByRole("tab", { name: "History", exact: true }).click();
   await page.getByRole("button", { name: "Revision 1", exact: true }).click();
   await page
     .getByRole("heading", { name: "Saved revision 1", exact: true })
@@ -331,6 +447,7 @@ export async function exerciseGarmentUI(page, fixture) {
     ).definition.fields.find((f) => f.label === "Chest").id === chestId,
     "Original history changed",
   );
+  await back();
   await page
     .getByLabel("Search by name prefix", { exact: true })
     .fill(fixture.newLabel);
@@ -338,7 +455,7 @@ export async function exerciseGarmentUI(page, fixture) {
     .getByRole("button", { name: "Refresh register", exact: true })
     .click();
   const row = () =>
-    page.locator(".master-rows > li").filter({
+    page.locator("[data-master-row]").filter({
       has: page.getByRole("button", { name: fixture.newLabel, exact: true }),
     });
   await row()
@@ -366,6 +483,7 @@ export async function exerciseGarmentUI(page, fixture) {
         `/garments?active=all&visibility=all&search=${encodeURIComponent(fixture.newLabel)}`,
       )
     ).items.find((item) => item.id === id)?.active;
+  await resume();
   const editorActive = page.getByRole("checkbox", { name: /Active garment/ });
   check(await editorActive.isChecked(), "Editor active state is missing");
   await editorActive.uncheck();
@@ -374,6 +492,7 @@ export async function exerciseGarmentUI(page, fixture) {
   await editorActive.check();
   await page.getByText("Garment marked active.", { exact: true }).waitFor();
   check(await storedActive(), "Editor restore failed");
+  await back();
   await row().getByRole("button", { name: "Deactivate", exact: true }).click();
   await page.getByText("Garment marked inactive.", { exact: true }).waitFor();
   await page.getByLabel("Status", { exact: true }).selectOption("inactive");
@@ -396,6 +515,7 @@ export async function exerciseGarmentUI(page, fixture) {
   await page
     .getByRole("button", { name: "Refresh register", exact: true })
     .click();
+  await resume();
   await page.getByRole("button", { name: "Cancel", exact: true }).click();
   await page
     .getByRole("button", { name: fixture.pricedLabel, exact: true })

@@ -5,12 +5,19 @@ import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { promisify } from "node:util";
+import { exerciseGarmentEditorFrameUI } from "./garment-editor-frame-ui-checks.mjs";
+import { exerciseMasterAuthorityUI } from "./master-authority-ui-checks.mjs";
 import {
   exerciseCatalogReadonlyUI,
   exerciseCatalogUI,
   exerciseStarterUI,
 } from "./master-catalog-ui-checks.mjs";
+import { exerciseMasterRegistersUI } from "./master-register-ui-checks.mjs";
 import { exerciseGarmentUI } from "./master-ui-browser-checks.mjs";
+import {
+  exerciseWorkspaceRoutesUI,
+  exerciseWorkspaceShellUI,
+} from "./workspace-shell-ui-checks.mjs";
 
 const execute = promisify(execFile);
 export async function masterUiChecks({
@@ -162,7 +169,83 @@ export async function masterUiChecks({
       );
       assert.ok(passed.test(result), result.slice(0, 1500));
     };
+    for (const phase of ["views", "reads", "catalogs"]) {
+      const registers = await run(
+        "run-code",
+        `async page => { const exercise=${exerciseMasterRegistersUI.toString()}; return exercise(page,${JSON.stringify({ ...fixture, phase })}); }`,
+      );
+      assert.ok(
+        /"masterRegistersPassed"\s*:\s*true/.test(registers),
+        registers.slice(-2500),
+      );
+      console.log(`Master register UI ${phase} passed.`);
+    }
     await exercise("build");
+    const editorFrame = await run(
+      "run-code",
+      `async page => {const exercise=${exerciseGarmentEditorFrameUI.toString()};return exercise(page,${JSON.stringify(fixture)});}`,
+    );
+    assert.ok(
+      /"garmentEditorFramePassed"\s*:\s*true/.test(editorFrame),
+      editorFrame.slice(-2000),
+    );
+    console.log(
+      "Garment editor frame passed: step identity retention, rail retention, no implicit saves, disabled preview and responsive layouts.",
+    );
+    const retainedViewDraft = await run(
+      "run-code",
+      `async page => { await page.getByRole("button",{name:"Measurements step",exact:true}).click(); const before = await page.getByLabel("Garment name",{exact:true}).inputValue(); const count = await page.getByRole("group",{name:/^Dimension [0-9]+$/}).count(); await page.getByRole("button",{name:"← Back to garments",exact:true}).click(); await page.getByRole("button",{name:"Card view",exact:true}).click(); await page.getByRole("button",{name:"Table view",exact:true}).click(); await page.getByRole("button",{name:/^Resume editing /}).click(); if(await page.getByLabel("Garment name",{exact:true}).inputValue() !== before || await page.getByRole("group",{name:/^Dimension [0-9]+$/}).count() !== count) throw Error("View switch reset the draft"); return {viewDraftRetained:true}; }`,
+    );
+    assert.ok(
+      /"viewDraftRetained"\s*:\s*true/.test(retainedViewDraft),
+      retainedViewDraft.slice(-1800),
+    );
+    const failedSwitch = await run(
+      "run-code",
+      `async page => { await page.route("**/api/preferences", route => route.fulfill({status:503,contentType:"application/json",body:'{"message":"Temporary failure"}'})); await page.getByLabel("Switch shop or location",{exact:true}).selectOption(${JSON.stringify(`${tenant}/${secondLocation}`)}); }`,
+    );
+    assert.ok(
+      failedSwitch.includes("Discard unsaved garment changes?"),
+      failedSwitch.slice(-1500),
+    );
+    await run("dialog-accept");
+    const shellPhase = async (phase) => {
+      const output = await run(
+        "run-code",
+        `async page => { const exercise=${exerciseWorkspaceShellUI.toString()}; return exercise(page,${JSON.stringify({ ...fixture, phase })}); }`,
+      );
+      assert.ok(
+        /"workspaceShellPassed"\s*:\s*true/.test(output),
+        output.slice(-2500),
+      );
+    };
+    await shellPhase("mobile");
+    const mobileExit = await run(
+      "run-code",
+      `async page => { await page.getByRole("dialog",{name:"Workspace menu"}).getByRole("link",{name:"Settings",exact:true}).click(); }`,
+    );
+    assert.ok(
+      mobileExit.includes(
+        "Discard unsaved garment changes and leave this page?",
+      ),
+      mobileExit.slice(-1500),
+    );
+    await run("dialog-dismiss");
+    await shellPhase("capture");
+    console.log(
+      "Workspace shell UI passed: failed/canceled switches, mobile focus and navigation, shortcut, and 320/390/1024/1025/1440 widths.",
+    );
+    for (const action of ["back", "reload"]) {
+      const result = await run(
+        "run-code",
+        `async page => { await page.evaluate(action => { if(action === "back") history.back(); else location.reload(); }, ${JSON.stringify(action)}); }`,
+      );
+      assert.ok(
+        /beforeunload/i.test(result),
+        `Dirty ${action} did not prompt: ${result.slice(-1500)}`,
+      );
+      await run("dialog-dismiss");
+    }
     const navigation = await run(
       "run-code",
       `async page => { await page.getByRole('link',{name:'fitloom / workspace',exact:true}).click(); }`,
@@ -184,6 +267,11 @@ export async function masterUiChecks({
     );
     await run("dialog-dismiss");
     for (const button of ["Services", "Cancel"]) {
+      if (button === "Cancel")
+        await run(
+          "run-code",
+          `async page => { const resume=page.getByRole("button",{name:/^Resume editing /}); if(await resume.isVisible()) await resume.click(); }`,
+        );
       const decision = await run(
         "run-code",
         `async page => { await page.getByRole('button',{name:${JSON.stringify(button)},exact:true}).click(); }`,
@@ -249,9 +337,71 @@ export async function masterUiChecks({
       /"starterUiPassed"\s*:\s*true/.test(starterResult),
       starterResult.slice(0, 1500),
     );
+    const routes = await run(
+      "run-code",
+      `async page => { const exercise=${exerciseWorkspaceRoutesUI.toString()}; return exercise(page,${JSON.stringify(fixture)}); }`,
+    );
+    assert.ok(
+      /"workspaceRoutesPassed"\s*:\s*true/.test(routes),
+      routes.slice(-2500),
+    );
+    console.log(
+      "Workspace route UI passed: preferences, profile, assigned routes, document history, direct catalogs, clean uncertain-operation replay, and successful switches.",
+    );
+    const refreshedProjection = await run(
+      "run-code",
+      `async page => {
+      await page.goto(${JSON.stringify(`${base}/workspaces/${tenant}/${location}/settings/garments`)});
+      await page.route(${JSON.stringify(`**/masters/garments/${pricedId}`)}, async route => {const response=await route.fetch();const data=await response.json();delete data.baseRate;delete data.currency;delete data.serviceOverrides;await route.fulfill({response,json:data});});
+      await page.getByLabel("Search by name prefix",{exact:true}).fill(${JSON.stringify(pricedLabel)});
+      await page.getByRole("button",{name:${JSON.stringify(`${pricedLabel} remote`)},exact:true}).click();
+      await page.getByText("Read-only view. Your role cannot publish garment changes.",{exact:true}).waitFor();
+      if(!await page.getByRole("checkbox",{name:"Active garment",exact:true}).isDisabled() || await page.getByRole("button",{name:"Save new version",exact:true}).count())throw Error("Schema-only current projection retained write controls");
+      await page.unroute(${JSON.stringify(`**/masters/garments/${pricedId}`)});
+      return {refreshedProjectionReadonly:true};
+    }`,
+    );
+    assert.ok(
+      /"refreshedProjectionReadonly"\s*:\s*true/.test(refreshedProjection),
+      refreshedProjection.slice(-2000),
+    );
+    const authorityPhase = async (phase) => {
+      const result = await run(
+        "run-code",
+        `async page => { const exercise=${exerciseMasterAuthorityUI.toString()}; return exercise(page,${JSON.stringify({ ...fixture, phase })}); }`,
+      );
+      assert.ok(
+        /"authorityUiPassed"\s*:\s*true/.test(result),
+        result.slice(-2500),
+      );
+    };
+    await authorityPhase("prepare-addon");
     await admin.query(
       "DELETE FROM app.permission_grants WHERE role_id=$1 AND permission IN ('masters.manage','masters.rates.read')",
       [role],
+    );
+    await authorityPhase("revoked-addon");
+    await admin.query(
+      "INSERT INTO app.permission_grants SELECT $1,$2,p FROM unnest(ARRAY['masters.manage','masters.rates.read']) p ON CONFLICT DO NOTHING",
+      [tenant, role],
+    );
+    await authorityPhase("prepare-garment");
+    await admin.query(
+      "DELETE FROM app.permission_grants WHERE role_id=$1 AND permission IN ('masters.manage','masters.rates.read')",
+      [role],
+    );
+    await authorityPhase("revoked-garment");
+    const cancelRevoked = await run(
+      "run-code",
+      `async page => { await page.getByRole("button",{name:"Cancel",exact:true}).click(); }`,
+    );
+    assert.ok(
+      cancelRevoked.includes("Discard unsaved garment changes?"),
+      cancelRevoked.slice(-1500),
+    );
+    await run("dialog-accept");
+    console.log(
+      "Open-session authority UI passed: cached register, current, eligibility and exact-version prices removed; dirty drafts retained; no writes; 320/390/1024/1440px.",
     );
     const catalogReadonly = await run(
       "run-code",
@@ -275,6 +425,14 @@ export async function masterUiChecks({
       `async page => { await page.goto(${JSON.stringify(`${base}/workspaces/${tenant}/${location}/settings/garments`)}); await page.getByRole('heading',{name:'Garment access is unavailable.',exact:true}).waitFor(); return {garmentUiPassed:true}; }`,
     );
     assert.ok(passed.test(denied), denied.slice(0, 1500));
+    const restricted = await run(
+      "run-code",
+      `async page => { await page.screenshot({path:${JSON.stringify(`${artifacts}/restricted-catalog.png`)}}); await page.goto(${JSON.stringify(`${base}/workspaces/${tenant}/${location}`)}); await page.getByRole('heading',{name:'HTTP fixture shop',exact:true}).waitFor(); if(await page.getByRole('link',{name:'Garments',exact:true}).count()) throw Error('Restricted navigation exposes catalog'); await page.screenshot({path:${JSON.stringify(`${artifacts}/restricted-overview.png`)}}); await page.goto(${JSON.stringify(`${base}/workspaces/${tenant}/${location}/settings`)}); await page.getByRole('heading',{name:'Settings',exact:true}).waitFor(); return {restrictedWorkspacePassed:true}; }`,
+    );
+    assert.ok(
+      /"restrictedWorkspacePassed"\s*:\s*true/.test(restricted),
+      restricted.slice(-2000),
+    );
     console.log(
       "Master UI checks passed: garment/service/add-on editors and history, eligibility, unset/zero rates, inactive references, ordering, visibility, first-use starters/collision rollback/no-op/replay, lost-response recovery, dirty navigation, roles, and desktop/narrow layouts.",
     );

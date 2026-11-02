@@ -374,7 +374,12 @@ try {
     { headers: { cookie } },
   );
   assert.equal(settingsPage.status, 200);
-  assert.ok((await settingsPage.text()).includes("Garments and services"));
+  const catalogHtml = await settingsPage.text();
+  assert.ok(catalogHtml.includes("Garments and services"));
+  assert.ok(
+    !catalogHtml.includes(email),
+    "Catalog shell exposed private owner contact data",
+  );
   const anonymousSettings = await fetch(
     `${base}/workspaces/${tenant}/${choice.locationId}/settings/garments`,
     { redirect: "manual" },
@@ -518,7 +523,29 @@ try {
   ).text();
   assert.ok(workspacePage.includes("HTTP fixture shop"));
   assert.ok(workspacePage.includes("People &amp; access"));
-  assert.ok(workspacePage.includes("Upload private image"));
+  assert.ok(workspacePage.includes("workspace-app-topbar"));
+  for (const [suffix, content] of [
+    ["/settings", "Personal preferences"],
+    ["/settings/shop", "Update shop profile"],
+    ["/settings/access", "Send invitation"],
+    ["/files", "Upload private image"],
+  ]) {
+    const url = `${base}/workspaces/${tenant}/${choice.locationId}${suffix}`;
+    const response = await fetch(url, { headers: { cookie } });
+    assert.equal(response.status, 200);
+    const html = await response.text();
+    assert.ok(
+      html.includes(content),
+      `${suffix} lost its existing workspace tool`,
+    );
+    assert.ok(
+      html.includes("workspace-app-topbar"),
+      `${suffix} lost the shared shell`,
+    );
+    const anonymous = await fetch(url, { redirect: "manual" });
+    assert.equal(anonymous.status, 307);
+    assert.equal(anonymous.headers.get("location"), "/account");
+  }
   assert.equal(
     (
       await fetch(

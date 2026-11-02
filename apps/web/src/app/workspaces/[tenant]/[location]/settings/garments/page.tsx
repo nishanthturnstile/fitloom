@@ -1,86 +1,63 @@
-import { headers } from "next/headers";
-import { redirect } from "next/navigation";
-import { identityService } from "@/server/identity";
+import { PageUnavailable } from "@/components/workspace/page-unavailable";
 import { masterService } from "@/server/masters";
-import { workspaceService } from "@/server/workspaces";
+import { workspacePageContext } from "@/server/workspace-page-context";
 import { GarmentSettings } from "./garment-settings";
 export const dynamic = "force-dynamic";
 export default async function GarmentSettingsPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ tenant: string; location: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
-  const h = await headers();
-  try {
-    await identityService().identity(h);
-  } catch {
-    redirect("/account");
-  }
-  const p = await params;
-  const target = { tenantId: p.tenant, locationId: p.location };
-  try {
-    const service = workspaceService(h);
-    const workspace = await service.view(target);
-    if (!workspace.permissions.includes("masters.read"))
-      return (
-        <main className="workspace-shell">
-          <h1>Garment access is unavailable.</h1>
-          <p>Your role needs permission to view garments and services.</p>
-          <a href={`/workspaces/${p.tenant}/${p.location}`}>
-            Return to workspace
-          </a>
-        </main>
-      );
-    const [page, catalog, choices, preferences] = await Promise.all([
-      masterService(h).page(target, "garment"),
-      masterService(h).catalog(target),
-      service.choices(),
-      service.preferences(),
-    ]);
-    const selected = {
-      ...target,
-      shopName: workspace.shopName,
-      locationName: workspace.locationName,
-      permissions: workspace.permissions,
-    };
+  const p = await params,
+    query = await searchParams;
+  const context = await workspacePageContext(p.tenant, p.location),
+    base = `/workspaces/${p.tenant}/${p.location}`;
+  if (
+    context.kind === "unavailable" ||
+    !context.workspace.permissions.includes("masters.read")
+  )
     return (
-      <main className="workspace-shell garment-shell">
+      <PageUnavailable title="Garment access is unavailable." href={base} />
+    );
+  const kind =
+    query.kind === "service"
+      ? "service"
+      : query.kind === "addon"
+        ? "addon"
+        : "garment";
+  try {
+    const service = masterService(context.h);
+    const [page, catalog] = await Promise.all([
+      service.page(context.target, kind),
+      service.catalog(context.target),
+    ]);
+    return (
+      <div className="workspace-foundation">
         <GarmentSettings
-          workspace={selected}
+          key={`${context.principalId}:${kind}`}
+          workspace={{
+            tenantId: context.workspace.tenantId,
+            locationId: context.workspace.locationId,
+            shopName: context.workspace.shopName,
+            locationName: context.workspace.locationName,
+            permissions: context.workspace.permissions,
+          }}
           initialPage={page}
           initialCatalog={catalog}
-          choices={
-            choices.some(
-              (c) => c.tenantId === p.tenant && c.locationId === p.location,
-            )
-              ? choices
-              : [
-                  {
-                    ...target,
-                    shopName: workspace.shopName,
-                    locationName: workspace.locationName,
-                  },
-                  ...choices,
-                ]
-          }
-          locale={preferences?.locale ?? "en"}
+          initialKind={kind}
+          focusSearch={query.focus === "search"}
         />
-      </main>
+      </div>
     );
   } catch {
     return (
-      <main className="workspace-shell">
-        <h1>Garment settings are unavailable.</h1>
-        <p>
-          Your access may have changed, or the workspace could not be reached.
-        </p>
-        <a href={`/workspaces/${p.tenant}/${p.location}/settings/garments`}>
-          Try again
-        </a>
-        <p>
-          <a href="/workspaces">Choose an authorized workspace</a>
-        </p>
-      </main>
+      <PageUnavailable
+        title="Garment settings are unavailable."
+        href={base}
+        retryHref={`${base}/settings/garments?kind=${kind}`}
+      />
     );
   }
 }

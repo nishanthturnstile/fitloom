@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { IBM_Plex_Sans, Noto_Sans } from "next/font/google";
+import { IBM_Plex_Mono, IBM_Plex_Sans, Noto_Sans } from "next/font/google";
 import { cn } from "@/lib/utils";
 
 const notoSansHeading = Noto_Sans({
@@ -11,6 +11,12 @@ const notoSansHeading = Noto_Sans({
 const ibmPlexSans = IBM_Plex_Sans({
   subsets: ["latin"],
   variable: "--font-ibm-plex",
+});
+
+const ibmPlexMono = IBM_Plex_Mono({
+  subsets: ["latin"],
+  weight: ["400", "500"],
+  variable: "--font-ibm-plex-mono",
 });
 
 export const metadata: Metadata = {
@@ -26,7 +32,11 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={cn(ibmPlexSans.variable, notoSansHeading.variable)}
+      className={cn(
+        ibmPlexSans.variable,
+        notoSansHeading.variable,
+        ibmPlexMono.variable,
+      )}
     >
       <body>{children}</body>
     </html>

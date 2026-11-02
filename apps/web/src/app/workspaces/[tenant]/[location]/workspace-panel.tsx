@@ -1,7 +1,5 @@
 "use client";
 import type {
-  PrivateFileSummary,
-  WorkspaceChoice,
   WorkspaceTeam,
   WorkspaceView,
 } from "@fitloom/application/workspace-contracts";
@@ -10,7 +8,6 @@ import {
   workspaceTeam,
 } from "@fitloom/application/workspace-contracts";
 import { type FormEvent, useState } from "react";
-import { PrivateFiles } from "./private-files";
 
 type Team = WorkspaceTeam;
 function field(form: FormData, name: string) {
@@ -19,19 +16,13 @@ function field(form: FormData, name: string) {
 }
 export function WorkspacePanel({
   workspace,
-  files,
-  fileTotal,
-  fileNext,
-  choices,
+  section,
   team: initialTeam,
   principalId,
   locale,
 }: {
   workspace: WorkspaceView;
-  files: PrivateFileSummary[];
-  fileTotal: number;
-  fileNext: number | null;
-  choices: WorkspaceChoice[];
+  section: "shop" | "preferences" | "access";
   team: Team | null;
   principalId: string;
   locale: string;
@@ -128,204 +119,144 @@ export function WorkspacePanel({
   }
   return (
     <>
-      <div className="workspace-heading">
-        <div>
-          <p className="account-eyebrow">
-            YOUR SHOP / {workspace.locationName}
-          </p>
-          <h1>{workspace.shopName}</h1>
-        </div>
-        <label>
-          Switch shop or location
-          <select
-            value={`${workspace.tenantId}/${workspace.locationId}`}
-            onChange={async (e) => {
-              const [tenantId, locationId] = e.target.value.split("/");
-              try {
-                const response = await fetch("/api/preferences", {
-                  method: "POST",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({
-                    operationKey: crypto.randomUUID(),
-                    correlationId: crypto.randomUUID(),
-                    payload: { locale, tenantId, locationId },
-                  }),
-                });
-                if (!response.ok)
-                  throw new Error(
-                    "Workspace access changed. Reload your choices.",
-                  );
-                window.location.assign(`/workspaces/${tenantId}/${locationId}`);
-              } catch (error) {
-                setNotice(
-                  error instanceof Error
-                    ? error.message
-                    : "Workspace unavailable",
-                );
-              }
-            }}
-          >
-            {choices.map((c) => (
-              <option
-                key={`${c.tenantId}/${c.locationId}`}
-                value={`${c.tenantId}/${c.locationId}`}
+      <div className="workspace-panel">
+        {section === "shop" && (
+          <section className="account-card">
+            <h2>Shop profile</h2>
+            <dl>
+              <dt>Business mode</dt>
+              <dd>{workspace.businessMode ?? "Setup pending"}</dd>
+              <dt>Timezone</dt>
+              <dd>{workspace.timezone ?? "Setup pending"}</dd>
+              <dt>Address</dt>
+              <dd>{workspace.address ?? "Setup pending"}</dd>
+            </dl>
+            {workspace.owner ? (
+              <>
+                <h3>Owner contact</h3>
+                <p>
+                  {workspace.owner.name}
+                  <br />
+                  {workspace.owner.email}
+                  <br />
+                  {workspace.owner.phone}
+                </p>
+              </>
+            ) : null}
+            {workspace.permissions.includes("workspace.manage") ? (
+              <form
+                onSubmit={(e) =>
+                  form(e, async (f) =>
+                    command(
+                      base,
+                      {
+                        expectedVersion: workspace.version,
+                        shopName: field(f, "shopName"),
+                        address: field(f, "address"),
+                      },
+                      "PATCH",
+                    ),
+                  )
+                }
               >
-                {c.shopName} · {c.locationName}
-              </option>
-            ))}
-          </select>
-        </label>
-      </div>
-      {workspace.permissions.includes("masters.read") && (
-        <nav aria-label="Workspace settings">
-          <a
-            href={`/workspaces/${workspace.tenantId}/${workspace.locationId}/settings/garments`}
-          >
-            Garments and services
-          </a>
-        </nav>
-      )}
-      {workspace.permissions.includes("files.read") ? (
-        <PrivateFiles
-          workspace={workspace}
-          files={files}
-          total={fileTotal}
-          next={fileNext}
-        />
-      ) : null}
-      <p>
-        <a href="/workspaces">Browse all authorized shops and locations</a>
-      </p>
-      <div className="workspace-columns">
-        <section className="account-card">
-          <h2>Shop profile</h2>
-          <dl>
-            <dt>Business mode</dt>
-            <dd>{workspace.businessMode ?? "Setup pending"}</dd>
-            <dt>Timezone</dt>
-            <dd>{workspace.timezone ?? "Setup pending"}</dd>
-            <dt>Address</dt>
-            <dd>{workspace.address ?? "Setup pending"}</dd>
-          </dl>
-          {workspace.owner ? (
-            <>
-              <h3>Owner contact</h3>
-              <p>
-                {workspace.owner.name}
-                <br />
-                {workspace.owner.email}
-                <br />
-                {workspace.owner.phone}
-              </p>
-            </>
-          ) : null}
-          {workspace.permissions.includes("workspace.manage") ? (
-            <form
-              onSubmit={(e) =>
-                form(e, async (f) =>
-                  command(
-                    base,
-                    {
-                      expectedVersion: workspace.version,
-                      shopName: field(f, "shopName"),
-                      address: field(f, "address"),
-                    },
-                    "PATCH",
-                  ),
-                )
-              }
-            >
-              <label>
-                Shop name
-                <input
-                  name="shopName"
-                  defaultValue={workspace.shopName}
-                  required
-                  maxLength={200}
-                />
-              </label>
-              <label>
-                Address
-                <input
-                  name="address"
-                  defaultValue={workspace.address ?? ""}
-                  required
-                  maxLength={1000}
-                />
-              </label>
-              <button type="submit" disabled={busy}>
-                Update shop profile
+                <label>
+                  Shop name
+                  <input
+                    name="shopName"
+                    defaultValue={workspace.shopName}
+                    required
+                    maxLength={200}
+                  />
+                </label>
+                <label>
+                  Address
+                  <input
+                    name="address"
+                    defaultValue={workspace.address ?? ""}
+                    required
+                    maxLength={1000}
+                  />
+                </label>
+                <button type="submit" disabled={busy}>
+                  Update shop profile
+                </button>
+              </form>
+            ) : null}
+            {workspace.permissions.includes("locations.all") ? (
+              <button
+                type="button"
+                className="account-secondary"
+                onClick={async () => {
+                  const response = await fetch(`${base}?view=all`, {
+                    cache: "no-store",
+                  });
+                  const data: unknown = await response.json();
+                  if (response.ok && Array.isArray(data))
+                    setNotice(
+                      `All ${response.headers.get("X-Total-Count") ?? data.length} locations authorized. ${data.flatMap((item) => (typeof item === "object" && item !== null && "name" in item && typeof item.name === "string" ? [item.name] : [])).join(", ")}`,
+                    );
+                  else
+                    setNotice(
+                      "You do not have consolidated access to every location.",
+                    );
+                }}
+              >
+                View all locations
               </button>
-            </form>
-          ) : null}
-          {workspace.permissions.includes("locations.all") ? (
-            <button
-              type="button"
-              className="account-secondary"
-              onClick={async () => {
-                const response = await fetch(`${base}?view=all`, {
-                  cache: "no-store",
-                });
-                const data: unknown = await response.json();
-                if (response.ok && Array.isArray(data))
-                  setNotice(
-                    `All ${response.headers.get("X-Total-Count") ?? data.length} locations authorized. ${data.flatMap((item) => (typeof item === "object" && item !== null && "name" in item && typeof item.name === "string" ? [item.name] : [])).join(", ")}`,
-                  );
-                else
-                  setNotice(
-                    "You do not have consolidated access to every location.",
-                  );
-              }}
-            >
-              View all locations
-            </button>
-          ) : null}
-        </section>
-        <section className="account-card">
-          <h2>Your access</h2>
-          <p className="account-muted">
-            Permissions are checked for this location on each request.
-          </p>
-          <ul className="permission-list">
-            {workspace.permissions.map((p) => (
-              <li key={p} title={p}>
-                {workspacePermissionLabel(p)}
-              </li>
-            ))}
-          </ul>
-          <details>
-            <summary>Personal preferences</summary>
-            <form
-              onSubmit={(e) =>
-                form(e, async (f) =>
-                  command("/api/preferences", {
-                    locale: field(f, "locale"),
-                    tenantId: workspace.tenantId,
-                    locationId: workspace.locationId,
-                  }),
-                )
-              }
-            >
-              <label>
-                Preferred language
-                <select name="locale" defaultValue={locale}>
-                  <option value="en">English</option>
-                  <option value="ta">Tamil</option>
-                  <option value="hi">Hindi</option>
-                </select>
-              </label>
-              <button type="submit" disabled={busy}>
-                Save preference
-              </button>
-            </form>
+            ) : null}
+          </section>
+        )}
+        {section === "preferences" && (
+          <section className="account-card">
+            <h2>Your access</h2>
             <p className="account-muted">
-              Saves your language preference. Interface translations follow
-              their own implementation.
+              Permissions are checked for this location on each request.
             </p>
-          </details>
-        </section>
+            <ul className="permission-list">
+              {workspace.permissions.map((p) => (
+                <li key={p} title={p}>
+                  {workspacePermissionLabel(p)}
+                </li>
+              ))}
+            </ul>
+            <details>
+              <summary>Personal preferences</summary>
+              <form
+                onSubmit={(e) =>
+                  form(e, async (f) =>
+                    command("/api/preferences", {
+                      locale: field(f, "locale"),
+                      tenantId: workspace.tenantId,
+                      locationId: workspace.locationId,
+                    }),
+                  )
+                }
+              >
+                <label>
+                  Preferred language
+                  <select
+                    name="locale"
+                    aria-label="Preferred language"
+                    defaultValue={locale}
+                  >
+                    <option value="en">English</option>
+                    <option value="ta">Tamil</option>
+                    <option value="hi">Hindi</option>
+                  </select>
+                </label>
+                <button type="submit" disabled={busy}>
+                  Save preference
+                </button>
+              </form>
+              <p className="account-muted">
+                Saves your language preference. Interface translations follow
+                their own implementation.
+              </p>
+            </details>
+          </section>
+        )}
       </div>
-      {team ? (
+      {section === "access" && team ? (
         <section className="account-card workspace-team">
           <h2>People & access</h2>
           <p>

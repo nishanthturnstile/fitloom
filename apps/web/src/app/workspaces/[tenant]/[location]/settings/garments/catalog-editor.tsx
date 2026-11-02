@@ -1,9 +1,15 @@
 "use client";
 import * as c from "@fitloom/application/master-contracts";
-import { useState } from "react";
+import type { ReactNode } from "react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { FieldGroup } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
 import { Control, type Issues } from "./editor-controls";
+import { EditorSaveBar } from "./editor-save-bar";
 import { RateControl } from "./eligibility-editor";
-import { type Row, rate, resource, response } from "./master-client";
+import { type Row, rate } from "./master-client";
+import { MasterHistory } from "./master-history";
 export type CatalogItem =
   | ReturnType<typeof c.serviceVersion.parse>
   | ReturnType<typeof c.addonVersion.parse>
@@ -23,191 +29,181 @@ export type CatalogDraft = (
     | { entity: "service"; label: string }
     | { entity: "addon"; label: string; amount: string }
   );
-export function CatalogEditor({
-  draft,
-  history,
-  base,
-  disabled,
-  canManage,
-  busy,
-  dirty,
-  issues,
-  onChange,
-  onSave,
-  onClose,
-  onReload,
-  onMoreHistory,
-}: {
+export function CatalogEditor(props: {
   draft: CatalogDraft;
   history: ReturnType<typeof c.masterHistoryPage.parse> | null;
-  base: string;
+  snapshot: CatalogItem | null;
+  showRates: boolean;
   disabled: boolean;
+  locked: boolean;
   canManage: boolean;
   busy: boolean;
   dirty: boolean;
   issues: Issues;
+  recovery: ReactNode;
   onChange: (draft: CatalogDraft) => void;
   onSave: () => void;
   onClose: () => void;
   onReload: () => void;
+  onInspect: (versionId: string) => void;
   onMoreHistory: () => Promise<void>;
 }) {
-  const [snapshot, setSnapshot] = useState<CatalogItem | null>(null),
-    [error, setError] = useState("");
-  async function inspect(versionId: string) {
-    if (draft.kind !== "saved") return;
-    try {
-      setSnapshot(
-        await response(
-          fetch(
-            `${base}/${resource(draft.entity)}/${draft.row.id}/versions/${versionId}`,
-            { cache: "no-store" },
-          ),
-          catalogItemSchema(draft.entity),
-        ),
-      );
-      setError("");
-    } catch {
-      setError("Saved revision could not be reached. Try again.");
-    }
-  }
+  const { draft, snapshot } = props;
+  const noun = draft.entity === "service" ? "service" : "add-on";
   return (
-    <>
-      <section
-        className="master-editor"
-        aria-label={
-          draft.entity === "service" ? "Service editor" : "Add-on editor"
-        }
-      >
-        <div className="master-editor-heading">
-          <h2>
-            {draft.kind === "new"
-              ? `New ${draft.entity === "service" ? "service" : "add-on"}`
-              : draft.current.label}
+    <section
+      className="garment-editor catalog-editor master-editor"
+      aria-label={
+        draft.entity === "service" ? "Service editor" : "Add-on editor"
+      }
+    >
+      <header className="editor-heading">
+        <div>
+          <p className="mb-2 text-xs text-muted-foreground">
+            Shop catalog · {noun}
+          </p>
+          <h2 className="font-heading text-2xl font-medium tracking-tight">
+            {draft.kind === "new" ? `New ${noun}` : draft.current.label}
           </h2>
-          <span>
-            {draft.kind === "saved"
-              ? `Revision ${draft.current.revision} · ${draft.row.active ? "active" : "inactive"}`
-              : "Unsaved"}
-            {dirty ? " · unsaved changes" : ""}
-          </span>
-        </div>
-        {!canManage && (
-          <p>Read-only view. Your role cannot publish catalog changes.</p>
-        )}
-        {issues.length > 0 && (
-          <div className="master-error-summary" role="alert">
-            {issues.map((i) => (
-              <p key={`${i.path.join(".")}-${i.message}`}>{i.message}</p>
-            ))}
+          <div className="mt-3 flex flex-wrap items-center gap-2">
+            <Badge variant="outline">
+              {draft.kind === "new"
+                ? "Unsaved"
+                : draft.row.active
+                  ? "Active"
+                  : "Inactive"}
+            </Badge>
+            {draft.kind === "saved" && (
+              <span className="font-mono text-xs text-muted-foreground">
+                Revision {draft.current.revision}
+              </span>
+            )}
           </div>
-        )}
-        <fieldset disabled={disabled} className="master-edit-fields">
-          <div className="master-section">
+        </div>
+      </header>
+      {!props.canManage && (
+        <p className="mb-4 text-sm text-muted-foreground">
+          Read-only view. Your role cannot publish catalog changes.
+        </p>
+      )}
+      {props.issues.length > 0 && (
+        <div className="editor-errors" role="alert">
+          {props.issues.map((issue) => (
+            <p key={`${issue.path.join(".")}-${issue.message}`}>
+              {issue.message}
+            </p>
+          ))}
+        </div>
+      )}
+      <div className="editor-body">
+        <form
+          id="catalog-definition-form"
+          noValidate
+          onSubmit={(event) => {
+            event.preventDefault();
+            if (!props.disabled) props.onSave();
+          }}
+        >
+          <fieldset disabled={props.disabled} className="editor-domain">
             <h3>
               {draft.entity === "service"
                 ? "Service identity"
                 : "Add-on identity and price"}
             </h3>
-            <Control
-              label={
-                draft.entity === "service" ? "Service name" : "Add-on name"
-              }
-              path={["label"]}
-              issues={issues}
-            >
-              {(props) => (
-                <input
-                  {...props}
-                  value={draft.label}
-                  maxLength={100}
-                  onChange={(e) =>
-                    onChange({ ...draft, label: e.target.value })
-                  }
-                />
-              )}
-            </Control>
-            {draft.entity === "addon" &&
-              (draft.kind === "new" || "amount" in draft.current) && (
-                <RateControl
-                  optional={false}
-                  label="Add-on price (INR)"
-                  value={draft.amount}
-                  path={["amount"]}
-                  issues={issues}
-                  onChange={(amount) =>
-                    onChange({ ...draft, amount: amount ?? "" })
-                  }
-                />
-              )}
-            <p className="master-muted">
-              Saving creates a new revision. Garment history keeps the labels
-              saved with each garment version.
+            <FieldGroup>
+              <Control
+                label={
+                  draft.entity === "service" ? "Service name" : "Add-on name"
+                }
+                path={["label"]}
+                issues={props.issues}
+              >
+                {(control) => (
+                  <Input
+                    {...control}
+                    value={draft.label}
+                    maxLength={100}
+                    onChange={(event) =>
+                      props.onChange({ ...draft, label: event.target.value })
+                    }
+                  />
+                )}
+              </Control>
+              {draft.entity === "addon" &&
+                props.showRates &&
+                (draft.kind === "new" || "amount" in draft.current) && (
+                  <RateControl
+                    optional={false}
+                    label="Add-on price (INR)"
+                    value={draft.amount}
+                    path={["amount"]}
+                    issues={props.issues}
+                    onChange={(amount) =>
+                      props.onChange({ ...draft, amount: amount ?? "" })
+                    }
+                  />
+                )}
+            </FieldGroup>
+            <p className="mt-5 text-sm text-muted-foreground">
+              {draft.entity === "service"
+                ? "Garments hold their own base rates and service overrides."
+                : "This price is separate from garment base rates and service overrides. Zero is a valid price; up to six decimal places are supported."}
             </p>
-          </div>
-        </fieldset>
-        <div className="master-save-bar">
-          <div className="master-actions">
-            {canManage && (
-              <button
-                type="button"
-                className="master-primary"
-                disabled={disabled || !dirty}
-                onClick={onSave}
-              >
-                Save new version
-              </button>
-            )}
+            <p className="mt-3 text-xs text-muted-foreground">
+              Saving creates a new revision. Garment history keeps the labels
+              saved with each garment version. Status changes are available in
+              the register.
+            </p>
+          </fieldset>
+        </form>
+        <aside className="editor-rail">
+          {snapshot && (
+            <section
+              aria-label="Historical catalog record"
+              className="mb-5 rounded-md border border-border bg-muted/40 p-4"
+            >
+              <h3>Saved revision {snapshot.revision}</h3>
+              <p className="break-words text-sm">{snapshot.label}</p>
+              {props.showRates && "amount" in snapshot && (
+                <p className="mt-2 font-mono text-sm">
+                  Saved add-on price: {rate(snapshot.amount)}
+                </p>
+              )}
+            </section>
+          )}
+          <MasterHistory
+            history={props.history}
+            currentVersionId={draft.kind === "saved" ? draft.current.id : null}
+            selectedVersionId={snapshot?.id ?? null}
+            disabled={props.busy}
+            onInspect={props.onInspect}
+            onMore={() => void props.onMoreHistory()}
+          />
+        </aside>
+      </div>
+      <EditorSaveBar
+        dirty={props.dirty}
+        writable={props.canManage}
+        locked={props.disabled}
+        busy={props.busy}
+        form="catalog-definition-form"
+        recovery={
+          <>
+            {props.recovery}
             {draft.kind === "saved" && (
-              <button type="button" disabled={busy} onClick={onReload}>
-                Reload saved version
-              </button>
-            )}
-            <button type="button" disabled={busy} onClick={onClose}>
-              Cancel
-            </button>
-          </div>
-        </div>
-      </section>
-      <aside
-        className="master-inspector"
-        key={draft.kind === "saved" ? draft.current.id : `new-${draft.entity}`}
-      >
-        <h2>Saved history</h2>
-        {error && <p role="alert">{error}</p>}
-        {snapshot && (
-          <section aria-label="Historical catalog record">
-            <h3>Saved revision {snapshot.revision}</h3>
-            <p>{snapshot.label}</p>
-            {"amount" in snapshot && (
-              <p>Saved add-on price: {rate(snapshot.amount)}</p>
-            )}
-          </section>
-        )}
-        <ol>
-          {history?.items.map((v) => (
-            <li key={v.id}>
-              <button
-                type="button"
-                disabled={busy}
-                onClick={() => void inspect(v.id)}
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={props.locked}
+                onClick={props.onReload}
               >
-                Revision {v.revision}
-              </button>
-              <small>{new Date(v.createdAt).toLocaleString()}</small>
-            </li>
-          ))}
-        </ol>
-        {history?.nextOffset !== null && history && (
-          <button
-            type="button"
-            disabled={busy}
-            onClick={() => void onMoreHistory()}
-          >
-            More history
-          </button>
-        )}
-      </aside>
-    </>
+                Reload saved version
+              </Button>
+            )}
+          </>
+        }
+        onCancel={props.onClose}
+      />
+    </section>
   );
 }

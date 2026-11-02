@@ -1,8 +1,12 @@
 "use client";
 import * as c from "@fitloom/application/master-contracts";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useEffectEvent, useMemo, useState } from "react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
 import { Control, type Issues } from "./editor-controls";
 import {
+  ApiError,
   type Detail,
   type Page,
   pageSchema,
@@ -45,7 +49,7 @@ export function RateControl({
     <div className="master-rate-control">
       <Control label={label} path={path} issues={issues}>
         {(props) => (
-          <input
+          <Input
             {...props}
             type="text"
             inputMode="decimal"
@@ -73,6 +77,7 @@ export function RateControl({
 type CurrentChoice = { id: string; label: string; amount?: string };
 export function EligibilityEditor({
   base,
+  panel,
   definition,
   current,
   rates,
@@ -80,8 +85,10 @@ export function EligibilityEditor({
   disabled,
   issues,
   onChange,
+  onAccessLost,
 }: {
   base: string;
+  panel: "services" | "addons";
   definition: c.GarmentDefinition;
   current: Detail | null;
   rates: RateDraft;
@@ -89,9 +96,14 @@ export function EligibilityEditor({
   disabled: boolean;
   issues: Issues;
   onChange: (definition: c.GarmentDefinition, rates: RateDraft) => void;
+  onAccessLost: (error: unknown) => void;
 }) {
   const [choices, setChoices] = useState<CurrentChoice[]>([]),
     [error, setError] = useState("");
+  const [refreshKey, setRefreshKey] = useState(0);
+  const reportAccess = useEffectEvent((error: unknown) => {
+    if (error instanceof ApiError && error.status === 403) onAccessLost(error);
+  });
   // Resolve saved stable IDs to current names and permitted prices. Never put these in historical views.
   const identities = useMemo(
     () => ({
@@ -102,6 +114,8 @@ export function EligibilityEditor({
   );
   useEffect(() => {
     let alive = true;
+    // Refresh the bounded ID set after a deliberate retry.
+    void refreshKey;
     const ids = identities;
     Promise.all([
       ...ids.services.map(async (id) => {
@@ -156,205 +170,260 @@ export function EligibilityEditor({
           setError("");
         }
       })
-      .catch(() => {
-        if (alive)
+      .catch((error: unknown) => {
+        if (alive) {
+          setChoices([]);
+          reportAccess(error);
           setError(
-            "Current choices could not be refreshed. Saved references remain visible. Reload the garment to try again.",
+            "Current choices could not be refreshed. Saved references remain visible. Refresh current choices to try again.",
           );
+        }
       });
     return () => {
       alive = false;
     };
-  }, [base, identities, current]);
+  }, [base, identities, current, refreshKey]);
   return (
-    <section className="master-section" aria-label="Rates and eligibility">
-      <h3>04 · Rates and eligibility</h3>
+    <section
+      className="master-section eligibility-panel"
+      aria-label="Rates and eligibility"
+    >
+      <h3>{panel === "addons" ? "05 · Add-ons" : "04 · Services & rates"}</h3>
       <p className="master-muted">
-        Configuration defaults in INR. Unset and zero are distinct. A service
-        override replaces the base rate. Add-ons have separate current prices.
+        {panel === "services"
+          ? "Choose the services offered for this garment. An override replaces the base default; unset and zero are distinct."
+          : "Choose optional extras for this garment. Their current INR prices are separate from garment and service rates."}
       </p>
-      {error && <p role="alert">{error}</p>}
+      {!showRates && (
+        <p className="mt-3 text-sm text-muted-foreground">
+          Prices are unavailable with your current access.
+        </p>
+      )}
+      {error && (
+        <Alert variant="destructive" className="my-4">
+          <AlertDescription>{error}</AlertDescription>
+          <button type="button" onClick={() => setRefreshKey((key) => key + 1)}>
+            Refresh current choices
+          </button>
+        </Alert>
+      )}
       <fieldset disabled={disabled}>
-        {showRates && (
-          <RateControl
-            label="Base default rate (INR)"
-            value={rates.baseRate}
-            path={["baseRate"]}
-            issues={issues}
-            onChange={(baseRate) =>
-              onChange(definition, { ...rates, baseRate })
-            }
-          />
-        )}
-        <h4>Eligible services</h4>
-        {definition.services.length === 0 && <p>No eligible services.</p>}
-        {definition.services.map((binding, index) => {
-          const retired =
-            current?.services.find((s) => s.serviceId === binding.serviceId)
-              ?.bindingState === "retired";
-          const selected = choices.find((s) => s.id === binding.serviceId);
-          const override =
-            rates.serviceOverrides.find(
-              (s) => s.serviceId === binding.serviceId,
-            )?.rateOverride ?? null;
-          return (
-            <div className="master-binding" key={binding.serviceId}>
-              <strong>
-                {retired
-                  ? binding.savedLabel
-                  : (selected?.label ?? binding.savedLabel)}
-              </strong>
-              {retired && (
-                <p className="master-muted">
-                  Inactive service retained. Its saved label and override are
-                  locked. Remove it or restore the service to change this
-                  binding.
-                </p>
-              )}
-              {showRates && (
-                <>
-                  <RateControl
-                    label={`Service override ${index + 1} (INR)`}
-                    path={["serviceOverrides", index, "rateOverride"]}
-                    issues={issues}
-                    disabled={retired}
-                    value={override}
-                    onChange={(rateOverride) =>
-                      onChange(definition, {
-                        ...rates,
-                        serviceOverrides: rates.serviceOverrides.map((s) =>
-                          s.serviceId === binding.serviceId
-                            ? { ...s, rateOverride }
-                            : s,
-                        ),
-                      })
-                    }
-                  />
+        <div hidden={panel !== "services"}>
+          {showRates && (
+            <div className="rate-default">
+              <RateControl
+                label="Base default rate (INR)"
+                value={rates.baseRate}
+                path={["baseRate"]}
+                issues={issues}
+                onChange={(baseRate) =>
+                  onChange(definition, { ...rates, baseRate })
+                }
+              />
+              <p className="mt-3 text-xs text-muted-foreground">
+                Default for services without an override. INR · up to six
+                decimal places.
+              </p>
+            </div>
+          )}
+          <h4>
+            Eligible services{" "}
+            <Badge variant="outline">{definition.services.length} / 20</Badge>
+          </h4>
+          {definition.services.length === 0 && <p>No eligible services.</p>}
+          {definition.services.map((binding, index) => {
+            const retired =
+              current?.services.find((s) => s.serviceId === binding.serviceId)
+                ?.bindingState === "retired";
+            const selected = choices.find((s) => s.id === binding.serviceId);
+            const override =
+              rates.serviceOverrides.find(
+                (s) => s.serviceId === binding.serviceId,
+              )?.rateOverride ?? null;
+            return (
+              <div className="master-binding" key={binding.serviceId}>
+                <strong>
+                  {retired
+                    ? binding.savedLabel
+                    : (selected?.label ?? binding.savedLabel)}
+                </strong>
+                <Badge className="ml-2" variant="outline">
+                  {retired ? "Inactive · retained" : "Eligible"}
+                </Badge>
+                {retired && (
                   <p className="master-muted">
-                    Configured service rate: {rate(override ?? rates.baseRate)}
+                    Inactive service retained. Its saved label and override are
+                    locked. Remove it or restore the service to change this
+                    binding.
                   </p>
-                </>
-              )}
-              <button
-                type="button"
-                onClick={() =>
-                  onChange(
-                    {
-                      ...definition,
-                      services: definition.services.filter(
-                        (s) => s.serviceId !== binding.serviceId,
-                      ),
-                    },
-                    {
-                      ...rates,
-                      serviceOverrides: rates.serviceOverrides.filter(
-                        (s) => s.serviceId !== binding.serviceId,
-                      ),
-                    },
-                  )
-                }
-              >
-                Remove service {index + 1}
-              </button>
-            </div>
-          );
-        })}
-        {!disabled && definition.services.length < 20 && (
-          <ChoicePicker
-            base={base}
-            kind="service"
-            selected={definition.services.map((s) => s.serviceId)}
-            disabled={disabled}
-            onChoose={(item) =>
-              onChange(
-                {
-                  ...definition,
-                  services: [
-                    ...definition.services,
-                    {
-                      serviceId: c.serviceId.parse(item.id),
-                      savedLabel: item.label,
-                    },
-                  ],
-                },
-                {
-                  ...rates,
-                  serviceOverrides: [
-                    ...rates.serviceOverrides,
-                    {
-                      serviceId: c.serviceId.parse(item.id),
-                      rateOverride: null,
-                    },
-                  ],
-                },
-              )
-            }
-          />
-        )}
-        <h4>Eligible add-ons</h4>
-        {definition.addons.length === 0 && <p>No eligible add-ons.</p>}
-        {definition.addons.map((binding, index) => {
-          const retired =
-            current?.addons.find((a) => a.addonId === binding.addonId)
-              ?.bindingState === "retired";
-          const selected = choices.find((a) => a.id === binding.addonId);
-          return (
-            <div className="master-binding" key={binding.addonId}>
-              <strong>
-                {retired
-                  ? binding.savedLabel
-                  : (selected?.label ?? binding.savedLabel)}
-              </strong>
-              {retired ? (
-                <p className="master-muted">
-                  Inactive add-on retained. Remove it or restore the add-on to
-                  use it in new bindings.
-                </p>
-              ) : showRates && selected?.amount !== undefined ? (
-                <p>Current add-on price: {rate(selected.amount)}</p>
-              ) : null}
-              <button
-                type="button"
-                onClick={() =>
-                  onChange(
-                    {
-                      ...definition,
-                      addons: definition.addons.filter(
-                        (a) => a.addonId !== binding.addonId,
-                      ),
-                    },
-                    rates,
-                  )
-                }
-              >
-                Remove add-on {index + 1}
-              </button>
-            </div>
-          );
-        })}
-        {!disabled && definition.addons.length < 30 && (
-          <ChoicePicker
-            base={base}
-            kind="addon"
-            selected={definition.addons.map((a) => a.addonId)}
-            disabled={disabled}
-            onChoose={(item) =>
-              onChange(
-                {
-                  ...definition,
-                  addons: [
-                    ...definition.addons,
-                    {
-                      addonId: c.addonId.parse(item.id),
-                      savedLabel: item.label,
-                    },
-                  ],
-                },
-                rates,
-              )
-            }
-          />
-        )}
+                )}
+                {showRates && (
+                  <>
+                    <RateControl
+                      label={`Service override ${index + 1} (INR)`}
+                      path={["serviceOverrides", index, "rateOverride"]}
+                      issues={issues}
+                      disabled={retired}
+                      value={override}
+                      onChange={(rateOverride) =>
+                        onChange(definition, {
+                          ...rates,
+                          serviceOverrides: rates.serviceOverrides.map((s) =>
+                            s.serviceId === binding.serviceId
+                              ? { ...s, rateOverride }
+                              : s,
+                          ),
+                        })
+                      }
+                    />
+                    <p className="master-muted">
+                      Configured service rate:{" "}
+                      <span className="font-mono">
+                        {rate(override ?? rates.baseRate)}
+                      </span>
+                    </p>
+                    <p className="master-muted text-xs">
+                      {override !== null
+                        ? "Service override"
+                        : rates.baseRate !== null
+                          ? "Uses base default"
+                          : "Rate unset"}
+                    </p>
+                  </>
+                )}
+                <button
+                  type="button"
+                  onClick={() =>
+                    onChange(
+                      {
+                        ...definition,
+                        services: definition.services.filter(
+                          (s) => s.serviceId !== binding.serviceId,
+                        ),
+                      },
+                      {
+                        ...rates,
+                        serviceOverrides: rates.serviceOverrides.filter(
+                          (s) => s.serviceId !== binding.serviceId,
+                        ),
+                      },
+                    )
+                  }
+                >
+                  Remove service {index + 1}
+                </button>
+              </div>
+            );
+          })}
+          {!disabled && definition.services.length < 20 && (
+            <ChoicePicker
+              base={base}
+              kind="service"
+              selected={definition.services.map((s) => s.serviceId)}
+              disabled={disabled}
+              showRates={showRates}
+              onAccessLost={onAccessLost}
+              onChoose={(item) =>
+                onChange(
+                  {
+                    ...definition,
+                    services: [
+                      ...definition.services,
+                      {
+                        serviceId: c.serviceId.parse(item.id),
+                        savedLabel: item.label,
+                      },
+                    ],
+                  },
+                  {
+                    ...rates,
+                    serviceOverrides: [
+                      ...rates.serviceOverrides,
+                      {
+                        serviceId: c.serviceId.parse(item.id),
+                        rateOverride: null,
+                      },
+                    ],
+                  },
+                )
+              }
+            />
+          )}
+        </div>
+        <div hidden={panel !== "addons"}>
+          <h4>
+            Eligible add-ons{" "}
+            <Badge variant="outline">{definition.addons.length} / 30</Badge>
+          </h4>
+          {definition.addons.length === 0 && <p>No eligible add-ons.</p>}
+          {definition.addons.map((binding, index) => {
+            const retired =
+              current?.addons.find((a) => a.addonId === binding.addonId)
+                ?.bindingState === "retired";
+            const selected = choices.find((a) => a.id === binding.addonId);
+            return (
+              <div className="master-binding" key={binding.addonId}>
+                <strong>
+                  {retired
+                    ? binding.savedLabel
+                    : (selected?.label ?? binding.savedLabel)}
+                </strong>
+                <Badge className="ml-2" variant="outline">
+                  {retired ? "Inactive · retained" : "Eligible"}
+                </Badge>
+                {retired ? (
+                  <p className="master-muted">
+                    Inactive add-on retained. Remove it or restore the add-on to
+                    use it in new bindings.
+                  </p>
+                ) : showRates && selected?.amount !== undefined ? (
+                  <p>Current add-on price: {rate(selected.amount)}</p>
+                ) : null}
+                <button
+                  type="button"
+                  onClick={() =>
+                    onChange(
+                      {
+                        ...definition,
+                        addons: definition.addons.filter(
+                          (a) => a.addonId !== binding.addonId,
+                        ),
+                      },
+                      rates,
+                    )
+                  }
+                >
+                  Remove add-on {index + 1}
+                </button>
+              </div>
+            );
+          })}
+          {!disabled && definition.addons.length < 30 && (
+            <ChoicePicker
+              base={base}
+              kind="addon"
+              selected={definition.addons.map((a) => a.addonId)}
+              disabled={disabled}
+              showRates={showRates}
+              onAccessLost={onAccessLost}
+              onChoose={(item) =>
+                onChange(
+                  {
+                    ...definition,
+                    addons: [
+                      ...definition.addons,
+                      {
+                        addonId: c.addonId.parse(item.id),
+                        savedLabel: item.label,
+                      },
+                    ],
+                  },
+                  rates,
+                )
+              }
+            />
+          )}
+        </div>
       </fieldset>
     </section>
   );
@@ -364,12 +433,16 @@ function ChoicePicker({
   kind,
   selected,
   disabled,
+  showRates,
+  onAccessLost,
   onChoose,
 }: {
   base: string;
   kind: "service" | "addon";
   selected: string[];
   disabled: boolean;
+  showRates: boolean;
+  onAccessLost: (error: unknown) => void;
   onChoose: (item: { id: string; label: string }) => void;
 }) {
   const [search, setSearch] = useState(""),
@@ -390,7 +463,10 @@ function ChoicePicker({
         ),
       );
       setError("");
-    } catch {
+    } catch (error) {
+      setPage(null);
+      if (error instanceof ApiError && error.status === 403)
+        onAccessLost(error);
       setError(`Available ${noun} could not be reached. Try again.`);
     } finally {
       setBusy(false);
@@ -404,7 +480,10 @@ function ChoicePicker({
           value={search}
           maxLength={100}
           disabled={disabled || busy}
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={(e) => {
+            setSearch(e.target.value);
+            setPage(null);
+          }}
         />
       </label>
       <button
@@ -431,7 +510,9 @@ function ChoicePicker({
                 >
                   Add {item.label}
                 </button>
-                {"amount" in item && <small> · {rate(item.amount)}</small>}
+                {showRates && "amount" in item && (
+                  <small> · {rate(item.amount)}</small>
+                )}
               </li>
             ))}
           </ul>
