@@ -7,6 +7,8 @@ import { createPool } from "@fitloom/db";
 import sharp from "sharp";
 import { signFixture } from "../dist/index.js";
 import { totp } from "../test/auth-helpers.mjs";
+import { masterHttpChecks } from "./master-http-checks.mjs";
+import { masterUiChecks } from "./master-ui-checks.mjs";
 
 const root = new URL("../../../", import.meta.url),
   base = "http://localhost:24411";
@@ -356,6 +358,29 @@ try {
   assert.equal(view.status, 200);
   assert.ok(view.headers.get("cache-control").includes("no-store"));
   assert.equal((await view.json()).owner.email, email);
+  await masterHttpChecks({ base, workspacePath, api, cookie, admin, tenant });
+  if (process.env.MASTER_UI_CHECKS === "1")
+    await masterUiChecks({
+      base,
+      workspacePath,
+      api,
+      cookie,
+      admin,
+      tenant,
+      location: choice.locationId,
+    });
+  const settingsPage = await fetch(
+    `${base}/workspaces/${tenant}/${choice.locationId}/settings/garments`,
+    { headers: { cookie } },
+  );
+  assert.equal(settingsPage.status, 200);
+  assert.ok((await settingsPage.text()).includes("Garments and services"));
+  const anonymousSettings = await fetch(
+    `${base}/workspaces/${tenant}/${choice.locationId}/settings/garments`,
+    { redirect: "manual" },
+  );
+  assert.equal(anonymousSettings.status, 307);
+  assert.equal(anonymousSettings.headers.get("location"), "/account");
   const jobs = await fetch(`${base}${workspacePath}/jobs`, {
     headers: { cookie },
   });

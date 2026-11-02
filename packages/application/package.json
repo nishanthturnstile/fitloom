@@ -11,6 +11,14 @@
     "./workspace-contracts": {
       "types": "./dist/workspace-contracts.d.ts",
       "default": "./dist/workspace-contracts.js"
+    },
+    "./master-contracts": {
+      "types": "./dist/master-contracts.d.ts",
+      "default": "./dist/master-contracts.js"
+    },
+    "./garment-definition": {
+      "types": "./dist/garment-definition.d.ts",
+      "default": "./dist/garment-definition.js"
     }
   },
   "scripts": {
@@ -20,7 +28,7 @@
     "test": "pnpm --filter @fitloom/db build && pnpm build && node --env-file-if-exists=../db/.env --test --test-concurrency=1 test/*.test.mjs",
     "mail:local": "node ../../scripts/compose.mjs up",
     "mail:status": "node --env-file-if-exists=../db/.env scripts/mail-status.mjs",
-    "test:http": "node --env-file-if-exists=../db/.env scripts/web-smoke.mjs",
+    "test:http": "node --env-file-if-exists=../db/.env scripts/web-smoke.mjs && node --env-file-if-exists=../db/.env scripts/master-transport-check.mjs",
     "test:storage-reset": "node --env-file-if-exists=../db/.env scripts/reset-test-storage.mjs"
   },
   "devDependencies": {

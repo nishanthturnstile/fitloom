@@ -11,7 +11,8 @@ Statuses: Planned, In progress, Blocked, Deferred, Done. Deferred work is intent
 | Local Docker Compose and Tailscale development | Done | Use canonical Tailscale URLs and persistent SeaweedFS private storage |
 | External infrastructure, deployment, and host backups | Deferred | User owns separate setup. Remind after locally verified phase 3; assess first deployment readiness after phase 4 |
 | Subscriptions, platform billing, and payment-provider integrations | Deferred | Internal product has no platform subscription. No implementation until explicitly reopened; no scheduled phase |
-| Customers and measurements | Planned | Roadmap phase 2 |
+| Garment masters, phase 2 Build One | Done | Increments 1–6 verified locally. Use stable schema contracts for the next customer/measurement build. See [final acceptance and handoff](evidence/phase-2-build-1-increment-6.md) |
+| Customers and measurements | Planned | Continue roadmap phase 2 after the [Build One garment masters plan](plans/phase-2-build-1-garment-masters.md) |
 | Orders, pricing, manual payments, and documents | Planned | Phase 3: record advances, partial/full collections, balances, receipts, refunds, and corrections without a payment provider |
 | Production, trials, delivery, and daily control | Planned | Roadmap phase 4 |
 | Workshop and workforce finance | Planned | Roadmap phase 5 |
@@ -21,6 +22,10 @@ Statuses: Planned, In progress, Blocked, Deferred, Done. Deferred work is intent
 | Insights, engagement, and operator tools | Planned | Roadmap phase 9 |
 
 Detailed scope and dependencies stay in [the roadmap](../product/roadmap.md).
+
+Build One verified on 2026-11-02: the complete garment/service/add-on settings workflow, immutable schema history, rates and eligibility, explicit starter installation, tenant/location authority, and schema-only projections pass final acceptance. Increment 6 adds filtered-page/audit, function-privilege, update-rollback, historical-projection, revoked-permission, and inline-bounds regressions. `pnpm validate` passes 12 database and 146 application tests, lint, types, production build, optimized HTTP, and 413/408 transport checks. A separate real Chrome run passes desktop/narrow, dirty navigation, saved history, conflict/replay, starter collision recovery, and role scenarios. All 23 foundation migrations remain unchanged within the 34 retained migrations; no increment 6 migration or deployment is added. [Final evidence](evidence/phase-2-build-1-increment-6.md) records the acceptance matrix and limits. Customers and measurements remain Planned, as does the rest of phase 2.
+
+Build One implementation review on 2026-11-02: the two-axis [implementation review](reviews/phase-2-build-1-implementation-review.md) found and fixed the missing Drizzle snapshot baseline, inherited-name query handling, the editor's missing active-state control, the starter-install client size check, duplicated resource/history contracts, and dialog accessibility. It also retained the Chrome screenshots in the repository and documented the starter-install token arithmetic. The 34 retained migrations are unchanged and no new migration was added; the general `db:generate` path now reports no drift against the reviewed `0033_snapshot.json` baseline. Lint, types, build, 12 database and 146 application tests, optimized HTTP, and the real Chrome run pass after the fixes.
 
 Scope decision on 2026-11-01: build Fitloom as an internal product with no platform subscription. Defer all subscription plans, trials, entitlements, quotas, platform billing, and payment-provider integrations until explicitly reopened. Continue 1B → phase 2 → phase 3 and onward without 1D. Shop payments remain required and are entered manually, including incoming collections and outgoing refunds, expenses, supplier payments, and workforce payouts in their owning phases. Record amount, currency, method, date, reference, allocation, actor, and audit history. Earlier dated entries below preserve their original scope; this decision supersedes their instructions to start or require 1D.
 

@@ -2,7 +2,7 @@
 
 This guide covers `packages/application/`. Run project commands from the repository root unless a command specifies another directory.
 
-Shared server command execution, verified identity, email/MFA, decimal policies, and journal contracts. See [identity, Mailpit, and production Resend configuration](../architecture/authentication.md). PostgreSQL persistence functions, grants, and migrations belong to `@fitloom/db`. The main entry point is Node-only. `./workspace-contracts` exposes browser-safe Zod schemas and inferred types.
+Shared server command execution, verified identity, email/MFA, decimal policies, and journal contracts. See [identity, Mailpit, and production Resend configuration](../architecture/authentication.md). PostgreSQL persistence functions, grants, and migrations belong to `@fitloom/db`. The main entry point is Node-only. `./workspace-contracts`, `./master-contracts`, and `./garment-definition` expose browser-safe schemas and pure helpers.
 
 ## Execute commands
 
@@ -54,6 +54,7 @@ Pinned `decimal.js` 10.6.0 uses an isolated constructor with sixty significant d
 | --- | --- |
 | `moneyInput` | Signed decimal string, eighteen integer digits and two fractional places. Canonical output has two places. Matches journal `numeric(20,2)`. |
 | `positiveMoneyInput` | Posted money strictly greater than zero |
+| `nonnegativeRateInput` | Configured default rate, zero allowed, six canonical places; rejects every negative spelling before normalization, including `-0` |
 | `unitPriceInput` | Eighteen integer digits and six fractional places |
 | `quantityInput` | Twelve integer digits and six fractional places, with explicit `piece`, `metre`, or `hour` unit |
 | `intermediateInput` | Thirty integer digits and twelve fractional places |
@@ -92,3 +93,63 @@ Day 5 adds `processFoundationWork`, `fixtureInbox`, `signFixture`, `retryJob`, a
 Day 6 adds a SeaweedFS-backed `BlobStore`, bounded image validation/streaming, `beginFile`/`attachFile`/`retireFile`, and current-identity `createFileService`. The identity service supplies strict, durable operator commands and supported owner recovery on the same transaction as its encrypted mail intent. See [private files and operator recovery](../operations/private-files-and-operator-recovery.md). Application test files run serially against the shared isolated database, while tests retain explicit concurrent command/race checks.
 
 Day 7 adds immutable digest-addressed blob references, durable content preparation, whole-stream download deadlines, protected `operationalStatus`, bounded page methods, shared browser-safe team schemas, and optional typed `Observe` callbacks. Diagnostics never include domain inputs and cannot alter command results. `pnpm validate` passes 65 application tests and optimized HTTP failure/recovery checks. Root `pnpm verify:recovery` exercises actual database/object restore; `pnpm verify:resources` measures the live local stack. See [the operating contract and evidence](../operations/foundation-operations.md).
+
+## Garment master contracts
+
+Phase 2 Build One increment 1 provides `master-contracts.ts`, `garment-definition.ts`, `master-manifest.ts`, and `master-starters.ts`. The contracts cover format 1 definitions, command payloads, bounded errors and pages, and separate schema-only/priced output schemas. Command execution lives in the separate master service described below.
+
+`garmentDefinition` validates ordered sections, length/number/text/boolean/select fields, construction groups, semantic compatibility, and unique IDs. Every eligible service requires an explicit nullable rate override in `garmentSave`; an unset base rate also uses explicit null. `masterRateInput` aliases `nonnegativeRateInput`. Names retain their display spelling; authoritative name normalization belongs to the SQL persistence function.
+
+`definitionIdentities` separates immutable meaning from editable labels, order, bounds, and precision. `identityIssues` compares against a tenant/garment-scoped registry. `copyHistoricalDefinition` creates fresh IDs for retired nodes and for options whose owner receives a new ID. The SQL persistence layer independently enforces the same rules.
+
+`garmentPreview` creates an ordered, value-free model for both unsaved and exact historical definitions. It supplies image alternatives and an explicit empty-schema message. `createStarterBundle(newId)` allocates original development examples with unset rates and no database writes. Original illustration IDs resolve only to bundled static assets.
+
+Run `pnpm --filter @fitloom/application build`, then `node --test packages/application/test/master-contracts.test.mjs` for the focused contract checks. Increment 1 verified 51 contract tests alongside workspace lint, type checks, and production build. See [increment 1 evidence](../implementation/evidence/phase-2-build-1-increment-1.md). Subsequent increments add independent SQL enforcement, permission delegation, the service/API, and the complete garment/service/add-on settings workflow.
+
+Increment 2 extends `createRole` to accept `masters.read`, `masters.manage`, and `masters.rates.read`. Management requires both read permissions, and SQL independently checks the same rule and the actor's current delegation authority. `workspacePermissionLabel` supplies display labels while preserving the exact permission values in role submissions. [Master persistence](database.md#garment-master-persistence) documents the restricted save/read functions. Increment 3 adds the master service and its authorization-before-replay wiring, described below.
+
+Increment 2 verification on 2026-11-01: `pnpm validate` passes 12 database tests and 135 application tests, including 19 reported storage tests. The final retained set contains 30 migrations. Lint, types, production build, and optimized HTTP smoke also pass. [Increment 2 evidence](../implementation/evidence/phase-2-build-1-increment-2.md) records actual behavior, migration corrections, and remaining service/API/UI boundaries.
+
+## Execute master commands and queries
+
+Build One increment 3 adds `createMasterService({ pool, resolveIdentity, observe? })`. It uses the existing command executor and scoped transaction owner. The factory exposes `command(action, target, invocation)`, `catalog(target)`, `page(target, kind, query?)`, `garment(target, id, versionId?)`, `service(target, id, versionId?)`, `addon(target, id, versionId?)`, and `history(target, kind, id, query?)`.
+
+The target is `{ tenantId, locationId }`. Invocation is `{ operationKey, correlationId, payload }`; actor identity comes from the trusted resolver. Command input and output are parsed with the shared strict contracts. The service pre-parses editor input to provide at most 30 bounded validation issues, then the executor validates normalized input again before hashing it. `MasterError` exposes a safe category, issues, and correlation ID. Driver SQL, constraint names, and payloads do not enter responses.
+
+| Action | Exported command | Payload |
+| --- | --- | --- |
+| `garment.save` | `saveGarment` | Create/update definition, explicit nullable base rate, currency, and one explicit nullable override per eligible service |
+| `garment.lifecycle` | `changeGarmentLifecycle` | Garment ID, expected header version, active state |
+| `service.save` | `saveMasterService` | Create/update label, with ID and expected version for update |
+| `service.lifecycle` | `changeServiceLifecycle` | Service ID, expected header version, active state |
+| `addon.save` | `saveMasterAddon` | Create/update label, amount, INR currency, with ID and expected version for update |
+| `addon.lifecycle` | `changeAddonLifecycle` | Add-on ID, expected header version, active state |
+| `masters.starters.install` | `installMasterStarters` | `bundleVersion: "tailoring-core-v1"`, expected catalog version |
+| `masters.reorder` | `reorderMasters` | Kind, moved ID, before ID or null for end, expected catalog version |
+| `masters.visibility` | `changeMasterVisibility` | Expected catalog version and both hide-standard flags |
+
+All writes require current `masters.read`, `masters.manage`, and `masters.rates.read` before replay. Expected-version and mutable-reference checks remain inside new mutations, so a successful retry can replay after its original save advanced the version or a service was later retired. Every result includes `catalogVersion`. Record commands audit their stable entity and header versions. Catalog commands audit `master_catalog` with the tenant UUID and previous/next order/settings tokens, including equal tokens on no-op initialization.
+
+Starter definitions and fresh node IDs are generated inside the new-operation mutation. Installation locks catalog state, uses private publication helpers with the existing SQL validation, and creates missing template keys atomically. It preserves existing copies, rates, labels, IDs, active states, and schema history. A name collision rolls back the full installation and returns a bounded issue. Installation advances the catalog token once; applying the installed bundle again leaves it unchanged. Missing garment copies bind active starter services only, preserving any existing retired service copy.
+
+Reads resolve current identity and `masters.read` at a concrete location. The service checks `masters.rates.read` before choosing the SQL projection. Schema-only pages/details/history omit price properties. Registers use active/available defaults, normalized prefix search, origin/applicability filters, a maximum of 50 rows, and offsets through 100000. Page results contain `items`, `total`, `nextOffset`, and `catalogVersion`; counts and rows use the same predicates. Current and exact-version reads remain accessible for inactive or hidden records.
+
+The master contract bounds version inputs to PostgreSQL's positive/nonnegative integer range. A continuation token never exceeds the admitted offset range. `masterHistoryQuery` and `masterEmptyQuery` keep route query validation browser-safe. See [master API transport](web.md#master-api-transport) and [increment 3 evidence](../implementation/evidence/phase-2-build-1-increment-3.md). The settings UI configures garment schemas, services, add-ons, eligibility, nullable rates, and starter visibility.
+
+Increment 3 verification on 2026-11-01: final `pnpm validate` passes 12 database tests, 144 application tests, lint, type checks, production build, and optimized HTTP master/baseline checks. The retained set contains 34 migrations. Actual repeated over-limit requests and a stalled request stream produce 413 and 408 responses. [Increment 3 evidence](../implementation/evidence/phase-2-build-1-increment-3.md) records checks, corrections, and remaining UI work.
+
+Increment 4 adds the browser-safe `masterCommandResponse` schema helper and guidance illustration data in the shared pure preview model. The web garment editor preserves complete current rates and bindings during schema saves. It uses the current schema identity set to regenerate retired IDs when copying historical schemas. [Garment UI evidence](../implementation/evidence/phase-2-build-1-increment-4.md) records real Chrome scenarios plus the unchanged 12 database/144 application test regression counts, types/build/lint, and optimized HTTP checks.
+
+Increment 5 adds service/add-on editors and editable rates/eligibility. Current choices resolve current labels and permitted add-on prices; garment history retains saved labels and its own rates. Retired references can carry forward unchanged from the locked current version or be removed. A retired service override cannot be changed while carried forward. [Catalog configuration evidence](../implementation/evidence/phase-2-build-1-increment-5.md) records first-use starter installation, collision rollback, replay, schema-only UI, and decimal behavior.
+
+## Consume saved garment schemas
+
+Use a stable `garmentId` with an exact `garmentVersionId` when storing a historical reference. Content revision and version ID identify immutable saved content. The detail's `version` is the current header edit token, including lifecycle changes, even when reading an older content version. Do not use that header token to identify historical content.
+
+`catalogVersion` protects membership, ordering, and visibility commands. A content or price edit preserves it. Creation, an actual lifecycle change, ordering, visibility, or installation of missing starter copies advances it. No-op commands preserve it. Reinstallation returns existing IDs as well as new IDs, so nonempty result arrays do not imply a change.
+
+Later measurement entry stores wearer values separately and defines its own intake projection and permissions. It can consume format 1 definitions and the pure ordered preview helpers without importing the Node service. Unknown format versions fail explicitly. A future persisted format requires a renderer for earlier stored formats.
+
+`resolveGarmentRate` applies `rateOverride ?? baseRate`, preserving an explicit zero and leaving both-null unset. Eligible add-ons remain separate components. Later order confirmation owns immutable measurement/schema, service, add-on, and resolved-price snapshots; changing a default must not reprice an existing order.
+
+The [final acceptance matrix](../implementation/evidence/phase-2-build-1-increment-6.md) maps each Build One scenario to executable checks and records the migration review, commands, outputs, and remaining limits.

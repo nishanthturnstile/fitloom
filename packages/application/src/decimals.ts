@@ -20,6 +20,11 @@ function decimalSchema(scale: number, integerDigits: number) {
 }
 export const moneyInput = decimalSchema(2, 18).brand<"PostedMoney">();
 export const unitPriceInput = decimalSchema(6, 18).brand<"UnitPrice">();
+// Check the supplied spelling before normalization, including negative zero.
+export const nonnegativeRateInput = z
+  .string()
+  .refine((value) => !value.startsWith("-"), "Rate must be nonnegative")
+  .pipe(unitPriceInput);
 export const quantityInput = z.strictObject({
   value: decimalSchema(6, 12).brand<"Quantity">(),
   unit: z.enum(["piece", "metre", "hour"]),

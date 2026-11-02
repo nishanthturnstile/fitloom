@@ -1,8 +1,19 @@
 import assert from "node:assert/strict";
 import { createHash, randomUUID } from "node:crypto";
-import { readFile } from "node:fs/promises";
+import {
+  copyFile,
+  mkdir,
+  mkdtemp,
+  readFile,
+  rm,
+  writeFile,
+} from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { test } from "node:test";
 import { sql } from "drizzle-orm";
+import { drizzle } from "drizzle-orm/node-postgres";
+import { migrate } from "drizzle-orm/node-postgres/migrator";
 import pg from "pg";
 import { createPool, withScope } from "../dist/index.js";
 import { migrateDatabase } from "../scripts/migrate.mjs";
@@ -71,22 +82,102 @@ await test("PostgreSQL roles, migrations, and tenant isolation", async (t) => {
     await migration.query(
       "SET ROLE fitloom_migrator; DROP SCHEMA IF EXISTS app CASCADE; DROP SCHEMA public CASCADE; DROP SCHEMA IF EXISTS drizzle CASCADE; DROP SCHEMA IF EXISTS pgboss CASCADE; CREATE SCHEMA public AUTHORIZATION fitloom_migrator; REVOKE ALL ON SCHEMA public FROM PUBLIC",
     );
-    await t.test("clean migrations and repeated invocation", async () => {
-      await migrateDatabase(url);
-      const before = await migration.query(
-        "SELECT * FROM drizzle.__drizzle_migrations ORDER BY id",
-      );
-      await migrateDatabase(url);
-      assert.deepEqual(
-        (
+    await t.test(
+      "clean migrations, existing Owner upgrade, and repeated invocation",
+      async () => {
+        const folder = await mkdtemp(join(tmpdir(), "fitloom-foundation-"));
+        const journal = JSON.parse(
+          await readFile(
+            new URL("../migrations/meta/_journal.json", import.meta.url),
+            "utf8",
+          ),
+        );
+        const foundation = {
+          ...journal,
+          entries: journal.entries.slice(0, 23),
+        };
+        const legacyTenant = randomUUID(),
+          ownerRole = randomUUID(),
+          managerRole = randomUUID();
+        try {
+          await mkdir(join(folder, "meta"));
+          await writeFile(
+            join(folder, "meta", "_journal.json"),
+            JSON.stringify(foundation),
+          );
+          for (const entry of foundation.entries)
+            await copyFile(
+              new URL(`../migrations/${entry.tag}.sql`, import.meta.url),
+              join(folder, `${entry.tag}.sql`),
+            );
+          await migrate(drizzle(migration), { migrationsFolder: folder });
           await migration.query(
-            "SELECT * FROM drizzle.__drizzle_migrations ORDER BY id",
-          )
-        ).rows,
-        before.rows,
-      );
-      assert.equal(before.rowCount, 23);
-    });
+            "INSERT INTO app.tenants(id,name) VALUES($1,'Existing master migration fixture')",
+            [legacyTenant],
+          );
+          await migration.query(
+            "INSERT INTO app.roles(id,tenant_id,name,preset) VALUES($1,$3,'Owner','owner'),($2,$3,'Manager','manager')",
+            [ownerRole, managerRole, legacyTenant],
+          );
+          await migration.query(
+            "INSERT INTO app.permission_grants VALUES($1,$2,'workspace.manage'),($1,$3,'workspace.read')",
+            [legacyTenant, ownerRole, managerRole],
+          );
+          await migrateDatabase(url);
+          const upgraded = (
+            await migration.query(
+              "SELECT permission FROM app.permission_grants WHERE role_id=$1 ORDER BY permission",
+              [ownerRole],
+            )
+          ).rows.map((r) => r.permission);
+          assert.deepEqual(upgraded, [
+            "masters.manage",
+            "masters.rates.read",
+            "masters.read",
+            "workspace.manage",
+          ]);
+          assert.equal(
+            (
+              await migration.query(
+                "SELECT * FROM app.permission_grants WHERE role_id=$1 AND permission LIKE 'masters.%'",
+                [managerRole],
+              )
+            ).rowCount,
+            0,
+          );
+          await migration.query(
+            "DELETE FROM app.permission_grants WHERE tenant_id=$1",
+            [legacyTenant],
+          );
+          await migration.query("DELETE FROM app.roles WHERE tenant_id=$1", [
+            legacyTenant,
+          ]);
+          await migration.query("DELETE FROM app.tenants WHERE id=$1", [
+            legacyTenant,
+          ]);
+        } finally {
+          await rm(folder, { recursive: true, force: true });
+        }
+        // Also prove the full retained set installs directly from an empty database.
+        await migration.query(
+          "DROP SCHEMA app CASCADE; DROP SCHEMA public CASCADE; DROP SCHEMA drizzle CASCADE; DROP SCHEMA pgboss CASCADE; CREATE SCHEMA public AUTHORIZATION fitloom_migrator; REVOKE ALL ON SCHEMA public FROM PUBLIC",
+        );
+        await migrateDatabase(url);
+        const before = await migration.query(
+          "SELECT * FROM drizzle.__drizzle_migrations ORDER BY id",
+        );
+        await migrateDatabase(url);
+        assert.deepEqual(
+          (
+            await migration.query(
+              "SELECT * FROM drizzle.__drizzle_migrations ORDER BY id",
+            )
+          ).rows,
+          before.rows,
+        );
+        assert.equal(before.rowCount, 34);
+      },
+    );
     const actorA = randomUUID(),
       actorB = randomUUID(),
       userA = randomUUID(),

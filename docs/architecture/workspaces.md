@@ -18,9 +18,11 @@ The foundation presets have these permissions:
 
 | Preset | Permissions |
 | --- | --- |
-| Owner | `workspace.read`, `workspace.manage`, `workspace.private.read`, `access.manage`, `locations.all`, `audit.read`, `files.read`, `files.manage` |
+| Owner | `workspace.read`, `workspace.manage`, `workspace.private.read`, `access.manage`, `locations.all`, `audit.read`, `files.read`, `files.manage`, `masters.read`, `masters.manage`, `masters.rates.read` |
 | Manager | `workspace.read`, `workspace.manage` |
 | Staff | `workspace.read` |
+
+Existing and future Owner presets receive all three master permissions. Manager and Staff receive none automatically. A custom role containing `masters.manage` must also include `masters.read` and `masters.rates.read`; both the application contract and restricted SQL role function enforce this dependency. Master reads and writes use a concrete granted location, even though definitions belong to the whole tenant. Schema-only projections omit rate properties. The existing role UI gives master permissions readable labels.
 
 Preset definitions have no runtime write path. `createRole` creates a tenant-qualified custom role with a required `workspace.read` permission. Every requested permission must already belong to the actor at the selected location. Financial permissions are explicit custom grants; presets do not receive accounting permissions.
 

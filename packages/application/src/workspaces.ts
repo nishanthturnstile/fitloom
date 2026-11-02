@@ -157,26 +157,43 @@ export const updateWorkspace = command({
 export const createRole = command({
   kind: "role.create",
   permission: "access.manage",
-  input: z.strictObject({
-    name: z.string().trim().min(1).max(80),
-    permissions: z
-      .array(
-        z.enum([
-          "workspace.read",
-          "workspace.manage",
-          "workspace.private.read",
-          "access.manage",
-          "locations.all",
-          "audit.read",
-          "journal.read",
-          "journal.post",
-          "files.read",
-          "files.manage",
-        ]),
+  input: z
+    .strictObject({
+      name: z.string().trim().min(1).max(80),
+      permissions: z
+        .array(
+          z.enum([
+            "workspace.read",
+            "workspace.manage",
+            "workspace.private.read",
+            "access.manage",
+            "locations.all",
+            "audit.read",
+            "journal.read",
+            "journal.post",
+            "files.read",
+            "files.manage",
+            "masters.read",
+            "masters.manage",
+            "masters.rates.read",
+          ]),
+        )
+        .min(1)
+        .max(20),
+    })
+    .superRefine((role, ctx) => {
+      if (
+        role.permissions.includes("masters.manage") &&
+        (!role.permissions.includes("masters.read") ||
+          !role.permissions.includes("masters.rates.read"))
       )
-      .min(1)
-      .max(20),
-  }),
+        ctx.addIssue({
+          code: "custom",
+          path: ["permissions"],
+          message:
+            "Master management requires schema and rate read permissions",
+        });
+    }),
   output: z.object({ roleId: uuid }),
   entity: "role",
   changes: ["permissions"],

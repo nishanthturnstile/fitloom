@@ -1,6 +1,8 @@
 # Fitloom documentation
 
-Start with the [implementation status](implementation/status.md), then read the [roadmap](product/roadmap.md). Phase 1B is complete locally. Next is phase 2: customers, garment masters, and measurements. Phase 3 adds orders and manually recorded shop payments. Subscriptions, platform billing, and payment-provider integrations are deferred until explicitly reopened.
+Start with the [implementation status](implementation/status.md), then read the [roadmap](product/roadmap.md). Phase 1B and phase 2 Build One garment masters are complete locally. Next are customers and measurements in the remaining phase 2 builds. Phase 3 adds orders and manually recorded shop payments. Subscriptions, platform billing, and payment-provider integrations are deferred until explicitly reopened.
+
+The first phase 2 build is specified in the [garment masters implementation plan](implementation/plans/phase-2-build-1-garment-masters.md), with its [research evidence](implementation/research/build-one/technical-findings.md), [plan review record](implementation/reviews/phase-2-build-1-garment-masters-review.md), [implementation review record](implementation/reviews/phase-2-build-1-implementation-review.md), and [final acceptance evidence](implementation/evidence/phase-2-build-1-increment-6.md).
 
 ## Folder structure
 

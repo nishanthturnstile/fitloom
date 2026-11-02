@@ -1,9 +1,11 @@
 import "server-only";
+import { randomUUID } from "node:crypto";
 import {
   BodyReadError,
   CommandError,
   createWorkspaceService,
   identityEnvironment,
+  MasterError,
   readBoundedBody,
 } from "@fitloom/application";
 import { pino } from "pino";
@@ -43,15 +45,27 @@ export function privateJson(data: unknown, status = 200) {
     },
   });
 }
-export async function safeRoute(run: () => Promise<Response>) {
+export async function safeRoute(
+  run: () => Promise<Response>,
+  masterErrors = false,
+) {
   try {
     return await run();
   } catch (error) {
-    if (error instanceof BodyReadError)
-      return privateJson(
-        { message: error.message, category: "validation" },
+    if (error instanceof BodyReadError) {
+      const response = privateJson(
+        {
+          message: error.message,
+          category: "validation",
+          ...(masterErrors ? { correlationId: randomUUID() } : {}),
+        },
         error.status,
       );
+      // An early body rejection leaves unread request bytes. Tell HTTP/1 clients
+      // to close this connection instead of reusing a socket the server will drain.
+      response.headers.set("Connection", "close");
+      return response;
+    }
     const category =
       error instanceof CommandError
         ? error.category
@@ -70,6 +84,17 @@ export async function safeRoute(run: () => Promise<Response>) {
               ? error.message
               : "Access denied",
         category,
+        ...(masterErrors
+          ? {
+              correlationId:
+                error instanceof MasterError
+                  ? error.correlationId
+                  : randomUUID(),
+              ...(error instanceof MasterError && error.issues.length
+                ? { issues: error.issues }
+                : {}),
+            }
+          : {}),
       },
       category === "access"
         ? 403
@@ -84,6 +109,7 @@ export async function safeRoute(run: () => Promise<Response>) {
 export async function mutation(
   request: Request,
   run: (input: unknown) => Promise<Response>,
+  options: { bodyLimit?: "master-definition"; masterErrors?: boolean } = {},
 ) {
   return safeRoute(async () => {
     const { config } = identityEnvironment(process.env);
@@ -96,7 +122,7 @@ export async function mutation(
     if (!request.headers.get("content-type")?.startsWith("application/json"))
       throw new CommandError("validation", "JSON required");
     const bytes = await readBoundedBody(request, {
-      maxBytes: 16384,
+      maxBytes: options.bodyLimit === "master-definition" ? 131072 : 16384,
       timeoutMs: 5000,
     });
     let input: unknown;
@@ -108,7 +134,7 @@ export async function mutation(
       throw new CommandError("validation", "Invalid JSON");
     }
     return run(input);
-  });
+  }, options.masterErrors);
 }
 export function invocation(input: unknown, scope: unknown) {
   if (

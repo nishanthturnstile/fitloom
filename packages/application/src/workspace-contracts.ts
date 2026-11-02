@@ -221,3 +221,16 @@ export const workspaceTeam = z.strictObject({
   nextOffset: z.int().nonnegative().nullable(),
 });
 export type WorkspaceTeam = z.infer<typeof workspaceTeam>;
+
+export function workspacePermissionLabel(permission: string): string {
+  switch (permission) {
+    case "masters.read":
+      return "View garments and services";
+    case "masters.manage":
+      return "Manage garments and services";
+    case "masters.rates.read":
+      return "View garment and add-on rates";
+    default:
+      return permission;
+  }
+}

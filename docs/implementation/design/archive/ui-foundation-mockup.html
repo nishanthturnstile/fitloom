@@ -1,0 +1,721 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Fitloom — UI foundation direction</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+:root {
+  --ink: #1e332a;
+  --ink-2: #2b493b;
+  --paper: #f4efe3;
+  --surface: #fbf8f0;
+  --surface-2: #eee8d9;
+  --line: #d9d3c2;
+  --line-strong: #b9b19c;
+  --muted: #6d7468;
+  --accent: #b65a33;
+  --accent-soft: #f0d9cc;
+  --gold: #a8894f;
+  --success: #3f6b4f;
+  --danger: #9b3d33;
+  --blue: #3d5f73;
+  --radius: 3px;
+  --shadow: 0 1px 0 rgba(30, 51, 42, 0.08), 0 12px 28px rgba(30, 51, 42, 0.05);
+  --display: "Fraunces", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  --body: "Instrument Sans", "Avenir Next", "Segoe UI", sans-serif;
+  --mono: "IBM Plex Mono", "SF Mono", Menlo, monospace;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; min-height: 100%; }
+body {
+  background: var(--ink);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 14px;
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+}
+button, input, select, textarea { font: inherit; }
+button { cursor: pointer; }
+a { color: inherit; }
+h1, h2, h3, h4, p, ul, ol, dl, dd { margin: 0; }
+ul, ol { padding: 0; list-style: none; }
+svg { display: block; }
+
+/* ---------- review chrome ---------- */
+.review-bar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  min-height: 48px;
+  padding: 8px 20px;
+  background: #14241d;
+  color: #efe9da;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  font-size: 11px;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+.review-brand { font-family: var(--display); font-size: 13px; letter-spacing: 0.2em; white-space: nowrap; }
+.review-screens { display: flex; gap: 4px; flex-wrap: wrap; }
+.review-screens button {
+  padding: 7px 10px;
+  color: #cfc8b7;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 2px;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.review-screens button.active { color: #14241d; background: #e8d7ba; border-color: #e8d7ba; }
+.review-note { margin-left: auto; color: #9eaa9b; font-size: 10px; letter-spacing: 0.08em; text-transform: none; text-align: right; }
+@media (max-width: 820px) {
+  .review-note { display: none; }
+  .review-bar { gap: 10px; padding: 8px 12px; }
+}
+
+/* ---------- app shell ---------- */
+.screen { min-height: calc(100vh - 48px); background: var(--paper); }
+.app-shell { display: grid; grid-template-columns: 236px minmax(0, 1fr); min-height: calc(100vh - 48px); }
+.sidebar {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  padding: 22px 14px 16px;
+  background:
+    radial-gradient(circle at 18% 4%, rgba(182, 90, 51, 0.16), transparent 30%),
+    linear-gradient(180deg, #1e332a 0%, #182b23 100%);
+  color: #eee8d9;
+  overflow: hidden;
+}
+.sidebar::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.16;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 160 160' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.35'/%3E%3C/svg%3E");
+}
+.brand { position: relative; z-index: 1; display: flex; gap: 10px; align-items: center; padding: 0 6px 2px; }
+.brand-mark {
+  display: grid; place-items: center; width: 30px; height: 30px;
+  border: 1px solid rgba(238, 232, 217, 0.45);
+  border-radius: 2px;
+  font-family: var(--display); font-size: 18px; color: #f0e5cf;
+  background: rgba(255, 255, 255, 0.04);
+}
+.brand strong { display: block; font-family: var(--display); font-size: 19px; font-weight: 500; letter-spacing: 0.06em; line-height: 1; }
+.brand small { display: block; margin-top: 4px; color: #a9b3a5; font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase; }
+.shop-switch {
+  position: relative; z-index: 1;
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  width: 100%; padding: 10px 11px;
+  color: #eee8d9; background: rgba(255, 255, 255, 0.045);
+  border: 1px solid rgba(238, 232, 217, 0.2); border-radius: 2px;
+  text-align: left; font-size: 12px;
+}
+.shop-switch small { display: block; color: #a9b3a5; font-size: 10px; margin-top: 2px; }
+.side-nav { position: relative; z-index: 1; display: grid; gap: 3px; }
+.nav-label { padding: 12px 8px 5px; color: #8f9c8d; font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase; }
+.nav-item {
+  display: flex; align-items: center; gap: 9px;
+  padding: 8px 9px; border-radius: 2px;
+  color: #cfd5cb; text-decoration: none; font-size: 12.5px;
+  border-left: 2px solid transparent;
+}
+.nav-item svg { width: 15px; height: 15px; opacity: 0.75; }
+.nav-item:hover { background: rgba(255, 255, 255, 0.05); color: #fff9ed; }
+.nav-item.active { color: #fff9ed; background: rgba(255, 255, 255, 0.07); border-left-color: var(--accent); }
+.nav-item.active svg { opacity: 1; }
+.nav-item.soon { color: #8f9c8d; }
+.soon-tag { margin-left: auto; padding: 1px 5px; border: 1px solid rgba(238, 232, 217, 0.18); border-radius: 20px; font-size: 8px; letter-spacing: 0.12em; text-transform: uppercase; }
+.sidebar-foot { position: relative; z-index: 1; margin-top: auto; display: grid; gap: 10px; padding-top: 14px; border-top: 1px solid rgba(238, 232, 217, 0.14); }
+.user-chip { display: flex; align-items: center; gap: 9px; }
+.avatar { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: #e8d7ba; color: var(--ink); font-size: 11px; font-weight: 600; }
+.user-chip strong { display: block; font-size: 11.5px; color: #f1ecdf; font-weight: 500; }
+.user-chip small { display: block; color: #9eaa9b; font-size: 9.5px; }
+.signout { color: #9eaa9b; font-size: 10px; letter-spacing: 0.08em; text-decoration: none; }
+.signout:hover { color: #f1ecdf; }
+
+.main { min-width: 0; background: var(--paper); }
+.topbar {
+  display: flex; align-items: center; justify-content: space-between; gap: 18px;
+  min-height: 58px; padding: 0 34px;
+  border-bottom: 1px solid var(--line);
+  background: rgba(251, 248, 240, 0.7);
+  backdrop-filter: blur(8px);
+}
+.crumb { color: var(--muted); font-size: 11px; letter-spacing: 0.06em; }
+.crumb strong { color: var(--ink); font-weight: 500; }
+.top-actions { display: flex; align-items: center; gap: 8px; }
+.command {
+  display: flex; align-items: center; gap: 22px;
+  min-width: 220px; padding: 7px 9px;
+  color: var(--muted); background: var(--surface);
+  border: 1px solid var(--line); border-radius: 2px; font-size: 11.5px;
+}
+.command kbd { margin-left: auto; padding: 1px 5px; border: 1px solid var(--line); border-radius: 2px; font-family: var(--mono); font-size: 9px; color: var(--muted); }
+.date-chip { color: var(--muted); font-size: 11px; white-space: nowrap; }
+
+.content { max-width: 1420px; padding: 34px 34px 64px; }
+.page-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 28px; margin-bottom: 30px; }
+.page-head.compact { align-items: center; }
+.eyebrow { color: var(--accent); font-size: 9.5px; letter-spacing: 0.2em; text-transform: uppercase; font-weight: 600; }
+h1 { margin-top: 6px; font-family: var(--display); font-size: clamp(30px, 3.6vw, 44px); font-weight: 500; letter-spacing: -0.025em; line-height: 1.02; }
+h2 { font-family: var(--display); font-size: 20px; font-weight: 500; letter-spacing: -0.01em; }
+h3 { font-size: 14px; font-weight: 600; }
+.lede { max-width: 62ch; margin-top: 11px; color: var(--muted); font-size: 13px; line-height: 1.55; }
+.head-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.primary, .secondary, .ghost, .icon-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+  min-height: 34px; padding: 7px 13px;
+  border-radius: 2px; font-size: 11.5px; font-weight: 500; letter-spacing: 0.01em;
+  transition: transform 120ms ease, box-shadow 120ms ease, background 120ms ease;
+}
+.primary { color: #fff9ed; background: var(--accent); border: 1px solid #8f4527; box-shadow: 2px 2px 0 rgba(30, 51, 42, 0.16); }
+.primary:hover { transform: translate(-1px, -1px); box-shadow: 3px 3px 0 rgba(30, 51, 42, 0.18); }
+.secondary { color: var(--ink); background: var(--surface); border: 1px solid var(--line-strong); }
+.secondary:hover { background: #fffcf4; border-color: var(--ink-2); }
+.ghost { color: var(--muted); background: transparent; border: 1px solid transparent; }
+.ghost:hover { color: var(--ink); background: rgba(30, 51, 42, 0.04); }
+.icon-btn { width: 30px; min-height: 30px; padding: 0; color: var(--muted); background: transparent; border: 1px solid transparent; }
+.icon-btn:hover { color: var(--ink); border-color: var(--line); background: var(--surface); }
+.primary svg, .secondary svg, .ghost svg { width: 14px; height: 14px; }
+
+/* ---------- home ---------- */
+.stat-strip { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: 1px solid var(--line-strong); border-bottom: 1px solid var(--line-strong); margin-bottom: 24px; }
+.stat { padding: 14px 16px 15px; border-right: 1px solid var(--line); }
+.stat:first-child { padding-left: 0; }
+.stat:last-child { border-right: 0; }
+.stat span { display: block; color: var(--muted); font-size: 9.5px; letter-spacing: 0.16em; text-transform: uppercase; }
+.stat strong { display: block; margin: 5px 0 2px; font-family: var(--display); font-size: 30px; font-weight: 500; line-height: 1; }
+.stat small { color: var(--muted); font-size: 10.5px; }
+.home-grid { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 0.9fr) minmax(0, 0.75fr); gap: 14px; }
+.panel { padding: 18px 18px 16px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); }
+.panel.span-2 { grid-column: span 1; }
+.panel-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+.panel-head a { color: var(--accent); font-size: 10.5px; text-decoration: none; border-bottom: 1px solid rgba(182, 90, 51, 0.3); }
+.badge { display: inline-flex; align-items: center; gap: 5px; padding: 3px 7px; border: 1px solid var(--line); border-radius: 2px; color: var(--muted); font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; white-space: nowrap; }
+.badge.soon { color: var(--gold); border-color: rgba(168, 137, 79, 0.35); background: #faf5e8; }
+.checklist { display: grid; gap: 0; }
+.checklist li { display: flex; align-items: center; gap: 10px; padding: 11px 0; border-top: 1px solid var(--line); font-size: 12.5px; }
+.checklist li:first-child { border-top: 0; }
+.checklist .tick { display: grid; place-items: center; width: 18px; height: 18px; border: 1px solid var(--line-strong); border-radius: 50%; color: var(--muted); font-size: 9px; }
+.checklist .done .tick { color: #fff9ed; background: var(--success); border-color: var(--success); }
+.checklist li > span:nth-child(2) { margin-left: 2px; }
+.checklist small { display: block; color: var(--muted); font-size: 10.5px; margin-top: 2px; }
+.checklist .action { margin-left: auto; }
+.checklist .action button { padding: 4px 8px; font-size: 10px; }
+.mini-list { display: grid; gap: 0; }
+.mini-list li { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-top: 1px solid var(--line); }
+.mini-list li:first-child { border-top: 0; }
+.mini-list strong { display: block; font-size: 12px; font-weight: 500; }
+.mini-list small { color: var(--muted); font-size: 10px; }
+.mini-list .when { margin-left: auto; color: var(--muted); font-family: var(--mono); font-size: 9.5px; }
+.dot { width: 7px; height: 7px; border-radius: 50%; background: var(--line-strong); flex: none; }
+.dot.standard { background: var(--gold); }
+.dot.custom { background: var(--blue); }
+.panel-copy { color: var(--muted); font-size: 12px; line-height: 1.55; }
+.panel .secondary:disabled { opacity: 0.55; cursor: not-allowed; margin-top: 14px; }
+
+/* ---------- list ---------- */
+.back-link { display: inline-flex; align-items: center; gap: 5px; color: var(--muted); font-size: 10.5px; text-decoration: none; margin-bottom: 8px; }
+.back-link:hover { color: var(--ink); }
+.toolbar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+.search-box { display: flex; align-items: center; gap: 8px; flex: 1 1 280px; min-height: 34px; padding: 0 10px; background: var(--surface); border: 1px solid var(--line); border-radius: 2px; color: var(--muted); }
+.search-box svg { width: 14px; height: 14px; flex: none; }
+.search-box input { width: 100%; border: 0; outline: 0; background: transparent; font-size: 12px; color: var(--ink); }
+.search-box input::placeholder { color: #929a8f; }
+.filter { min-height: 34px; padding: 0 9px; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 2px; font-size: 11px; }
+.segmented { display: inline-flex; border: 1px solid var(--line); border-radius: 2px; overflow: hidden; }
+.segmented button { min-height: 32px; padding: 0 10px; color: var(--muted); background: var(--surface); border: 0; font-size: 10.5px; }
+.segmented button + button { border-left: 1px solid var(--line); }
+.segmented button.active { color: var(--ink); background: var(--surface-2); font-weight: 500; }
+.table-wrap { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
+.data-table { width: 100%; border-collapse: collapse; }
+.data-table th { padding: 9px 12px; color: var(--muted); background: #f7f2e6; border-bottom: 1px solid var(--line-strong); font-size: 9px; font-weight: 600; letter-spacing: 0.14em; text-align: left; text-transform: uppercase; white-space: nowrap; }
+.data-table td { padding: 12px; border-bottom: 1px solid var(--line); font-size: 12px; vertical-align: middle; }
+.data-table tbody tr:last-child td { border-bottom: 0; }
+.data-table tbody tr { transition: background 120ms ease; }
+.data-table tbody tr:hover { background: #faf6eb; }
+.name-cell { display: flex; align-items: center; gap: 10px; }
+.glyph { display: grid; place-items: center; width: 30px; height: 30px; border: 1px solid var(--line); border-radius: 2px; color: var(--ink-2); background: #f7f2e6; font-family: var(--display); font-size: 15px; }
+.name-cell strong { display: block; font-weight: 600; font-size: 12.5px; }
+.name-cell small { display: block; margin-top: 2px; color: var(--muted); font-size: 9.5px; letter-spacing: 0.04em; }
+.num { font-family: var(--mono); font-size: 11px; white-space: nowrap; }
+.num small { font-family: var(--body); color: var(--muted); font-size: 9.5px; }
+.status { display: inline-flex; align-items: center; gap: 5px; font-size: 10px; white-space: nowrap; }
+.status::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+.status.active { color: var(--success); }
+.status.inactive { color: var(--muted); }
+.rev { color: var(--muted); font-family: var(--mono); font-size: 10.5px; }
+.table-foot { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 12px 0; color: var(--muted); font-size: 10.5px; }
+.table-foot a { color: var(--accent); text-decoration: none; }
+.row-open { color: var(--accent); font-size: 10.5px; text-decoration: none; border-bottom: 1px solid rgba(182, 90, 51, 0.3); white-space: nowrap; }
+
+/* ---------- editor ---------- */
+.editor-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; padding: 0 0 20px; border-bottom: 1px solid var(--line-strong); }
+.title-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
+.title-row h1 { margin: 0; font-size: clamp(28px, 3vw, 38px); }
+.chip { display: inline-flex; align-items: center; padding: 3px 7px; border: 1px solid var(--line); border-radius: 2px; color: var(--muted); font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; }
+.chip.standard { color: var(--gold); border-color: rgba(168, 137, 79, 0.4); background: #faf5e8; }
+.chip.custom { color: var(--blue); border-color: rgba(61, 95, 115, 0.35); background: #eef3f5; }
+.editor-meta { margin-top: 7px; color: var(--muted); font-size: 10.5px; }
+.editor-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding-top: 4px; }
+.editor-body { display: grid; grid-template-columns: 176px minmax(0, 1fr) 308px; gap: 24px; align-items: start; padding: 22px 0 82px; }
+.steps { position: sticky; top: 76px; display: grid; gap: 3px; }
+.step { display: flex; align-items: center; gap: 9px; width: 100%; padding: 9px 8px; color: var(--muted); background: transparent; border: 0; border-left: 2px solid transparent; border-radius: 0 2px 2px 0; font-size: 11px; text-align: left; }
+.step span { font-family: var(--mono); font-size: 9px; opacity: 0.6; }
+.step small { margin-left: auto; padding: 1px 5px; border: 1px solid var(--line); border-radius: 10px; font-size: 8.5px; }
+.step:hover { color: var(--ink); background: rgba(30, 51, 42, 0.035); }
+.step.active { color: var(--ink); background: var(--surface); border-left-color: var(--accent); font-weight: 600; box-shadow: var(--shadow); }
+.step.done { color: var(--ink-2); }
+.step.done span { color: var(--success); opacity: 1; }
+.editor-main { min-width: 0; }
+.section-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 18px; margin-bottom: 16px; }
+.section-head h2 { margin-top: 4px; font-size: 26px; }
+.section-head .muted { max-width: 56ch; margin-top: 7px; color: var(--muted); font-size: 11.5px; line-height: 1.55; }
+.section-card { margin-bottom: 14px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); }
+.section-card-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 13px 14px; border-bottom: 1px solid var(--line); }
+.section-card-head > div:first-child { display: flex; align-items: center; gap: 9px; }
+.section-index { display: grid; place-items: center; width: 22px; height: 22px; border: 1px solid var(--line); border-radius: 50%; color: var(--muted); font-family: var(--mono); font-size: 9px; }
+.section-card-head small { color: var(--muted); font-size: 10px; }
+.row-actions { display: flex; align-items: center; gap: 2px; }
+.row-actions button { width: 26px; min-height: 26px; padding: 0; color: var(--muted); background: transparent; border: 1px solid transparent; border-radius: 2px; font-size: 11px; }
+.row-actions button:hover { color: var(--ink); border-color: var(--line); background: var(--surface-2); }
+.field-list { display: grid; }
+.field-row { display: flex; align-items: center; gap: 10px; padding: 11px 14px; border-bottom: 1px solid var(--line); }
+.field-row:last-child { border-bottom: 0; }
+.drag { color: #b8b09d; font-size: 13px; cursor: grab; user-select: none; }
+.field-main { min-width: 150px; }
+.field-main strong { display: block; font-size: 12px; font-weight: 600; }
+.field-main small { display: block; margin-top: 2px; color: var(--muted); font-size: 9.5px; }
+.chip.required { color: var(--accent); border-color: rgba(182, 90, 51, 0.35); background: #fbf0e9; font-size: 8.5px; }
+.field-range { margin-left: auto; color: var(--muted); font-family: var(--mono); font-size: 9.5px; white-space: nowrap; }
+.add-row { display: flex; align-items: center; gap: 6px; width: 100%; padding: 11px 14px; color: var(--accent); background: transparent; border: 0; border-top: 1px dashed var(--line); font-size: 11px; text-align: left; }
+.add-row:hover { background: #fbf0e9; }
+.editor-rail { position: sticky; top: 76px; display: grid; gap: 12px; }
+.rail-tabs { display: flex; border-bottom: 1px solid var(--line); }
+.rail-tabs button { flex: 1; padding: 7px 4px; color: var(--muted); background: transparent; border: 0; border-bottom: 2px solid transparent; font-size: 10px; }
+.rail-tabs button.active { color: var(--ink); border-bottom-color: var(--accent); font-weight: 600; }
+.preview-card, .history-card { padding: 14px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); }
+.preview-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 10px; }
+.preview-card h3 { margin-bottom: 2px; font-family: var(--display); font-size: 18px; font-weight: 500; }
+.preview-card > .muted { color: var(--muted); font-size: 10px; }
+.preview-card label { display: block; margin-top: 12px; font-size: 10.5px; font-weight: 500; }
+.preview-card label .req { color: var(--accent); }
+.preview-card input { width: 100%; margin-top: 5px; padding: 8px 9px; color: var(--muted); background: #f7f2e6; border: 1px solid var(--line); border-radius: 2px; font-size: 11px; }
+.preview-card label small { display: block; margin-top: 4px; color: var(--muted); font-size: 9px; }
+.history-card h3 { font-family: var(--display); font-size: 16px; font-weight: 500; margin-bottom: 8px; }
+.history-card ol { display: grid; gap: 0; }
+.history-card li { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 0; border-top: 1px solid var(--line); font-family: var(--mono); font-size: 9.5px; }
+.history-card li:first-child { border-top: 0; }
+.history-card small { font-family: var(--body); color: var(--muted); font-size: 9px; }
+.save-bar { position: fixed; right: 0; bottom: 0; left: 236px; z-index: 20; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 12px 34px; background: rgba(251, 248, 240, 0.96); border-top: 1px solid var(--line-strong); backdrop-filter: blur(8px); }
+.save-bar .state { display: flex; align-items: center; gap: 8px; font-size: 11px; }
+.save-bar .state .muted { color: var(--muted); }
+.live-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 3px rgba(182, 90, 51, 0.12); }
+.save-bar .actions { display: flex; gap: 8px; }
+.muted { color: var(--muted); }
+
+/* ---------- responsive ---------- */
+@media (max-width: 1240px) {
+  .editor-body { grid-template-columns: 160px minmax(0, 1fr); }
+  .editor-rail { position: static; grid-column: 2; grid-template-columns: 1fr 1fr; }
+  .home-grid { grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr); }
+  .home-grid .panel:last-child { grid-column: span 2; }
+}
+@media (max-width: 980px) {
+  .app-shell { grid-template-columns: 1fr; }
+  .sidebar { flex-direction: row; align-items: center; flex-wrap: wrap; gap: 12px; padding: 12px 16px; }
+  .brand { padding: 0; }
+  .shop-switch { width: auto; min-width: 190px; }
+  .side-nav { display: flex; width: 100%; gap: 2px; overflow-x: auto; padding-top: 2px; }
+  .nav-label { display: none; }
+  .nav-item { white-space: nowrap; border-left: 0; border-bottom: 2px solid transparent; padding: 7px 9px; }
+  .nav-item.active { border-left: 0; border-bottom-color: var(--accent); }
+  .sidebar-foot { display: none; }
+  .topbar { padding: 0 20px; }
+  .content { padding: 26px 20px 64px; }
+  .save-bar { left: 0; padding: 12px 20px; }
+  .editor-body { grid-template-columns: 1fr; }
+  .steps { position: static; display: flex; overflow-x: auto; gap: 2px; padding-bottom: 4px; }
+  .step { width: auto; white-space: nowrap; border-left: 0; border-bottom: 2px solid transparent; }
+  .step.active { border-left: 0; border-bottom-color: var(--accent); box-shadow: none; }
+  .editor-rail { grid-column: auto; }
+}
+@media (max-width: 720px) {
+  .review-screens button { padding: 6px 7px; font-size: 9px; }
+  .page-head, .editor-head { flex-direction: column; align-items: flex-start; gap: 14px; }
+  .head-actions, .editor-actions { width: 100%; }
+  .head-actions .primary, .head-actions .secondary, .editor-actions .primary, .editor-actions .secondary { flex: 1; }
+  .stat-strip { grid-template-columns: 1fr 1fr; }
+  .stat:nth-child(2) { border-right: 0; }
+  .stat:nth-child(3), .stat:nth-child(4) { border-top: 1px solid var(--line); }
+  .home-grid { grid-template-columns: 1fr; }
+  .home-grid .panel:last-child { grid-column: auto; }
+  .editor-rail { grid-template-columns: 1fr; }
+  .command { min-width: 0; flex: 1; }
+  .command kbd, .date-chip { display: none; }
+  .topbar { gap: 8px; }
+  .data-table { min-width: 760px; }
+  .table-wrap { overflow-x: auto; }
+  .editor-body { padding-bottom: 150px; }
+  .field-row { flex-wrap: wrap; }
+  .field-main { flex: 1 1 140px; min-width: 0; }
+  .field-range { order: 5; width: 100%; margin-left: 0; padding-left: 22px; }
+  .field-row .icon-btn { margin-left: auto; }
+  .save-bar { flex-direction: column; align-items: stretch; gap: 8px; }
+  .save-bar .actions { justify-content: flex-end; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+}
+</style>
+</head>
+<body>
+
+<div class="review-bar">
+  <div class="review-brand">Fitloom / UI foundation</div>
+  <div class="review-screens">
+    <button data-screen="screen-home" class="active">01 Workspace home</button>
+    <button data-screen="screen-garments">02 Garments</button>
+    <button data-screen="screen-editor">03 Garment editor</button>
+  </div>
+  <div class="review-note">Direction: “The Tailor’s Ledger” · warm paper, deep ink, terracotta · Fraunces + Instrument Sans</div>
+</div>
+
+<!-- ================= HOME ================= -->
+<div class="screen" id="screen-home">
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <span class="brand-mark">F</span>
+        <div><strong>FITLOOM</strong><small>Tailoring desk</small></div>
+      </div>
+      <button class="shop-switch">
+        <span>Fitloom Demo<small>Main · Coimbatore</small></span>
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M3 4.5 6 7.5 9 4.5"/></svg>
+      </button>
+      <nav class="side-nav" aria-label="Workspace">
+        <p class="nav-label">Today</p>
+        <a class="nav-item active" href="#" data-screen="screen-home">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M2.5 7.5 8 2.5l5.5 5"/><path d="M4 7v6h8V7"/></svg>
+          Home
+        </a>
+        <p class="nav-label">Work</p>
+        <a class="nav-item soon" href="#"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="8" cy="5" r="2.5"/><path d="M3.5 13c.6-2.3 2.3-3.5 4.5-3.5s3.9 1.2 4.5 3.5"/></svg>Customers <span class="soon-tag">next</span></a>
+        <a class="nav-item soon" href="#"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M3 2.5h10v11l-2-1.5-2 1.5-2-1.5-2 1.5z"/><path d="M5.5 5.5h5M5.5 8h5"/></svg>Orders <span class="soon-tag">phase 3</span></a>
+        <a class="nav-item soon" href="#"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M2.5 5.5h11M2.5 10.5h11"/><circle cx="5" cy="5.5" r="1.2" fill="var(--ink)"/><circle cx="11" cy="10.5" r="1.2" fill="var(--ink)"/></svg>Production <span class="soon-tag">phase 4</span></a>
+        <p class="nav-label">Catalog</p>
+        <a class="nav-item" href="#" data-screen="screen-garments"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M5 2.5 8 4l3-1.5 2.5 2L12 8l-1-.5V14H5V7.5L4 8 2.5 4.5z"/></svg>Garments</a>
+        <a class="nav-item" href="#"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="8" cy="8" r="2.2"/><path d="M8 1.8v2M8 12.2v2M1.8 8h2M12.2 8h2M3.7 3.7l1.4 1.4M10.9 10.9l1.4 1.4M12.3 3.7l-1.4 1.4M5.1 10.9l-1.4 1.4"/></svg>Services</a>
+        <a class="nav-item" href="#"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M8 2.5v11M2.5 8h11"/></svg>Add-ons</a>
+        <p class="nav-label">Admin</p>
+        <a class="nav-item" href="#"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="8" cy="8" r="2.2"/><path d="M8 1.8v1.4M8 12.8v1.4M1.8 8h1.4M12.8 8h1.4M3.6 3.6l1 1M11.4 11.4l1 1M12.4 3.6l-1 1M4.6 11.4l-1 1"/></svg>Settings</a>
+      </nav>
+      <div class="sidebar-foot">
+        <div class="user-chip"><span class="avatar">D</span><div><strong>Demo Owner</strong><small>Owner · all locations</small></div></div>
+        <a class="signout" href="#">Sign out</a>
+      </div>
+    </aside>
+
+    <div class="main">
+      <header class="topbar">
+        <div class="crumb"><strong>Fitloom Demo</strong> / Main</div>
+        <div class="top-actions">
+          <button class="command"><svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="7" cy="7" r="4.2"/><path d="m10.2 10.2 3 3"/></svg>Search garments, services… <kbd>⌘K</kbd></button>
+          <span class="date-chip">Mon 2 Nov</span>
+        </div>
+      </header>
+
+      <main class="content">
+        <section class="page-head">
+          <div>
+            <p class="eyebrow">Monday, 2 November</p>
+            <h1>Good morning, Demo.</h1>
+            <p class="lede">Your shop at a glance. The garment catalog is ready; customer records and measurements are the next build.</p>
+          </div>
+          <div class="head-actions">
+            <button class="secondary">Install starter library</button>
+            <button class="primary" data-screen="screen-editor">Create garment</button>
+          </div>
+        </section>
+
+        <div class="stat-strip">
+          <div class="stat"><span>Garments</span><strong>3</strong><small>2 standard · 1 custom</small></div>
+          <div class="stat"><span>Services</span><strong>2</strong><small>All rates unset</small></div>
+          <div class="stat"><span>Add-ons</span><strong>0</strong><small>Not configured</small></div>
+          <div class="stat"><span>Schema versions</span><strong>9</strong><small>All immutable</small></div>
+        </div>
+
+        <div class="home-grid">
+          <section class="panel">
+            <div class="panel-head"><h2>Setup progress</h2><span class="badge">3 of 4</span></div>
+            <ol class="checklist">
+              <li class="done"><span class="tick">✓</span><span>Garment catalog<small>Shirt, Blouse and Trouser</small></span></li>
+              <li class="done"><span class="tick">✓</span><span>Services<small>New stitching and Alteration</small></span></li>
+              <li><span class="tick">3</span><span>Add-ons<small>Add a named fixed-price extra</small></span><span class="action"><button class="secondary">Add add-on</button></span></li>
+              <li class="muted"><span class="tick">4</span><span>Customers &amp; measurements<small>Next phase 2 build</small></span><span class="badge soon">Next</span></li>
+            </ol>
+          </section>
+
+          <section class="panel">
+            <div class="panel-head"><h2>Recently edited</h2><a href="#" data-screen="screen-garments">View all</a></div>
+            <ul class="mini-list">
+              <li><span class="dot standard"></span><div><strong>Shirt</strong><small>Revision 4 · 12 fields</small></div><span class="when">2h</span></li>
+              <li><span class="dot custom"></span><div><strong>Sherwani</strong><small>Revision 2 · 8 fields</small></div><span class="when">1d</span></li>
+              <li><span class="dot standard"></span><div><strong>Blouse</strong><small>Revision 1 · 10 fields</small></div><span class="when">2d</span></li>
+            </ul>
+          </section>
+
+          <section class="panel">
+            <div class="panel-head"><h2>Next at the desk</h2><span class="badge soon">Phase 2</span></div>
+            <p class="panel-copy">Record a customer, take measurements, and reuse this garment schema. Orders and production follow.</p>
+            <button class="secondary" disabled>Add customer — coming next</button>
+          </section>
+        </div>
+      </main>
+    </div>
+  </div>
+</div>
+
+<!-- ================= GARMENTS ================= -->
+<div class="screen" id="screen-garments" hidden>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand"><span class="brand-mark">F</span><div><strong>FITLOOM</strong><small>Tailoring desk</small></div></div>
+      <button class="shop-switch"><span>Fitloom Demo<small>Main · Coimbatore</small></span><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M3 4.5 6 7.5 9 4.5"/></svg></button>
+      <nav class="side-nav" aria-label="Workspace">
+        <p class="nav-label">Today</p>
+        <a class="nav-item" href="#" data-screen="screen-home"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M2.5 7.5 8 2.5l5.5 5"/><path d="M4 7v6h8V7"/></svg>Home</a>
+        <p class="nav-label">Work</p>
+        <a class="nav-item soon" href="#"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="8" cy="5" r="2.5"/><path d="M3.5 13c.6-2.3 2.3-3.5 4.5-3.5s3.9 1.2 4.5 3.5"/></svg>Customers <span class="soon-tag">next</span></a>
+        <a class="nav-item soon" href="#"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M3 2.5h10v11l-2-1.5-2 1.5-2-1.5-2 1.5z"/><path d="M5.5 5.5h5M5.5 8h5"/></svg>Orders <span class="soon-tag">phase 3</span></a>
+        <a class="nav-item soon" href="#"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M2.5 5.5h11M2.5 10.5h11"/><circle cx="5" cy="5.5" r="1.2" fill="var(--ink)"/><circle cx="11" cy="10.5" r="1.2" fill="var(--ink)"/></svg>Production <span class="soon-tag">phase 4</span></a>
+        <p class="nav-label">Catalog</p>
+        <a class="nav-item active" href="#" data-screen="screen-garments"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M5 2.5 8 4l3-1.5 2.5 2L12 8l-1-.5V14H5V7.5L4 8 2.5 4.5z"/></svg>Garments</a>
+        <a class="nav-item" href="#"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="8" cy="8" r="2.2"/><path d="M8 1.8v2M8 12.2v2M1.8 8h2M12.2 8h2M3.7 3.7l1.4 1.4M10.9 10.9l1.4 1.4M12.3 3.7l-1.4 1.4M5.1 10.9l-1.4 1.4"/></svg>Services</a>
+        <a class="nav-item" href="#"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M8 2.5v11M2.5 8h11"/></svg>Add-ons</a>
+        <p class="nav-label">Admin</p>
+        <a class="nav-item" href="#"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="8" cy="8" r="2.2"/><path d="M8 1.8v1.4M8 12.8v1.4M1.8 8h1.4M12.8 8h1.4M3.6 3.6l1 1M11.4 11.4l1 1M12.4 3.6l-1 1M4.6 11.4l-1 1"/></svg>Settings</a>
+      </nav>
+      <div class="sidebar-foot"><div class="user-chip"><span class="avatar">D</span><div><strong>Demo Owner</strong><small>Owner · all locations</small></div></div><a class="signout" href="#">Sign out</a></div>
+    </aside>
+
+    <div class="main">
+      <header class="topbar">
+        <div class="crumb"><strong>Catalog</strong> / Garments</div>
+        <div class="top-actions"><button class="command"><svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="7" cy="7" r="4.2"/><path d="m10.2 10.2 3 3"/></svg>Search garments, services… <kbd>⌘K</kbd></button><span class="date-chip">Mon 2 Nov</span></div>
+      </header>
+
+      <main class="content">
+        <section class="page-head compact">
+          <div>
+            <a class="back-link" href="#" data-screen="screen-home">← Workspace home</a>
+            <h1>Garments</h1>
+            <p class="lede">Shirt, blouse, trouser and custom definitions. Every save keeps the previous schema readable.</p>
+          </div>
+          <div class="head-actions">
+            <button class="secondary">Install starter library</button>
+            <button class="primary" data-screen="screen-editor">Create garment</button>
+          </div>
+        </section>
+
+        <div class="toolbar">
+          <label class="search-box"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="7" cy="7" r="4.2"/><path d="m10.2 10.2 3 3"/></svg><input placeholder="Search garments by name" /></label>
+          <select class="filter"><option>Status: Active</option><option>Status: Inactive</option><option>Status: All</option></select>
+          <select class="filter"><option>Origin: All</option><option>Standard</option><option>Custom</option></select>
+          <select class="filter"><option>Applicability: All</option><option>Masculine</option><option>Feminine</option><option>Unisex</option></select>
+          <div class="segmented"><button class="active">Table</button><button>Cards</button></div>
+        </div>
+
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead><tr><th>Garment</th><th>Category</th><th>Applicability</th><th>Schema</th><th>Default rate</th><th>Revision</th><th>Status</th><th></th></tr></thead>
+            <tbody>
+              <tr>
+                <td><div class="name-cell"><span class="glyph">S</span><div><strong>Shirt</strong><small>Standard · shirt</small></div></div></td>
+                <td>Tailoring</td><td>Masculine</td><td>12 fields · 3 groups</td><td class="num">— <small>unset</small></td><td><span class="rev">Rev 4</span></td><td><span class="status active">Active</span></td><td><a class="row-open" href="#" data-screen="screen-editor">Open</a></td>
+              </tr>
+              <tr>
+                <td><div class="name-cell"><span class="glyph">B</span><div><strong>Blouse</strong><small>Standard · blouse</small></div></div></td>
+                <td>Tailoring</td><td>Feminine</td><td>10 fields · 2 groups</td><td class="num">— <small>unset</small></td><td><span class="rev">Rev 1</span></td><td><span class="status active">Active</span></td><td><a class="row-open" href="#" data-screen="screen-editor">Open</a></td>
+              </tr>
+              <tr>
+                <td><div class="name-cell"><span class="glyph">T</span><div><strong>Trouser</strong><small>Standard · trouser</small></div></div></td>
+                <td>Tailoring</td><td>Unisex</td><td>9 fields · 2 groups</td><td class="num">— <small>unset</small></td><td><span class="rev">Rev 1</span></td><td><span class="status active">Active</span></td><td><a class="row-open" href="#" data-screen="screen-editor">Open</a></td>
+              </tr>
+              <tr>
+                <td><div class="name-cell"><span class="glyph">Sh</span><div><strong>Sherwani</strong><small>Custom · ceremonial</small></div></div></td>
+                <td>Ceremonial</td><td>Unisex</td><td>8 fields · 2 groups</td><td class="num">₹ 2,400.00</td><td><span class="rev">Rev 2</span></td><td><span class="status active">Active</span></td><td><a class="row-open" href="#" data-screen="screen-editor">Open</a></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="table-foot"><span>Showing 4 of 4 garments · 2 standard, 2 custom</span><a href="#">Show inactive and hidden</a></div>
+      </main>
+    </div>
+  </div>
+</div>
+
+<!-- ================= EDITOR ================= -->
+<div class="screen" id="screen-editor" hidden>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand"><span class="brand-mark">F</span><div><strong>FITLOOM</strong><small>Tailoring desk</small></div></div>
+      <button class="shop-switch"><span>Fitloom Demo<small>Main · Coimbatore</small></span><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M3 4.5 6 7.5 9 4.5"/></svg></button>
+      <nav class="side-nav" aria-label="Workspace">
+        <p class="nav-label">Today</p>
+        <a class="nav-item" href="#" data-screen="screen-home"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M2.5 7.5 8 2.5l5.5 5"/><path d="M4 7v6h8V7"/></svg>Home</a>
+        <p class="nav-label">Work</p>
+        <a class="nav-item soon" href="#"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="8" cy="5" r="2.5"/><path d="M3.5 13c.6-2.3 2.3-3.5 4.5-3.5s3.9 1.2 4.5 3.5"/></svg>Customers <span class="soon-tag">next</span></a>
+        <a class="nav-item soon" href="#"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M3 2.5h10v11l-2-1.5-2 1.5-2-1.5-2 1.5z"/><path d="M5.5 5.5h5M5.5 8h5"/></svg>Orders <span class="soon-tag">phase 3</span></a>
+        <a class="nav-item soon" href="#"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M2.5 5.5h11M2.5 10.5h11"/><circle cx="5" cy="5.5" r="1.2" fill="var(--ink)"/><circle cx="11" cy="10.5" r="1.2" fill="var(--ink)"/></svg>Production <span class="soon-tag">phase 4</span></a>
+        <p class="nav-label">Catalog</p>
+        <a class="nav-item active" href="#" data-screen="screen-garments"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M5 2.5 8 4l3-1.5 2.5 2L12 8l-1-.5V14H5V7.5L4 8 2.5 4.5z"/></svg>Garments</a>
+        <a class="nav-item" href="#"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="8" cy="8" r="2.2"/><path d="M8 1.8v2M8 12.2v2M1.8 8h2M12.2 8h2M3.7 3.7l1.4 1.4M10.9 10.9l1.4 1.4M12.3 3.7l-1.4 1.4M5.1 10.9l-1.4 1.4"/></svg>Services</a>
+        <a class="nav-item" href="#"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M8 2.5v11M2.5 8h11"/></svg>Add-ons</a>
+        <p class="nav-label">Admin</p>
+        <a class="nav-item" href="#"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="8" cy="8" r="2.2"/><path d="M8 1.8v1.4M8 12.8v1.4M1.8 8h1.4M12.8 8h1.4M3.6 3.6l1 1M11.4 11.4l1 1M12.4 3.6l-1 1M4.6 11.4l-1 1"/></svg>Settings</a>
+      </nav>
+      <div class="sidebar-foot"><div class="user-chip"><span class="avatar">D</span><div><strong>Demo Owner</strong><small>Owner · all locations</small></div></div><a class="signout" href="#">Sign out</a></div>
+    </aside>
+
+    <div class="main">
+      <header class="topbar">
+        <div class="crumb"><strong>Catalog</strong> / Garments / <strong>Shirt</strong></div>
+        <div class="top-actions"><button class="command"><svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="7" cy="7" r="4.2"/><path d="m10.2 10.2 3 3"/></svg>Search garments, services… <kbd>⌘K</kbd></button><span class="date-chip">Mon 2 Nov</span></div>
+      </header>
+
+      <main class="content">
+        <header class="editor-head">
+          <div>
+            <a class="back-link" href="#" data-screen="screen-garments">← Garments</a>
+            <div class="title-row"><h1>Shirt</h1><span class="chip standard">Standard</span><span class="status active">Active</span><span class="chip">Revision 4</span></div>
+            <p class="editor-meta">Last saved today at 09:42 by Demo Owner · 3 KiB of 64 KiB</p>
+          </div>
+          <div class="editor-actions">
+            <button class="secondary">Preview</button>
+            <button class="ghost">Discard</button>
+            <button class="primary">Save new version</button>
+          </div>
+        </header>
+
+        <div class="editor-body">
+          <nav class="steps" aria-label="Garment editor sections">
+            <button class="step done"><span>01</span>Identity</button>
+            <button class="step active"><span>02</span>Measurements <small>12</small></button>
+            <button class="step"><span>03</span>Construction <small>3</small></button>
+            <button class="step"><span>04</span>Services &amp; rates</button>
+            <button class="step"><span>05</span>Add-ons</button>
+            <button class="step"><span>06</span>Preview &amp; history</button>
+          </nav>
+
+          <section class="editor-main">
+            <div class="section-head">
+              <div>
+                <p class="eyebrow">Step 02</p>
+                <h2>Measurements</h2>
+                <p class="muted">The dimensions a tailor records for this garment. Reorder or retire them; earlier versions remain readable.</p>
+              </div>
+              <button class="secondary">Add section</button>
+            </div>
+
+            <div class="section-card">
+              <div class="section-card-head">
+                <div><span class="section-index">01</span><h3>Body</h3><small>4 dimensions · 3 required</small></div>
+                <div class="row-actions"><button title="Move up">↑</button><button title="Move down">↓</button><button class="ghost" style="width:auto;padding:0 7px">Remove</button></div>
+              </div>
+              <div class="field-list">
+                <div class="field-row"><span class="drag">⠿</span><div class="field-main"><strong>Chest</strong><small>Length · body · cm · 2 decimals</small></div><span class="chip required">Required</span><span class="field-range">60–160 cm</span><button class="icon-btn">⋯</button></div>
+                <div class="field-row"><span class="drag">⠿</span><div class="field-main"><strong>Shoulder</strong><small>Length · body · cm · 2 decimals</small></div><span class="chip required">Required</span><span class="field-range">30–70 cm</span><button class="icon-btn">⋯</button></div>
+                <div class="field-row"><span class="drag">⠿</span><div class="field-main"><strong>Sleeve</strong><small>Length · garment · in · 1 decimal</small></div><span class="chip required">Required</span><span class="field-range">20–70 in</span><button class="icon-btn">⋯</button></div>
+                <div class="field-row"><span class="drag">⠿</span><div class="field-main"><strong>Shirt length</strong><small>Length · garment · cm · 2 decimals</small></div><span class="chip">Optional</span><span class="field-range">50–100 cm</span><button class="icon-btn">⋯</button></div>
+              </div>
+              <button class="add-row">+ Add dimension</button>
+            </div>
+
+            <div class="section-card">
+              <div class="section-card-head">
+                <div><span class="section-index">02</span><h3>Construction</h3><small>3 groups · 7 choices</small></div>
+                <div class="row-actions"><button title="Move up">↑</button><button title="Move down">↓</button></div>
+              </div>
+              <div class="field-list">
+                <div class="field-row"><span class="drag">⠿</span><div class="field-main"><strong>Collar</strong><small>Choose one · required · 3 choices</small></div><span class="chip">Single</span><span class="field-range" style="font-family:var(--body)">Mandarin · Plain · Cutaway</span><button class="icon-btn">⋯</button></div>
+                <div class="field-row"><span class="drag">⠿</span><div class="field-main"><strong>Finish</strong><small>Choose several · optional · 2 choices</small></div><span class="chip">Multiple</span><span class="field-range" style="font-family:var(--body)">Plain · Topstitched</span><button class="icon-btn">⋯</button></div>
+              </div>
+              <button class="add-row">+ Add construction group</button>
+            </div>
+          </section>
+
+          <aside class="editor-rail">
+            <div class="rail-tabs"><button class="active">Live preview</button><button>History</button></div>
+            <div class="preview-card">
+              <div class="preview-head"><span class="eyebrow">Customer form preview</span><span class="badge">Unsaved</span></div>
+              <h3>Shirt measurements</h3>
+              <p class="muted">Body · 4 dimensions · cm</p>
+              <label>Chest <span class="req">*</span><input value="" placeholder="e.g. 102.00" readonly /><small>Body chest circumference</small></label>
+              <label>Shoulder <span class="req">*</span><input value="" placeholder="e.g. 45.00" readonly /><small>Body shoulder width</small></label>
+              <label>Sleeve <span class="req">*</span><input value="" placeholder="e.g. 24.5" readonly /><small>Garment sleeve length · in</small></label>
+            </div>
+            <div class="history-card">
+              <h3>Saved versions</h3>
+              <ol>
+                <li><span>Rev 4</span><small>2h ago · Demo Owner</small></li>
+                <li><span>Rev 3</span><small>Yesterday · Demo Owner</small></li>
+                <li><span>Rev 2</span><small>30 Oct · Demo Owner</small></li>
+                <li><span>Rev 1</span><small>28 Oct · Demo Owner</small></li>
+              </ol>
+            </div>
+          </aside>
+        </div>
+      </main>
+      <footer class="save-bar">
+        <div class="state"><span class="live-dot"></span>Unsaved changes <span class="muted">· 3 KiB of 64 KiB</span></div>
+        <div class="actions"><button class="ghost">Discard</button><button class="primary">Save new version</button></div>
+      </footer>
+    </div>
+  </div>
+</div>
+
+<script>
+  const screens = [...document.querySelectorAll(".screen")];
+  const triggers = [...document.querySelectorAll("[data-screen]")];
+  function show(id) {
+    screens.forEach((screen) => { screen.hidden = screen.id !== id; });
+    document.querySelectorAll(".review-screens button").forEach((button) => {
+      button.classList.toggle("active", button.dataset.screen === id);
+    });
+    window.scrollTo({ top: 0, behavior: "instant" });
+  }
+  triggers.forEach((trigger) => {
+    trigger.addEventListener("click", (event) => {
+      if (trigger.tagName === "A") event.preventDefault();
+      show(trigger.dataset.screen);
+    });
+  });
+  document.querySelectorAll(".rail-tabs button").forEach((button) => {
+    button.addEventListener("click", () => {
+      document.querySelectorAll(".rail-tabs button").forEach((item) => item.classList.remove("active"));
+      button.classList.add("active");
+    });
+  });
+  document.querySelectorAll(".step").forEach((button) => {
+    button.addEventListener("click", () => {
+      document.querySelectorAll(".step").forEach((item) => item.classList.remove("active"));
+      button.classList.add("active");
+    });
+  });
+</script>
+</body>
+</html>

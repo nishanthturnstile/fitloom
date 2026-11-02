@@ -5,7 +5,10 @@ import type {
   WorkspaceTeam,
   WorkspaceView,
 } from "@fitloom/application/workspace-contracts";
-import { workspaceTeam } from "@fitloom/application/workspace-contracts";
+import {
+  workspacePermissionLabel,
+  workspaceTeam,
+} from "@fitloom/application/workspace-contracts";
 import { type FormEvent, useState } from "react";
 import { PrivateFiles } from "./private-files";
 
@@ -173,6 +176,15 @@ export function WorkspacePanel({
           </select>
         </label>
       </div>
+      {workspace.permissions.includes("masters.read") && (
+        <nav aria-label="Workspace settings">
+          <a
+            href={`/workspaces/${workspace.tenantId}/${workspace.locationId}/settings/garments`}
+          >
+            Garments and services
+          </a>
+        </nav>
+      )}
       {workspace.permissions.includes("files.read") ? (
         <PrivateFiles
           workspace={workspace}
@@ -276,7 +288,9 @@ export function WorkspacePanel({
           </p>
           <ul className="permission-list">
             {workspace.permissions.map((p) => (
-              <li key={p}>{p}</li>
+              <li key={p} title={p}>
+                {workspacePermissionLabel(p)}
+              </li>
             ))}
           </ul>
           <details>
@@ -475,7 +489,7 @@ export function WorkspacePanel({
                       value={p}
                       defaultChecked={p === "workspace.read"}
                     />
-                    {p}
+                    {workspacePermissionLabel(p)}
                   </label>
                 ))}
               </div>
