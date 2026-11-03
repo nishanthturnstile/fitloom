@@ -153,3 +153,42 @@ Later measurement entry stores wearer values separately and defines its own inta
 `resolveGarmentRate` applies `rateOverride ?? baseRate`, preserving an explicit zero and leaving both-null unset. Eligible add-ons remain separate components. Later order confirmation owns immutable measurement/schema, service, add-on, and resolved-price snapshots; changing a default must not reprice an existing order.
 
 The [final acceptance matrix](../implementation/evidence/phase-2-build-1-increment-6.md) maps each Build One scenario to executable checks and records the migration review, commands, outputs, and remaining limits.
+
+## Customer foundation contracts
+
+Build Two increment 1 starts with the browser subpaths @fitloom/application/customer-contracts and @fitloom/application/customer-phone. The contracts provide distinct IDs, UUIDv4 operation keys, strict customer and wearer profiles, fixed command payload schemas, bounded search/page shapes, and projection-free durable results. The Node export createCustomerService implements authorized reads and the eight fixed customer/wearer commands; browser modules remain free of service/database imports.
+
+Use the customerPhone form parser to turn display input plus a supported country into the canonical phone object. The profile wire schema independently validates display/country/E.164/digits and accepts its own parsed output unchanged. Do not add phone-derived fields to an otherwise raw envelope after dispatch. Customer operation keys and exact payload bytes remain stable for retry.
+
+Names use NFC, trimmed/collapsed ASCII whitespace, and 120 Unicode code points. Notes normalize line endings. SQL search identities fold ASCII case only. Profile height/weight remain original-unit positive decimal strings; they are not confirmed cutting measurements. Future write commands must use the shop timezone when validating birthdays.
+
+The storage and role authority tests use actual PostgreSQL and the existing isolated test environment. See [increment 1 evidence](../implementation/evidence/phase-2-build-2-increment-1.md) for the 47,739-byte populated Unicode fixture, verification results, and the remaining transaction/duplicate-review work.
+
+
+### Customer commands and reads
+
+Use `createCustomerService({pool, resolveIdentity, observe})` with request-bound identity. Its interface is `page(target, query)`, `detail(target, customerId)`, `wearers(target, customerId, query)`, `activity(target, customerId, query)`, `duplicateCheck(target, input)`, `review(target, reviewId)`, and `command(name, target, envelope)`. Scope is a concrete tenant/location; the service derives the principal from the current session. Reads have a 15-second deadline and the database keeps its statement/transaction limits.
+
+The fixed commands are customer.create/update/archive/restore and wearer.create/update/archive/restore. They use the existing executor with an optional domain SQLSTATE adapter. Their SQL claim checks the actor and location before replay. Authorization runs on every attempt; version, parent state and duplicate decisions run only for fresh writes. Customer plus optional self wearer, tags, safe activity and operation audit/result commit together. No-op saves preserve versions and produce no domain activity.
+
+Duplicate save results retain only review identity, expiry and count. A separate currently authorized projection returns at most five summaries. Ten-minute reviews bind actor/scope/kind, normalized phone, complete intended-payload hash and candidate versions. Accepted creates and phone updates have distinct intents. Consumed or expired reviews cannot authorize fresh saves; a committed save replays after review removal. Both reads and issuance share the database budget of 30 checks/minute and at most two live check leases. Read leases are consumed by restricted SQL; the worker purges expiry in batches of 100 at most once per minute, including startup.
+
+`CustomerError` carries an allowlisted code and bounded issues. Busy locks return a retryable 409, preserving the operation key. Durable results and diagnostic events contain no profiles or candidate summaries. CRM activity displays only You/Shop staff, event kind, changed field names, versions and timestamp.
+
+The existing customer storage test fixture adds three service scenarios covering lifecycle/no-op/busy behavior, duplicate races/replay, and actor/permission/budget/rollback boundaries. The existing HTTP harness adds one customer protocol path. The customer register/read-only view is delivered in Increment 2. Increment 3 adds creation/editing and duplicate decisions. Photo ownership remains later work.
+
+
+Workspace switching uses strict browser-safe destination/request/response schemas in workspace-contracts. `resolveWorkspaceDestination` only builds allowlisted paths from a freshly authorized target workspace. The endpoint owns preference persistence; source IDs, query/filter text and return tokens never participate in destination resolution. Customer return-state schemas are browser-safe exports from customer-contracts.
+
+
+Increment 3 web forms use the existing `customer.create`, `customer.update` and explicit duplicate-review intents. No new command or database migration is required. Self-wearer creation stays atomic. The browser retains exact envelopes for uncertain retries and treats saved/review/error outcomes as the existing strict union. Increment 4 provides richer wearer management; Increment 5 adds private photos.
+
+
+Increment 4 exposes the existing wearer create/update and customer/wearer archive/restore commands in the profile UI. It adds no persistence contract or migration. Parent/child lifecycle invariants, current-authority checks, same-customer ownership, shop-timezone birthday validation and original-unit strings remain enforced by the service/SQL functions. The existing wearer/activity continuation projections supply the UI's bounded pages. Increment 5 adds the separate photo service described below.
+
+
+### CRM photo ownership
+
+`createCustomerPhotoService` owns strict photo-owner parsing, current scope/actor authorization, three fixed commands, immutable upload identity and double-authorized inline reads. `customer-photo-contracts` is the browser-safe package subpath. The shared internal private-image module owns bounded normalization and response construction; CRM and workspace services keep separate permission-gated SQL entry points.
+
+A photo owner is either a customer avatar or a named wearer's face/body slot. Bind/remove use slot versions, actor-bound operation replay and safe photo activity. Upload is a separate action after the domain owner exists. Photo results contain IDs, versions and changed state, not provenance or image values. Historical reads remain possible after archive; new writes require active parent and wearer. Cleanup reuses its existing fenced job/version and excludes both kinds of live attachment.

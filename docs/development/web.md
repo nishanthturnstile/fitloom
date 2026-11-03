@@ -82,3 +82,65 @@ App links, workspace switching, catalog tabs, Cancel, and reload/copy decisions 
 The UI smoke path uses the existing verified-session fixture with `MASTER_UI_CHECKS=1 pnpm --filter @fitloom/application test:http` after `pnpm build`. It requires the available `playwright-cli` executable and an installed Chrome browser; no runtime browser/form/state dependency is added. The harness creates only synthetic `fitloom_test` data, uses an isolated browser context and a temporary private cookie file, and closes it afterward. Normal tools-container validation continues to run SSR/API/transport checks without requiring Playwright. See [increment 4 evidence](../implementation/evidence/phase-2-build-1-increment-4.md) and [increment 5 evidence](../implementation/evidence/phase-2-build-1-increment-5.md) for actual browser and regression results.
 
 Build One's final local acceptance on 2026-11-02 passes the expanded HTTP projection/authority/lifecycle checks and a fresh Chrome run, including incompatible numeric bounds with retained input. Screenshots and the complete acceptance matrix are in [increment 6 evidence](../implementation/evidence/phase-2-build-1-increment-6.md). The [saved-schema consumption contract](application.md#consume-saved-garment-schemas) defines the handoff to later measurement entry.
+
+
+## Workspace Home
+
+The workspace root is Home. With `masters.read`, its server loader composes four bounded existing service reads: garments with limit 5, services and add-ons with limit 1, and catalog status. Active/available totals come from each page's `total`, with shop-wide definition scope. It passes a price-free name/ID list to `WorkspaceHome` and makes no detail/history calls. Rate-review links require `masters.rates.read`. Users without catalog access retain authorized workspace tools; read failures show an unavailable summary instead of zero counts.
+
+The existing `test:http` harness checks rendered Home totals before and after catalog writes and checks restricted-role Home. Its optional Chrome run adds empty and populated Home, larger-than-page counts, document history, and 320/390/720/1024/1440px layouts. Set `FITLOOM_UI_ARTIFACTS` to a directory name under the OS temporary directory to retain a separate screenshot run. See [Build Two baseline evidence](../implementation/evidence/phase-2-build-2-increment-0.md) for actual results and remaining work.
+
+### CRM role dependencies and focused verification
+
+The access form uses the shared changeRolePermission helper. Selecting customer photo management selects customer management, photo read, customer read, and workspace read. Removing a required read removes its dependent selections. It does not select master, financial, or generic file permissions. Server Zod parsing and SQL delegation checks independently enforce the same rules.
+
+Run node scripts/verify-customer-foundation-ui.mjs with an installed Playwright index.mjs path as its argument. The script uses the existing private demo fixture and canonical origin, checks real sign-in, CRM checkbox dependencies, absence of implied catalog access, 1440/390px overflow, and Home. It does not submit a role or create customer records, and closes its browser and session. See [the foundation evidence](../implementation/evidence/phase-2-build-2-increment-1.md) for inspected captures.
+
+The register and customer route are available in Increment 2. Increment 3 adds create/edit controllers and duplicate decisions. Increment 4 adds wearer management and lifecycle; Increment 5 adds private customer and wearer photos. The scoped customer API and save/duplicate-review protocol are available from Increment 1.
+
+
+### Customer backend boundary
+
+`/api/workspaces/{tenant}/{location}/customers` implements directory GET, private POST search, detail, bounded wearer/activity continuation, advisory duplicate checks, protected review reads and the eight fixed commands. Search/tag values belong in POST JSON, never query strings. Query parsers reject unknown, inherited and duplicate keys. The authorized Customers register and read-only profile now use this boundary.
+
+Customer/wearer create/update commands opt into the 128KiB customer-profile body budget. Other JSON reads/mutations retain 16KiB; master-definition limits remain unchanged. The optional error adapter preserves existing shared-helper callers. Customer responses use the strict customerResponse/error union, private no-store, typed 409 review/busy/conflict outcomes, 401 session expiry, 404 unavailable records, 429 with Retry-After, and 413/408 transport errors. Reviews are projected after the operation commits.
+
+`customer-http-checks.mjs` runs inside the existing optimized-app smoke fixture. It saves a fully populated Unicode customer/self-wearer, retries the operation, reads a typed duplicate response, uses private POST search, and verifies validation/session/body-size errors. The existing master and foundation HTTP scenarios continue to cover shared-helper regressions.
+
+
+### Customer register and workspace navigation
+
+The Customers page loads an authorized first page and uses POST search for subsequent name/phone/status/segment/tag/page requests. Desktop supports table/cards; narrow screens use cards. Results and totals come from one scoped service page. Debounce, cancellation and generation checks prevent old responses replacing newer filters. Failures remove stale rows/counts and retain the filters for retry. Customer names open an authorized profile. Increment 3 adds permission-aware create/edit actions.
+
+`workspace-route-policy.ts` owns route-family selection, structural breadcrumbs, contextual search and switch requests. Customer detail/new/edit paths remain in the Customers group, with segment boundaries. Home/general settings prefer Customers when permitted; catalog routes retain catalog search. The existing native navigation guard remains the owner of dirty/uncertain exits.
+
+`POST /api/workspaces/switch` accepts workspaceSwitchRequest and returns workspaceSwitchResponse. It resolves current target permissions through workspaceService.view, then saves preferences through the existing command. It accepts destination families, never source record URLs. The browser validates the returned relative destination and target prefix, resets the selector on cancellation/failure, and clears return state on success. `/api/preferences` retains its existing contract.
+
+Customer return descriptors store only bounded filters, view, offset and focused-row identity under a versioned sessionStorage namespace. Principal/scope matching, 15-minute expiry, a ten-entry cap and strict parsing guard reads. An opaque UUID token connects register/profile/back URLs. A shared non-PII context-clear signal handles login, logout and successful switching across tabs. Storage/channel failures degrade safely and do not block authentication or navigation. Profile names remain in the authorized page header, not the shell or browser storage.
+
+See [Increment 2 evidence](../implementation/evidence/phase-2-build-2-increment-2.md) for review fixes, retained captures, commands, counts and sequencing limits.
+
+
+### Customer create/edit
+
+`/workspaces/{tenant}/{location}/customers/new` and `/customers/{id}/edit` require current `customers.manage` and share `customer-form.tsx`. The controller uses the browser-safe customer/phone schemas, optional sections, atomic self-wearer intent, private advisory POST checks and authoritative command responses. Customer and wearer names stay independent after creation.
+
+A lost or malformed save response retains the exact serialized envelope in memory. Retry save sends the same bytes. Duplicate decisions and corrected known validation failures use new operation keys. Version conflict offers guarded reload; permission/session denial blocks further form requests. The existing NavigationGuard owns dirty/uncertain exits. No form draft enters sessionStorage. Successful saves use native navigation to the profile; opaque return tokens retain only register context.
+
+
+### Wearers, lifecycle and activity
+
+Increment 4 adds the profile's Overview, Wearers and Activity sections. `customer-profile-panel.tsx` owns the single active wearer/lifecycle sheet and its NavigationGuard state. Wearer optional fields preserve raw drafts; schemas validate original decimal strings/units and the shop-local birthday bound. Successful commands perform an explicit guarded document reload of the profile, including when its URL and fragment are already unchanged. Uncertain or denied replay retains its exact envelope for explicit retry.
+
+Customer archive/restore preserves individual wearer archive states. Wearer editing/lifecycle controls require an active parent and current capabilities. Every command independently checks current authority and versions. Both wearer and CRM activity reads use bounded continuation, cancellation and strict response schemas. Access denial pauses further reads and edits; failed lists do not retain a stale count.
+
+The Increment 3 review also repaired per-keystroke trimming in optional customer fields, denial of advisory phone checks, and retained-envelope recovery after access loss. Normalization occurs at submission, and a denied replay retains uncertainty protection.
+
+
+### Private customer/wearer photos
+
+The profile's Customer photo and wearer Face photo/Body photo controls require `customers.photos.read`. Management requires the separate photo-management dependency chain and an active customer/wearer. `customer-photo-editor.tsx` reports protection to the profile controller; it does not register a second editor guard. Local previews are ephemeral object URLs. Saved images use unoptimized authenticated image requests to the scoped inline stream, preserving authorization and no-store behavior.
+
+The photo route family is `/api/workspaces/{tenant}/{location}/customers/photos`: POST `slot` reads a strict owner body; POST `commands/begin`, `commands/bind`, and `commands/remove` use fixed invocation contracts; PUT `uploads/{fileId}` accepts bounded JPEG/PNG; GET `files/{fileId}` rechecks current photo authority. No caller chooses a generic permission/purpose mode. Generic workspace file routes reject CRM files.
+
+The client retains each exact begin/upload/bind/remove step after an uncertain response. Upload retries keep the same file identity/content. A failed replacement retains the saved photo. Successful binding/removal uses the guarded document reload, including an unchanged profile fragment. No customer draft or image enters browser storage. No-op saves use the separate No changes to save announcement; nested wearer preference errors map to their real field controls.

@@ -66,6 +66,8 @@ export type Command<P, R> = {
     authority: AuthorizedScope,
     payload: P,
   ) => Promise<void>;
+  // Domain-specific SQL states are interpreted only after shared retry handling.
+  mapError?: (error: unknown) => CommandError | undefined;
   mutate: (
     db: TransactionDatabase,
     authority: AuthorizedScope,
@@ -245,6 +247,8 @@ export function createCommandExecutor(dependencies: {
                 : "database",
         });
         if ((code === "40001" || code === "40P01") && attempt < 2) continue;
+        const domainError = command.mapError?.(error);
+        if (domainError) throw domainError;
         if (error instanceof CommandError) throw error;
         if (
           code === "42501" ||

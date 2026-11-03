@@ -1,7 +1,8 @@
-import { sql } from "drizzle-orm";
+import { type SQLWrapper, sql } from "drizzle-orm";
 import {
   boolean,
   check,
+  date,
   foreignKey,
   index,
   integer,
@@ -14,6 +15,7 @@ import {
   text,
   timestamp,
   unique,
+  uniqueIndex,
   uuid,
 } from "drizzle-orm/pg-core";
 import { user } from "./auth-schema.js";
@@ -615,6 +617,502 @@ export const garmentVersionAddons = app
         t.garmentVersionId,
       ),
       index("garment_addons_reference").on(t.tenantId, t.addonId),
+      masterPolicy(),
+    ],
+  )
+  .enableRLS();
+
+// CRM storage has no runtime table grants. Its command/read protocol owns access.
+const customerVersionFields = () => ({
+  version: integer("version").default(1).notNull(),
+  createdAt: createdAt(),
+  updatedAt: timestamp("updated_at", { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+  createdBy: uuid("created_by")
+    .notNull()
+    .references(() => principals.id),
+  updatedBy: uuid("updated_by")
+    .notNull()
+    .references(() => principals.id),
+  archivedAt: timestamp("archived_at", { withTimezone: true }),
+  archivedBy: uuid("archived_by").references(() => principals.id),
+  creationOperationId: uuid("creation_operation_id").notNull(),
+});
+const customerPreferenceFields = () => ({
+  notes: text("notes"),
+  fitNotes: text("fit_notes"),
+  fabricNotes: text("fabric_notes"),
+  designNotes: text("design_notes"),
+});
+const customerTextCheck = (
+  name: string,
+  column: SQLWrapper,
+  max: number,
+  multiline = false,
+) =>
+  check(
+    name,
+    sql`app.customer_text_valid(${column},${sql.raw(String(max))},${sql.raw(multiline ? "true" : "false")})`,
+  );
+
+export const customers = app
+  .table(
+    "customers",
+    {
+      id: id(),
+      tenantId: uuid("tenant_id")
+        .notNull()
+        .references(() => tenants.id),
+      locationId: uuid("location_id").notNull(),
+      name: text("name").notNull(),
+      normalizedName: text("normalized_name")
+        .generatedAlwaysAs(sql`app.normalize_customer_name(name)`)
+        .notNull(),
+      phoneDisplay: text("phone_display"),
+      phoneCountryCode: text("phone_country_code"),
+      phoneE164: text("phone_e164"),
+      phoneDigits: text("phone_digits").generatedAlwaysAs(
+        sql`substring(phone_e164 from 2)`,
+      ),
+      email: text("email"),
+      addressLine1: text("address_line1"),
+      addressLine2: text("address_line2"),
+      city: text("city"),
+      region: text("region"),
+      postalCode: text("postal_code"),
+      addressCountryCode: text("address_country_code"),
+      taxCountryCode: text("tax_country_code"),
+      gstin: text("gstin"),
+      segment: text("segment"),
+      ...customerPreferenceFields(),
+      ...customerVersionFields(),
+    },
+    (t) => [
+      unique("customers_tenant_identity").on(t.tenantId, t.id),
+      unique("customers_location_identity").on(t.tenantId, t.locationId, t.id),
+      foreignKey({
+        name: "customers_location_fk",
+        columns: [t.tenantId, t.locationId],
+        foreignColumns: [locations.tenantId, locations.id],
+      }),
+      check(
+        "customers_name_check",
+        sql`app.customer_text_valid(${t.name},120,false) AND ${t.name}=app.customer_display_name(${t.name})`,
+      ),
+      check(
+        "customers_phone_check",
+        sql`(${t.phoneE164} IS NULL AND ${t.phoneDisplay} IS NULL AND ${t.phoneCountryCode} IS NULL) OR (${t.phoneE164} IS NOT NULL AND ${t.phoneDisplay} IS NOT NULL AND ${t.phoneCountryCode} IS NOT NULL AND ${t.phoneE164} ~ '^\\+[1-9][0-9]{6,14}$' AND ${t.phoneCountryCode} ~ '^[A-Z]{2}$' AND app.customer_text_valid(${t.phoneDisplay},64,false))`,
+      ),
+      check(
+        "customers_country_check",
+        sql`(${t.addressCountryCode} IS NULL OR ${t.addressCountryCode} ~ '^[A-Z]{2}$') AND (${t.taxCountryCode} IS NULL OR ${t.taxCountryCode} ~ '^[A-Z]{2}$')`,
+      ),
+      check(
+        "customers_address_country_check",
+        sql`${t.addressCountryCode} IS NOT NULL OR (${t.addressLine1} IS NULL AND ${t.addressLine2} IS NULL AND ${t.city} IS NULL AND ${t.region} IS NULL AND ${t.postalCode} IS NULL)`,
+      ),
+      check(
+        "customers_gstin_check",
+        sql`${t.gstin} IS NULL OR (${t.taxCountryCode} IS NOT NULL AND ${t.taxCountryCode}='IN' AND ${t.gstin} ~ '^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][1-9A-Z]Z[0-9A-Z]$')`,
+      ),
+      check(
+        "customers_segment_check",
+        sql`${t.segment} IS NULL OR ${t.segment} IN ('new','regular','important','bulk')`,
+      ),
+      check("customers_version_check", sql`${t.version}>0`),
+      check(
+        "customers_archive_check",
+        sql`(${t.archivedAt} IS NULL)=(${t.archivedBy} IS NULL)`,
+      ),
+      customerTextCheck("customers_email_check", t.email, 254),
+      customerTextCheck("customers_address_line1_check", t.addressLine1, 200),
+      customerTextCheck("customers_address_line2_check", t.addressLine2, 200),
+      customerTextCheck("customers_city_check", t.city, 100),
+      customerTextCheck("customers_region_check", t.region, 100),
+      customerTextCheck("customers_postal_check", t.postalCode, 32),
+      customerTextCheck("customers_notes_check", t.notes, 2000, true),
+      customerTextCheck("customers_fit_check", t.fitNotes, 1000, true),
+      customerTextCheck("customers_fabric_check", t.fabricNotes, 1000, true),
+      customerTextCheck("customers_design_check", t.designNotes, 1000, true),
+      index("customers_name_order").on(
+        t.tenantId,
+        t.locationId,
+        t.normalizedName,
+        t.id,
+      ),
+      index("customers_active_name_order")
+        .on(t.tenantId, t.locationId, t.normalizedName, t.id)
+        .where(sql`${t.archivedAt} IS NULL`),
+      index("customers_phone_lookup")
+        .on(t.tenantId, t.locationId, t.phoneE164)
+        .where(sql`${t.phoneE164} IS NOT NULL`),
+      index("customers_name_trigrams").using(
+        "gin",
+        t.normalizedName.op("gin_trgm_ops"),
+      ),
+      index("customers_phone_trigrams").using(
+        "gin",
+        t.phoneDigits.op("gin_trgm_ops"),
+      ),
+      index("customers_created_by").on(t.createdBy),
+      index("customers_updated_by").on(t.updatedBy),
+      index("customers_archived_by").on(t.archivedBy),
+      index("customers_creation_operation").on(t.creationOperationId),
+      masterPolicy(),
+    ],
+  )
+  .enableRLS();
+
+export const customerWearers = app
+  .table(
+    "customer_wearers",
+    {
+      id: id(),
+      tenantId: uuid("tenant_id").notNull(),
+      locationId: uuid("location_id").notNull(),
+      customerId: uuid("customer_id").notNull(),
+      name: text("name").notNull(),
+      normalizedName: text("normalized_name")
+        .generatedAlwaysAs(sql`app.normalize_customer_name(name)`)
+        .notNull(),
+      relationship: text("relationship"),
+      birthday: date("birthday"),
+      genderKind: text("gender_kind").default("unspecified").notNull(),
+      genderDescription: text("gender_description"),
+      heightValue: text("height_value"),
+      heightUnit: text("height_unit"),
+      weightValue: text("weight_value"),
+      weightUnit: text("weight_unit"),
+      ...customerPreferenceFields(),
+      ...customerVersionFields(),
+    },
+    (t) => [
+      unique("customer_wearers_tenant_identity").on(t.tenantId, t.id),
+      unique("customer_wearers_parent_identity").on(
+        t.tenantId,
+        t.locationId,
+        t.customerId,
+        t.id,
+      ),
+      foreignKey({
+        name: "customer_wearers_parent_fk",
+        columns: [t.tenantId, t.locationId, t.customerId],
+        foreignColumns: [
+          customers.tenantId,
+          customers.locationId,
+          customers.id,
+        ],
+      }),
+      check(
+        "customer_wearers_name_check",
+        sql`app.customer_text_valid(${t.name},120,false) AND ${t.name}=app.customer_display_name(${t.name})`,
+      ),
+      check(
+        "customer_wearers_gender_check",
+        sql`(${t.genderKind}='unspecified' AND ${t.genderDescription} IS NULL) OR (${t.genderKind}='self-described' AND ${t.genderDescription} IS NOT NULL AND app.customer_text_valid(${t.genderDescription},60,false))`,
+      ),
+      check(
+        "customer_wearers_height_check",
+        sql`app.customer_attribute_valid(${t.heightValue},${t.heightUnit},'height')`,
+      ),
+      check(
+        "customer_wearers_weight_check",
+        sql`app.customer_attribute_valid(${t.weightValue},${t.weightUnit},'weight')`,
+      ),
+      check(
+        "customer_wearers_birthday_check",
+        sql`${t.birthday} IS NULL OR (${t.birthday} BETWEEN '0001-01-01'::date AND '9999-12-31'::date AND isfinite(${t.birthday}))`,
+      ),
+      check("customer_wearers_version_check", sql`${t.version}>0`),
+      check(
+        "customer_wearers_archive_check",
+        sql`(${t.archivedAt} IS NULL)=(${t.archivedBy} IS NULL)`,
+      ),
+      customerTextCheck(
+        "customer_wearers_relationship_check",
+        t.relationship,
+        60,
+      ),
+      customerTextCheck("customer_wearers_notes_check", t.notes, 2000, true),
+      customerTextCheck("customer_wearers_fit_check", t.fitNotes, 1000, true),
+      customerTextCheck(
+        "customer_wearers_fabric_check",
+        t.fabricNotes,
+        1000,
+        true,
+      ),
+      customerTextCheck(
+        "customer_wearers_design_check",
+        t.designNotes,
+        1000,
+        true,
+      ),
+      index("customer_wearers_parent_order").on(
+        t.tenantId,
+        t.locationId,
+        t.customerId,
+        t.normalizedName,
+        t.id,
+      ),
+      index("customer_wearers_created_by").on(t.createdBy),
+      index("customer_wearers_updated_by").on(t.updatedBy),
+      index("customer_wearers_archived_by").on(t.archivedBy),
+      index("customer_wearers_creation_operation").on(t.creationOperationId),
+      masterPolicy(),
+    ],
+  )
+  .enableRLS();
+
+export const customerTags = app
+  .table(
+    "customer_tags",
+    {
+      tenantId: uuid("tenant_id").notNull(),
+      locationId: uuid("location_id").notNull(),
+      customerId: uuid("customer_id").notNull(),
+      label: text("label").notNull(),
+      normalizedTag: text("normalized_tag")
+        .generatedAlwaysAs(sql`app.normalize_customer_name(label)`)
+        .notNull(),
+    },
+    (t) => [
+      primaryKey({
+        columns: [t.tenantId, t.locationId, t.customerId, t.normalizedTag],
+      }),
+      foreignKey({
+        name: "customer_tags_parent_fk",
+        columns: [t.tenantId, t.locationId, t.customerId],
+        foreignColumns: [
+          customers.tenantId,
+          customers.locationId,
+          customers.id,
+        ],
+      }),
+      customerTextCheck("customer_tags_label_check", t.label, 40),
+      index("customer_tags_filter").on(
+        t.tenantId,
+        t.locationId,
+        t.normalizedTag,
+        t.customerId,
+      ),
+      masterPolicy(),
+    ],
+  )
+  .enableRLS();
+
+export const customerActivity = app
+  .table(
+    "customer_activity",
+    {
+      id: id(),
+      tenantId: uuid("tenant_id").notNull(),
+      locationId: uuid("location_id").notNull(),
+      customerId: uuid("customer_id").notNull(),
+      wearerId: uuid("wearer_id"),
+      actorId: uuid("actor_id")
+        .notNull()
+        .references(() => principals.id),
+      kind: text("kind").notNull(),
+      changedFields: text("changed_fields").array().notNull(),
+      previousVersion: integer("previous_version").notNull(),
+      nextVersion: integer("next_version").notNull(),
+      operationId: uuid("operation_id").notNull(),
+      createdAt: createdAt(),
+    },
+    (t) => [
+      foreignKey({
+        columns: [t.tenantId, t.locationId, t.customerId],
+        foreignColumns: [
+          customers.tenantId,
+          customers.locationId,
+          customers.id,
+        ],
+      }),
+      foreignKey({
+        columns: [t.tenantId, t.locationId, t.customerId, t.wearerId],
+        foreignColumns: [
+          customerWearers.tenantId,
+          customerWearers.locationId,
+          customerWearers.customerId,
+          customerWearers.id,
+        ],
+      }),
+      check(
+        "customer_activity_kind",
+        sql`${t.kind} IN ('customer.create','customer.update','customer.archive','customer.restore','wearer.create','wearer.update','wearer.archive','wearer.restore','customer-photo.bind','customer-photo.remove')`,
+      ),
+      check(
+        "customer_activity_versions",
+        sql`${t.previousVersion}>=0 AND ${t.nextVersion}>${t.previousVersion}`,
+      ),
+      check(
+        "customer_activity_fields",
+        sql`cardinality(${t.changedFields})<=30`,
+      ),
+      index("customer_activity_page").on(
+        t.tenantId,
+        t.locationId,
+        t.customerId,
+        t.createdAt,
+        t.id,
+      ),
+      index("customer_activity_wearer").on(
+        t.tenantId,
+        t.locationId,
+        t.customerId,
+        t.wearerId,
+      ),
+      index("customer_activity_actor").on(t.actorId),
+      index("customer_activity_operation").on(t.operationId),
+      masterPolicy(),
+    ],
+  )
+  .enableRLS();
+
+export const customerDuplicateReviews = app
+  .table(
+    "customer_duplicate_reviews",
+    {
+      id: id(),
+      tenantId: uuid("tenant_id").notNull(),
+      locationId: uuid("location_id").notNull(),
+      actorId: uuid("actor_id")
+        .notNull()
+        .references(() => principals.id),
+      commandKind: text("command_kind").notNull(),
+      phone: text("phone").notNull(),
+      draftHash: text("draft_hash").notNull(),
+      candidateFingerprint: text("candidate_fingerprint").notNull(),
+      candidateIds: uuid("candidate_ids").array().notNull(),
+      excludedCustomerId: uuid("excluded_customer_id"),
+      expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
+      consumedOperationId: uuid("consumed_operation_id"),
+    },
+    (t) => [
+      foreignKey({
+        columns: [t.tenantId, t.locationId],
+        foreignColumns: [locations.tenantId, locations.id],
+      }),
+      foreignKey({
+        columns: [t.tenantId, t.locationId, t.excludedCustomerId],
+        foreignColumns: [
+          customers.tenantId,
+          customers.locationId,
+          customers.id,
+        ],
+      }),
+      check(
+        "customer_review_kind",
+        sql`${t.commandKind} IN ('customer.create','customer.update')`,
+      ),
+      check("customer_review_phone", sql`${t.phone} ~ '^[+][1-9][0-9]{6,14}$'`),
+      check("customer_review_hash", sql`${t.draftHash} ~ '^v1:[a-f0-9]{64}$'`),
+      index("customer_review_expiry").on(t.expiresAt),
+      index("customer_review_actor").on(t.actorId),
+      index("customer_review_scope").on(
+        t.tenantId,
+        t.locationId,
+        t.excludedCustomerId,
+      ),
+      index("customer_review_operation").on(t.consumedOperationId),
+      masterPolicy(),
+    ],
+  )
+  .enableRLS();
+
+export const customerRequestBudgets = app
+  .table(
+    "customer_request_budgets",
+    {
+      tenantId: uuid("tenant_id").notNull(),
+      locationId: uuid("location_id").notNull(),
+      principalId: uuid("principal_id")
+        .notNull()
+        .references(() => principals.id),
+      minute: timestamp("minute", { withTimezone: true }).notNull(),
+      checks: integer("checks").notNull().default(0),
+      leases: jsonb("leases").notNull().default({}),
+    },
+    (t) => [
+      primaryKey({
+        columns: [t.tenantId, t.locationId, t.principalId, t.minute],
+      }),
+      foreignKey({
+        columns: [t.tenantId, t.locationId],
+        foreignColumns: [locations.tenantId, locations.id],
+      }),
+      check("customer_budget_checks", sql`${t.checks} BETWEEN 0 AND 30`),
+      check("customer_budget_leases", sql`jsonb_typeof(${t.leases})='object'`),
+      index("customer_budget_expiry").on(t.minute),
+      index("customer_budget_actor").on(t.principalId),
+      masterPolicy(),
+    ],
+  )
+  .enableRLS();
+
+export const customerPhotos = app
+  .table(
+    "customer_photos",
+    {
+      id: id(),
+      tenantId: uuid("tenant_id").notNull(),
+      locationId: uuid("location_id").notNull(),
+      customerId: uuid("customer_id").notNull(),
+      wearerId: uuid("wearer_id"),
+      role: text("role").notNull(),
+      fileId: uuid("file_id").notNull(),
+      version: integer("version").notNull(),
+      note: text("note").notNull(),
+      actorId: uuid("actor_id")
+        .notNull()
+        .references(() => principals.id),
+      createdAt: createdAt(),
+      retiredAt: timestamp("retired_at", { withTimezone: true }),
+    },
+    (t) => [
+      foreignKey({
+        columns: [t.tenantId, t.locationId, t.customerId],
+        foreignColumns: [
+          customers.tenantId,
+          customers.locationId,
+          customers.id,
+        ],
+      }),
+      foreignKey({
+        columns: [t.tenantId, t.locationId, t.customerId, t.wearerId],
+        foreignColumns: [
+          customerWearers.tenantId,
+          customerWearers.locationId,
+          customerWearers.customerId,
+          customerWearers.id,
+        ],
+      }),
+      check(
+        "customer_photo_shape",
+        sql`(${t.role}='avatar' AND ${t.wearerId} IS NULL) OR (${t.role} IN ('face','body') AND ${t.wearerId} IS NOT NULL)`,
+      ),
+      check("customer_photo_version", sql`${t.version}>0`),
+      check(
+        "customer_photo_note",
+        sql`char_length(${t.note}) BETWEEN 1 AND 1000`,
+      ),
+      uniqueIndex("customer_photo_file").on(t.fileId),
+      uniqueIndex("customer_photo_avatar_current")
+        .on(t.tenantId, t.locationId, t.customerId)
+        .where(sql`${t.retiredAt} IS NULL AND ${t.wearerId} IS NULL`),
+      uniqueIndex("customer_photo_wearer_current")
+        .on(t.tenantId, t.locationId, t.customerId, t.wearerId, t.role)
+        .where(sql`${t.retiredAt} IS NULL AND ${t.wearerId} IS NOT NULL`),
+      index("customer_photo_history").on(
+        t.tenantId,
+        t.locationId,
+        t.customerId,
+        t.wearerId,
+        t.role,
+        t.version,
+      ),
+      index("customer_photo_actor").on(t.actorId),
       masterPolicy(),
     ],
   )

@@ -30,6 +30,8 @@ export {
   requestHash,
   tenantId,
 } from "./commands.js";
+export { createCustomerPhotoService } from "./customer-photos.js";
+export { CustomerError, createCustomerService } from "./customers.js";
 export {
   DEVELOPMENT_CURRENCY,
   extendPrice,

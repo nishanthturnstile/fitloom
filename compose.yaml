@@ -17,27 +17,51 @@ x-app: &app
     NEXT_TELEMETRY_DISABLED: "1"
     TURBO_TELEMETRY_DISABLED: "1"
 
+# Watch source roots individually. Never archive the workspace root into a live
+# container: parent-directory changes can carry host dependencies/build output.
 x-watch: &watch
   watch:
-    - action: sync
-      path: .
-      target: /workspace
+    - &source-sync
+      action: sync
+      path: apps/web/src
+      target: /workspace/apps/web/src
       initial_sync: true
-      ignore:
-        - "**/package.json"
-        - pnpm-lock.yaml
-        - pnpm-workspace.yaml
-        - Dockerfile.dev
-        - compose.yaml
-        - docs/
-        - "**/*.md"
+    - <<: *source-sync
+      path: apps/web/public
+      target: /workspace/apps/web/public
+    - <<: *source-sync
+      path: apps/worker/src
+      target: /workspace/apps/worker/src
+    - <<: *source-sync
+      path: packages/application/src
+      target: /workspace/packages/application/src
+    - <<: *source-sync
+      path: packages/db/src
+      target: /workspace/packages/db/src
+    - <<: *source-sync
+      path: scripts
+      target: /workspace/scripts
+    - <<: *source-sync
+      path: apps/web/next.config.ts
+      target: /workspace/apps/web/next.config.ts
     - action: rebuild
       path: .
       include:
-        - "**/package.json"
+        - package.json
+        - apps/web/package.json
+        - apps/worker/package.json
+        - packages/application/package.json
+        - packages/db/package.json
         - pnpm-lock.yaml
         - pnpm-workspace.yaml
         - Dockerfile.dev
+        - turbo.json
+        - tsconfig.base.json
+        - apps/web/tsconfig.json
+        - apps/worker/tsconfig.json
+        - packages/application/tsconfig.json
+        - packages/db/tsconfig.json
+        - apps/web/turbo.json
 
 services:
   postgres:
@@ -147,7 +171,7 @@ services:
       test: ["CMD", "node", "scripts/healthcheck.mjs", "web"]
       interval: 10s
       timeout: 8s
-      start_period: 60s
+      start_period: 180s
       retries: 6
 
   worker:
@@ -165,7 +189,7 @@ services:
       test: ["CMD", "node", "scripts/healthcheck.mjs", "worker"]
       interval: 10s
       timeout: 5s
-      start_period: 30s
+      start_period: 180s
       retries: 6
 
   tools:

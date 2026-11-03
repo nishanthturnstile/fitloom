@@ -131,6 +131,11 @@ await test("PostgreSQL roles, migrations, and tenant isolation", async (t) => {
             )
           ).rows.map((r) => r.permission);
           assert.deepEqual(upgraded, [
+            "customers.archive",
+            "customers.manage",
+            "customers.photos.manage",
+            "customers.photos.read",
+            "customers.read",
             "masters.manage",
             "masters.rates.read",
             "masters.read",
@@ -139,7 +144,7 @@ await test("PostgreSQL roles, migrations, and tenant isolation", async (t) => {
           assert.equal(
             (
               await migration.query(
-                "SELECT * FROM app.permission_grants WHERE role_id=$1 AND permission LIKE 'masters.%'",
+                "SELECT * FROM app.permission_grants WHERE role_id=$1 AND (permission LIKE 'masters.%' OR permission LIKE 'customers.%')",
                 [managerRole],
               )
             ).rowCount,
@@ -175,7 +180,7 @@ await test("PostgreSQL roles, migrations, and tenant isolation", async (t) => {
           ).rows,
           before.rows,
         );
-        assert.equal(before.rowCount, 34);
+        assert.equal(before.rowCount, journal.entries.length);
       },
     );
     const actorA = randomUUID(),

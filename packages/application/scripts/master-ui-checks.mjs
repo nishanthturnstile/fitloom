@@ -1,10 +1,14 @@
 import assert from "node:assert/strict";
 import { execFile } from "node:child_process";
 import { randomUUID } from "node:crypto";
-import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, realpath, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { promisify } from "node:util";
+import sharp from "sharp";
+import { exerciseCustomerPhotosUI } from "./customer-photo-ui-checks.mjs";
+import { exerciseCustomersUI } from "./customer-register-ui-checks.mjs";
+import { exerciseCustomerWearersUI } from "./customer-wearers-ui-checks.mjs";
 import { exerciseGarmentEditorFrameUI } from "./garment-editor-frame-ui-checks.mjs";
 import { exerciseMasterAuthorityUI } from "./master-authority-ui-checks.mjs";
 import {
@@ -28,11 +32,22 @@ export async function masterUiChecks({
   admin,
   tenant,
   location,
+  customers,
 }) {
-  const directory = await mkdtemp(join(tmpdir(), "fitloom-ui-"));
+  const directory = await realpath(
+    await mkdtemp(join(tmpdir(), "fitloom-ui-")),
+  );
   const session = `g4-${process.pid}`;
-  const artifacts = join(tmpdir(), "fitloom-increment6-ui");
+  const artifacts = join(
+    tmpdir(),
+    process.env.FITLOOM_UI_ARTIFACTS ?? "fitloom-increment6-ui",
+  );
   await mkdir(artifacts, { recursive: true });
+  await sharp({
+    create: { width: 32, height: 24, channels: 3, background: "#448866" },
+  })
+    .png()
+    .toFile(join(directory, "photo-fixture.png"));
   const run = async (...args) => {
     const result = await execute("playwright-cli", [`-s=${session}`, ...args], {
       cwd: directory,
@@ -136,6 +151,8 @@ export async function masterUiChecks({
     pricedId,
     newLabel: `UI custom ${randomUUID().slice(0, 8)}`,
     artifacts,
+    customers,
+    photoFile: join(directory, "photo-fixture.png"),
   };
   try {
     const state = {
@@ -169,6 +186,40 @@ export async function masterUiChecks({
       );
       assert.ok(passed.test(result), result.slice(0, 1500));
     };
+    const customerResult = await run(
+      "run-code",
+      `async page => { const exercise=${exerciseCustomersUI.toString()};return exercise(page,${JSON.stringify(fixture)}); }`,
+    );
+    await writeFile(join(artifacts, "customer-run.txt"), customerResult);
+    assert.ok(
+      /"customersUiPassed"\s*:\s*true/.test(customerResult),
+      customerResult.slice(-4500),
+    );
+    console.log(
+      "Customer register UI passed: complete search/count/paging, views, private return context, stale responses and permission-aware switching.",
+    );
+    const wearerResult = await run(
+      "run-code",
+      `async page => { const exercise=${exerciseCustomerWearersUI.toString()};return exercise(page,${JSON.stringify(fixture)}); }`,
+    );
+    assert.ok(
+      /"customerWearersUiPassed"\s*:\s*true/.test(wearerResult),
+      wearerResult.slice(-4500),
+    );
+    console.log(
+      "Customer wearer UI passed: family identities, independent preferences, exact profile units, guarded sheets, lifecycle and continuation.",
+    );
+    const photoResult = await run(
+      "run-code",
+      `async page => {const exercise=${exerciseCustomerPhotosUI.toString()};return exercise(page,${JSON.stringify(fixture)});}`,
+    );
+    assert.ok(
+      /"customerPhotosUiPassed"\s*:\s*true/.test(photoResult),
+      photoResult.slice(-4500),
+    );
+    console.log(
+      "Customer photos UI passed: private preview/upload, exact bind retry, failed replacement recovery, removal and separate wearer slots.",
+    );
     for (const phase of ["views", "reads", "catalogs"]) {
       const registers = await run(
         "run-code",
@@ -202,7 +253,7 @@ export async function masterUiChecks({
     );
     const failedSwitch = await run(
       "run-code",
-      `async page => { await page.route("**/api/preferences", route => route.fulfill({status:503,contentType:"application/json",body:'{"message":"Temporary failure"}'})); await page.getByLabel("Switch shop or location",{exact:true}).selectOption(${JSON.stringify(`${tenant}/${secondLocation}`)}); }`,
+      `async page => { await page.route("**/api/workspaces/switch", route => route.fulfill({status:503,contentType:"application/json",body:'{"message":"Temporary failure"}'})); await page.getByLabel("Switch shop or location",{exact:true}).selectOption(${JSON.stringify(`${tenant}/${secondLocation}`)}); }`,
     );
     assert.ok(
       failedSwitch.includes("Discard unsaved garment changes?"),
@@ -385,6 +436,19 @@ export async function masterUiChecks({
       "INSERT INTO app.permission_grants SELECT $1,$2,p FROM unnest(ARRAY['masters.manage','masters.rates.read']) p ON CONFLICT DO NOTHING",
       [tenant, role],
     );
+    await authorityPhase("restore-addon");
+    // Native unload dialogs pause the CLI run before in-page listeners settle.
+    // Accept the deliberate fixture discard through the owning browser driver.
+    const garmentURL = `${base}/workspaces/${tenant}/${location}/settings/garments`;
+    const leavingAddon = await run(
+      "run-code",
+      `async page => { await page.goto(${JSON.stringify(garmentURL)}); }`,
+    );
+    if (leavingAddon.includes("beforeunload")) await run("dialog-accept");
+    await run(
+      "run-code",
+      `async page => { await page.waitForURL(${JSON.stringify(garmentURL)}); }`,
+    );
     await authorityPhase("prepare-garment");
     await admin.query(
       "DELETE FROM app.permission_grants WHERE role_id=$1 AND permission IN ('masters.manage','masters.rates.read')",
@@ -427,7 +491,7 @@ export async function masterUiChecks({
     assert.ok(passed.test(denied), denied.slice(0, 1500));
     const restricted = await run(
       "run-code",
-      `async page => { await page.screenshot({path:${JSON.stringify(`${artifacts}/restricted-catalog.png`)}}); await page.goto(${JSON.stringify(`${base}/workspaces/${tenant}/${location}`)}); await page.getByRole('heading',{name:'HTTP fixture shop',exact:true}).waitFor(); if(await page.getByRole('link',{name:'Garments',exact:true}).count()) throw Error('Restricted navigation exposes catalog'); await page.screenshot({path:${JSON.stringify(`${artifacts}/restricted-overview.png`)}}); await page.goto(${JSON.stringify(`${base}/workspaces/${tenant}/${location}/settings`)}); await page.getByRole('heading',{name:'Settings',exact:true}).waitFor(); return {restrictedWorkspacePassed:true}; }`,
+      `async page => { await page.screenshot({path:${JSON.stringify(`${artifacts}/restricted-catalog.png`)}}); await page.goto(${JSON.stringify(`${base}/workspaces/${tenant}/${location}`)}); await page.getByRole('heading',{name:'Home',exact:true}).waitFor(); if(await page.getByRole('link',{name:'Garments',exact:true}).count()) throw Error('Restricted navigation exposes catalog'); await page.screenshot({path:${JSON.stringify(`${artifacts}/restricted-home.png`)}}); await page.goto(${JSON.stringify(`${base}/workspaces/${tenant}/${location}/settings`)}); await page.getByRole('heading',{name:'Settings',exact:true}).waitFor(); return {restrictedWorkspacePassed:true}; }`,
     );
     assert.ok(
       /"restrictedWorkspacePassed"\s*:\s*true/.test(restricted),

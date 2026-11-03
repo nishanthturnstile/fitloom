@@ -5,7 +5,7 @@ import type {
 } from "@fitloom/application/workspace-contracts";
 import { Menu01Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { type ReactNode, useState } from "react";
+import { type ReactNode, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -15,6 +15,10 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import {
+  ensureCustomerReturnScope,
+  listenForCustomerContextClear,
+} from "./customer-return-session";
 import { NavigationGuard } from "./navigation-guard";
 import { WorkspaceNavigation } from "./workspace-navigation";
 import { WorkspaceSwitcher } from "./workspace-switcher";
@@ -25,6 +29,7 @@ export function WorkspaceShell({
   choices,
   locale,
   children,
+  principalId,
 }: {
   workspace: Pick<
     WorkspaceView,
@@ -33,7 +38,16 @@ export function WorkspaceShell({
   choices: WorkspaceChoice[];
   locale: string;
   children: ReactNode;
+  principalId: string;
 }) {
+  useEffect(() => {
+    ensureCustomerReturnScope({
+      principalId,
+      tenantId: workspace.tenantId,
+      locationId: workspace.locationId,
+    });
+    return listenForCustomerContextClear();
+  }, [principalId, workspace.tenantId, workspace.locationId]);
   const [menu, setMenu] = useState(false);
   const base = `/workspaces/${workspace.tenantId}/${workspace.locationId}`;
   const navigation = (
@@ -104,10 +118,7 @@ export function WorkspaceShell({
                 </SheetContent>
               </Sheet>
             </div>
-            <WorkspaceTopbar
-              base={base}
-              canReadMasters={workspace.permissions.includes("masters.read")}
-            />
+            <WorkspaceTopbar base={base} permissions={workspace.permissions} />
             <WorkspaceSwitcher
               choices={choices}
               selected={`${workspace.tenantId}/${workspace.locationId}`}

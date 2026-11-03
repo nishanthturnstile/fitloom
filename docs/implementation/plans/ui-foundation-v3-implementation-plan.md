@@ -1,6 +1,6 @@
 # UI foundation v3 implementation plan
 
-Status: In progress. Started on 2026-11-02. The foundation slice and increments 2–4 are locally verified. Increment 5 is implemented with passing host lint, types, and build; runtime acceptance remains open after interrupted validation and a worker receipt failure before the browser suite. Complete increment 5 verification before Home readiness in increment 6. See [implementation evidence](../evidence/ui-foundation-v3.md) for details and verification limits.
+Status: Complete locally on 2026-11-02. Increments 5–7 pass the existing Chrome workflow and inspected desktop/narrow visual acceptance. Guarded validation and runtime recovery are recorded in [Build Two increment 0](../evidence/phase-2-build-2-increment-0.md#final-ui-baseline-acceptance-2026-11-02). Customer Increment 2 now owns customer navigation, route policy and the safe switch resolver. Browser/platform verification limits remain explicit in the evidence.
 
 Implement the [v3 mockup](../design/ui-foundation-mockup-v3.html) as the working Fitloom workspace, garment register, and editor. Keep the existing garment-master behavior and provide a clear home for the workspace features already built.
 
@@ -461,13 +461,13 @@ The highest-risk changes are moving navigation away from the draft owner, splitt
 - [x] Shared desktop/mobile shell is present on all scoped workspace pages.
 - [x] Shop, current access, preferences, people/roles/invitations, and private files retain working destinations and authority checks.
 - [x] Garment, service, and add-on registers retain supported filters, totals, pagination, lifecycle, and ordering.
-- [ ] All six garment-editor steps preserve the existing definition, rate, eligibility, and identity rules.
-- [ ] Preview, exact history, historical copy, and service/add-on history work through permitted projections.
-- [ ] Dirty navigation, uncertain-operation replay, conflict recovery, and permission revocation pass on the actual screens.
-- [ ] Home uses real bounded reads and clearly labels recommendations and future modules.
-- [ ] Responsive and keyboard checks pass, with visual evidence retained.
-- [ ] Lint, types, build, guarded validation, and the optional real-browser master suite pass on the final implementation.
-- [ ] Legacy workspace CSS is retired where unused, and entry flows still work.
-- [ ] Documentation records the delivered routes, evidence, deviations, and verification limits.
+- [x] All six garment-editor steps preserve the existing definition, rate, eligibility, and identity rules.
+- [x] Preview, exact history, historical copy, and service/add-on history work through permitted projections.
+- [x] Dirty navigation, uncertain-operation replay, conflict recovery, and permission revocation pass on the actual screens.
+- [x] Home uses real bounded reads and clearly labels recommendations and future modules.
+- [x] Responsive and keyboard checks pass, with visual evidence retained.
+- [x] Lint, types, build, guarded validation, and the optional real-browser master suite pass on the final implementation.
+- [x] Legacy workspace CSS is retired where unused, and entry flows still work.
+- [x] Documentation records the delivered routes, evidence, deviations, and verification limits.
 
 After these conditions pass, plan customers and wearer measurements against the shared shell and stable garment contracts as a separate build.

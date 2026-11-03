@@ -1,6 +1,6 @@
 # UI foundation v3 implementation evidence
 
-Status: In progress. Foundation slice and increments 2–4 locally verified on 2026-11-02. Increment 5 is implemented; its runtime verification is incomplete. This record does not close the redesign acceptance checklist.
+Status: Complete locally on 2026-11-02. The final acceptance and ownership handoff below close increments 5–7 and supersede earlier incomplete-verification notes. See the [final baseline evidence](phase-2-build-2-increment-0.md#final-ui-baseline-acceptance-2026-11-02) for commands, captures and limits.
 
 ## Foundation slice
 
@@ -257,3 +257,21 @@ Next: restore responsive local test services, run full validation and the real C
 The local stack is healthy again. A byte comparison confirms that all 39 changed or new web source files match the running web container. The canonical Tailscale HTTPS account page returns 200; existing demo sign-in and the workspace list also return 200. The authenticated garment catalog returns 200 and renders the new Refresh access control and catalog register. This confirms the running app contains the current changes. Full increment 5 runtime acceptance remains pending.
 
 Manual test entry: [Fitloom sign-in](https://nishanths-macbook-pro.tail30fb6a.ts.net:24443/account). After sign-in, select your shop and open Garments. The existing Fitloom Demo catalog is also available at its workspace settings route. No development data was reset for this check.
+
+
+### Build Two baseline follow-up, 2026-11-02
+
+Home readiness is implemented with four bounded authorized catalog reads and real active/available totals. The new Home and the existing full Chrome UI scenarios pass locally, including the previously pending authority refresh and recovery checks. Stale history/Home assertions and fixture navigation synchronization were repaired in the existing harness. Thirteen synthetic captures and the detailed results are in [Build Two increment 0 evidence](phase-2-build-2-increment-0.md).
+
+Container validation passed 12 database and 146 application tests plus lint/types/build/HTTP checks. The later combined Chrome/HTTP command passed all UI scenarios, then failed its six-second worker-restart observation check; the separate HTTP/worker/transport rerun passes with a 30-second bound and an actual restart observation of 9379ms. The development account returned to a Next missing-error-components 404 while container-control requests timed out. Increment 0 and final UI acceptance remain open until the development runtime recovers. No customer schema or screen is delivered by this follow-up.
+
+### Runtime recovery and customer foundation follow-up
+
+The development 404 is repaired and the canonical demo sign-in → Home → settings/catalog path works again. Source-only Watch roots prevent host production output from entering the application containers; a real host build and source/ignored-file probes pass. A cold worker start exposed a separate health-check grace issue, now fixed with bounded startup grace and a lightweight worker probe. Both services and the background watcher are healthy.
+
+The first customer contract/storage foundation and its CRM role controls are implemented. Lint, types, build, 12 database and 159 application tests, HTTP/worker/transport checks, and focused 1440/390px Chrome role checks pass. Existing compatibility-styled access forms remain visible in the captures; final v3 visual/CSS acceptance remains separate from customer-domain implementation. See [the current implementation evidence](phase-2-build-2-increment-1.md).
+
+
+## Final local acceptance and ownership handoff
+
+The v3 increments 5–7 Chrome workflow and visual acceptance are closed by the [Build Two increment 0 final acceptance](phase-2-build-2-increment-0.md#final-ui-baseline-acceptance-2026-11-02). That record retains final desktop/narrow captures, inspected states, commands, the two harness synchronization repairs and explicit browser limits. Native access/entry/file forms share preset tokens; unused workspace selectors and the legacy text-color token are removed. Existing domain commands and controllers remain intact. Customer Increment 2 now owns the shell extension, route policy and safe switch resolver.

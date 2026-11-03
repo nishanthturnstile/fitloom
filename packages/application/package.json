@@ -19,6 +19,18 @@
     "./garment-definition": {
       "types": "./dist/garment-definition.d.ts",
       "default": "./dist/garment-definition.js"
+    },
+    "./customer-contracts": {
+      "types": "./dist/customer-contracts.d.ts",
+      "default": "./dist/customer-contracts.js"
+    },
+    "./customer-phone": {
+      "types": "./dist/customer-phone.d.ts",
+      "default": "./dist/customer-phone.js"
+    },
+    "./customer-photo-contracts": {
+      "types": "./dist/customer-photo-contracts.d.ts",
+      "default": "./dist/customer-photo-contracts.js"
     }
   },
   "scripts": {
@@ -43,6 +55,7 @@
     "better-auth": "1.7.14",
     "decimal.js": "10.6.0",
     "drizzle-orm": "0.45.4",
+    "libphonenumber-js": "1.13.15",
     "nodemailer": "10.3.1",
     "sharp": "0.35.5",
     "zod": "4.6.7"

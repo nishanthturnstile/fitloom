@@ -33,6 +33,7 @@ const instanceId = randomUUID();
 let stopping = false;
 let deadline: ReturnType<typeof setTimeout> | undefined;
 let wake: (() => void) | undefined;
+let customerMaintenanceAt = 0;
 const shutdown = (signal: NodeJS.Signals) => {
   if (stopping) return;
   stopping = true;
@@ -53,6 +54,10 @@ logger.info(
 try {
   while (!stopping) {
     try {
+      if (Date.now() >= customerMaintenanceAt) {
+        customerMaintenanceAt = Date.now() + 60000;
+        await pool.query("SELECT app.customer_maintenance()");
+      }
       const results = await Promise.allSettled([
         deliverAuthMail({
           pool,

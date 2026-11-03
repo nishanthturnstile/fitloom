@@ -230,7 +230,168 @@ export function workspacePermissionLabel(permission: string): string {
       return "Manage garments and services";
     case "masters.rates.read":
       return "View garment and add-on rates";
+    case "customers.read":
+      return "View customers and wearers";
+    case "customers.manage":
+      return "Create and edit customers and wearers";
+    case "customers.archive":
+      return "Archive and restore customers and wearers";
+    case "customers.photos.read":
+      return "View customer and wearer photos";
+    case "customers.photos.manage":
+      return "Manage customer and wearer photos";
     default:
       return permission;
+  }
+}
+
+export const workspacePermission = z.enum([
+  "workspace.read",
+  "workspace.manage",
+  "workspace.private.read",
+  "access.manage",
+  "locations.all",
+  "audit.read",
+  "journal.read",
+  "journal.post",
+  "files.read",
+  "files.manage",
+  "masters.read",
+  "masters.manage",
+  "masters.rates.read",
+  "customers.read",
+  "customers.manage",
+  "customers.archive",
+  "customers.photos.read",
+  "customers.photos.manage",
+]);
+export function workspacePermissionDependencies(permission: string): string[] {
+  const base = permission === "workspace.read" ? [] : ["workspace.read"];
+  switch (permission) {
+    case "masters.manage":
+      return [...base, "masters.read", "masters.rates.read"];
+    case "customers.manage":
+    case "customers.archive":
+    case "customers.photos.read":
+      return [...base, "customers.read"];
+    case "customers.photos.manage":
+      return [...base, "customers.manage", "customers.photos.read"];
+    default:
+      return base;
+  }
+}
+export const customRoleInput = z
+  .strictObject({
+    name: z.string().trim().min(1).max(80),
+    permissions: z.array(workspacePermission).min(1).max(20),
+  })
+  .superRefine((role, context) => {
+    if (!role.permissions.includes("workspace.read"))
+      context.addIssue({
+        code: "custom",
+        path: ["permissions"],
+        message: "Roles require workspace read access",
+      });
+    const selected = new Set<string>(role.permissions);
+    for (const permission of selected)
+      if (
+        workspacePermissionDependencies(permission).some(
+          (required) => !selected.has(required),
+        )
+      )
+        context.addIssue({
+          code: "custom",
+          path: ["permissions"],
+          message: `Include the read and management dependencies for ${permission}`,
+        });
+  });
+export function changeRolePermission(
+  selected: string[],
+  permission: string,
+  checked: boolean,
+): string[] {
+  const result = new Set(selected);
+  const visited = new Set<string>();
+  const add = (value: string) => {
+    if (visited.has(value)) return;
+    visited.add(value);
+    result.add(value);
+    for (const dependency of workspacePermissionDependencies(value))
+      add(dependency);
+  };
+  if (checked) add(permission);
+  else {
+    result.delete(permission);
+    let changed = true;
+    while (changed) {
+      changed = false;
+      for (const value of result)
+        if (
+          workspacePermissionDependencies(value).some(
+            (dependency) => !result.has(dependency),
+          )
+        ) {
+          result.delete(value);
+          changed = true;
+        }
+    }
+  }
+  return [...result];
+}
+
+export const workspaceDestination = z.discriminatedUnion("kind", [
+  z.strictObject({ kind: z.literal("home") }),
+  z.strictObject({ kind: z.literal("customers") }),
+  z.strictObject({
+    kind: z.literal("catalog"),
+    catalog: z.enum(["garment", "service", "addon"]),
+  }),
+  z.strictObject({
+    kind: z.literal("settings"),
+    section: z.enum(["root", "shop", "access", "files"]),
+  }),
+]);
+export type WorkspaceDestination = z.infer<typeof workspaceDestination>;
+export const workspaceSwitchRequest = z.strictObject({
+  operationKey: z.uuidv4(),
+  correlationId: z.uuid(),
+  target: workspaceTarget,
+  locale: z.enum(["en", "ta", "hi"]),
+  destination: workspaceDestination,
+});
+export const workspaceSwitchResponse = z.strictObject({
+  destination: z
+    .string()
+    .regex(
+      /^\/workspaces\/[0-9a-f-]{36}\/[0-9a-f-]{36}(?:\/(?:customers|files|settings(?:\/(?:shop|access|garments))?))?(?:\?kind=(?:service|addon))?$/i,
+    ),
+});
+export function resolveWorkspaceDestination(
+  workspace: Pick<WorkspaceView, "tenantId" | "locationId" | "permissions">,
+  requested: WorkspaceDestination,
+): string {
+  const base = `/workspaces/${workspace.tenantId}/${workspace.locationId}`;
+  const allowed = (permission: string) =>
+    workspace.permissions.includes(permission);
+  switch (requested.kind) {
+    case "home":
+      return base;
+    case "customers":
+      return allowed("customers.read") ? `${base}/customers` : base;
+    case "catalog":
+      return allowed("masters.read")
+        ? `${base}/settings/garments${requested.catalog === "garment" ? "" : `?kind=${requested.catalog}`}`
+        : base;
+    case "settings":
+      switch (requested.section) {
+        case "root":
+          return `${base}/settings`;
+        case "shop":
+          return `${base}/settings/shop`;
+        case "access":
+          return allowed("access.manage") ? `${base}/settings/access` : base;
+        case "files":
+          return allowed("files.read") ? `${base}/files` : base;
+      }
   }
 }

@@ -1,6 +1,6 @@
 # Fitloom documentation
 
-Start with the [implementation status](implementation/status.md), then read the [roadmap](product/roadmap.md). Phase 1B and phase 2 Build One garment masters are complete locally. Next are customers and measurements in the remaining phase 2 builds. Phase 3 adds orders and manually recorded shop payments. Subscriptions, platform billing, and payment-provider integrations are deferred until explicitly reopened.
+Start with the [implementation status](implementation/status.md), then read the [roadmap](product/roadmap.md). Phase 1B and phase 2 Build One garment masters and Build Two customers are complete locally. Next is Build Three measurements. Phase 3 adds orders and manually recorded shop payments. Subscriptions, platform billing, and payment-provider integrations are deferred until explicitly reopened.
 
 The first phase 2 build is specified in the [garment masters implementation plan](implementation/plans/phase-2-build-1-garment-masters.md), with its [research evidence](implementation/research/build-one/technical-findings.md), [plan review record](implementation/reviews/phase-2-build-1-garment-masters-review.md), [implementation review record](implementation/reviews/phase-2-build-1-implementation-review.md), and [final acceptance evidence](implementation/evidence/phase-2-build-1-increment-6.md).
 
@@ -46,6 +46,18 @@ docs/
 | [Implementation status](implementation/status.md) | Work areas, completion evidence, current scope decisions, and next steps |
 | [Phase 1B implementation plan](implementation/plans/phase-1b-implementation-plan.md) | Retained seven-day foundation plan, acceptance checks, and completion criteria |
 | [UI foundation v3 implementation plan](implementation/plans/ui-foundation-v3-implementation-plan.md) | Planned redesign increments, route and component ownership, mockup data mapping, and acceptance checks |
+| [Phase 2 Build Two customer implementation plan](implementation/plans/phase-2-build-2-customers.md) | Customer and wearer scope, progressive screens, navigation repairs, storage/permission contracts, implementation increments, and full workflow validation |
+| [Build Two increment 0 evidence](implementation/evidence/phase-2-build-2-increment-0.md) | Home readiness, runtime baseline checks, regression results, and remaining customer increments |
+| [Build Two increment 1 authority](implementation/evidence/phase-2-build-2-increment-1.md) | Runtime recovery, customer contracts, restricted reads, atomic saves, duplicate/replay protocol, bounded activity and acceptance |
+| [Build Two increment 2 register/navigation](implementation/evidence/phase-2-build-2-increment-2.md) | Search/count/paging, read-only profile entry, private return state, safe switching, forward migration, and Chrome acceptance |
+| [Build Two increments 0 and 1 implementation review](implementation/reviews/phase-2-build-2-increments-0-1-review.md) | Confirmed limiter/projection defects, fixes, and verification |
+| [Build Two increment 3 customer forms](implementation/evidence/phase-2-build-2-increment-3.md) | Shared create/edit controller, atomic self wearer, duplicate decisions, exact-envelope retry, and acceptance results |
+| [Build Two increment 2 review](implementation/reviews/phase-2-build-2-increment-2-review.md) | Standards/spec review before customer forms and stale-status correction |
+| [Build Two increment 4 wearers/lifecycle](implementation/evidence/phase-2-build-2-increment-4.md) | Profile sections, wearer sheets, lifecycle invariants, continuation and runtime evidence |
+| [Build Two increment 3 review](implementation/reviews/phase-2-build-2-increment-3-review.md) | Typed whitespace, unresolved replay retention and advisory-denial fixes |
+| [Build Two increment 5 photos/handoff](implementation/evidence/phase-2-build-2-increment-5.md) | Private file purposes, avatar/face/body workflows, security/cleanup, full acceptance and measurement handoff |
+| [Build Two increment 4 review](implementation/reviews/phase-2-build-2-increment-4-review.md) | Nested preference errors and no-op announcement fixes |
+| [Build Two customer plan review](implementation/reviews/phase-2-build-2-customers-review.md) | DeepSeek 4.1 Flash review dispositions, links to original findings, and planning verification limits |
 
 ## Operations
 

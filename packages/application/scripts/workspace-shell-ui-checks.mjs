@@ -29,7 +29,7 @@ export async function exerciseWorkspaceShellUI(page, fixture) {
       }),
       "Failed switch disabled unload protection",
     );
-    await page.unroute("**/api/preferences");
+    await page.unroute("**/api/workspaces/switch");
     await page.setViewportSize({ width: 390, height: 844 });
     const trigger = page.getByRole("button", {
       name: "Open workspace menu",
@@ -102,6 +102,49 @@ export async function exerciseWorkspaceRoutesUI(page, fixture) {
     if (!condition) throw new Error(message);
   };
   await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto(base);
+  await page.getByRole("heading", { name: "Home", exact: true }).waitFor();
+  const expected = await Promise.all(
+    ["garments", "services", "addons"].map(async (kind) => {
+      const response = await page.request.get(
+        `${fixture.base}/api/workspaces/${fixture.tenant}/${fixture.location}/masters/${kind}?limit=1`,
+      );
+      check(response.ok(), `Home ${kind} count read failed`);
+      return (await response.json()).total;
+    }),
+  );
+  const summary = page.getByRole("region", { name: "Catalog summary" });
+  for (const [index, label] of [
+    "Available garments",
+    "Available services",
+    "Available add-ons",
+  ].entries()) {
+    const tile = summary
+      .locator('[data-slot="card"]')
+      .filter({ has: page.getByRole("heading", { name: label, exact: true }) });
+    check(
+      (await tile.locator("p.tabular-nums").textContent()) ===
+        String(expected[index]),
+      `${label} differs from full authorized total`,
+    );
+  }
+  for (const width of [320, 390, 720, 1024, 1440]) {
+    await page.setViewportSize({ width, height: 1000 });
+    check(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= innerWidth + 1,
+      ),
+      `Home overflows at ${width}px`,
+    );
+    await page.screenshot({
+      path: `${fixture.artifacts}/home-${width}.png`,
+      fullPage: true,
+    });
+  }
+  await page
+    .getByRole("link", { name: "Open garment catalog", exact: true })
+    .click();
+  await page.getByRole("heading", { name: "Garments", exact: true }).waitFor();
   await page.goto(`${base}/settings`);
   await page.getByRole("heading", { name: "Settings", exact: true }).waitFor();
   await page.getByText("Personal preferences", { exact: true }).click();
@@ -181,23 +224,21 @@ export async function exerciseWorkspaceRoutesUI(page, fixture) {
     fullPage: true,
   });
   await page.goto(base);
-  await page.getByRole("heading", { name: original, exact: true }).waitFor();
+  await page.getByRole("heading", { name: "Home", exact: true }).waitFor();
   await page.screenshot({
-    path: `${fixture.artifacts}/overview-desktop.png`,
+    path: `${fixture.artifacts}/home-desktop.png`,
     fullPage: true,
   });
   // A document history traversal reloads authorized server projections.
   await page.goto(`${base}/settings`);
   await page.goBack();
-  await page.getByRole("heading", { name: original, exact: true }).waitFor();
+  await page.getByRole("heading", { name: "Home", exact: true }).waitFor();
   await page.goForward();
   await page.getByRole("heading", { name: "Settings", exact: true }).waitFor();
   await page.keyboard.press("Control+k");
-  await page.getByLabel("Search by name prefix", { exact: true }).waitFor();
+  await page.getByLabel("Search name or phone", { exact: true }).waitFor();
   await page.waitForFunction(
-    () =>
-      document.activeElement ===
-      document.querySelector(".master-register input"),
+    () => document.activeElement === document.getElementById("customer-search"),
   );
   check(
     page.url().includes("focus=search"),
@@ -284,7 +325,10 @@ export async function exerciseWorkspaceRoutesUI(page, fixture) {
   await page.getByText("Catalog settings updated.", { exact: true }).waitFor();
   await page.screenshot({ path: `${fixture.artifacts}/catalog-recovery.png` });
   await Promise.all([
-    page.waitForEvent("load"),
+    page.waitForURL(
+      `${fixture.base}/workspaces/${fixture.tenant}/${fixture.secondLocation}/settings/garments?kind=addon`,
+      { timeout: 15000 },
+    ),
     page
       .getByLabel("Switch shop or location", { exact: true })
       .selectOption(`${fixture.tenant}/${fixture.secondLocation}`),
@@ -295,7 +339,7 @@ export async function exerciseWorkspaceRoutesUI(page, fixture) {
     "Successful switch lost the destination",
   );
   await Promise.all([
-    page.waitForEvent("load"),
+    page.waitForURL(`${base}/settings/garments?kind=addon`, { timeout: 15000 }),
     page
       .getByLabel("Switch shop or location", { exact: true })
       .selectOption(`${fixture.tenant}/${fixture.location}`),

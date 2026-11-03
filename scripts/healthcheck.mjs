@@ -1,7 +1,7 @@
 import { readFile, stat } from "node:fs/promises";
-import { createPool } from "../packages/db/dist/index.js";
 
 if (process.argv[2] === "web") {
+  const { createPool } = await import("../packages/db/dist/index.js");
   const response = await fetch("http://127.0.0.1:24410/account", {
     signal: AbortSignal.timeout(5000),
   });

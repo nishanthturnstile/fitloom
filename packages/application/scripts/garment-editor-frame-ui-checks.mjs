@@ -50,7 +50,7 @@ export async function exerciseGarmentEditorFrameUI(page, fixture) {
   }
   await page.getByRole("tab", { name: "History", exact: true }).click();
   await page
-    .getByText("Save this garment to start its revision history.", {
+    .getByText("Save this record to start its revision history.", {
       exact: true,
     })
     .waitFor();

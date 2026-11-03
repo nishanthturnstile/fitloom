@@ -4,6 +4,7 @@ import type {
   WorkspaceView,
 } from "@fitloom/application/workspace-contracts";
 import {
+  changeRolePermission,
   workspacePermissionLabel,
   workspaceTeam,
 } from "@fitloom/application/workspace-contracts";
@@ -419,6 +420,27 @@ export function WorkspacePanel({
                       name="permission"
                       value={p}
                       defaultChecked={p === "workspace.read"}
+                      onChange={(event) => {
+                        const form = event.currentTarget.form;
+                        if (!form) return;
+                        const inputs = [
+                          ...form.querySelectorAll<HTMLInputElement>(
+                            'input[name="permission"]',
+                          ),
+                        ];
+                        const selected = changeRolePermission(
+                          inputs
+                            .filter(
+                              (input) =>
+                                input.checked && input !== event.currentTarget,
+                            )
+                            .map((input) => input.value),
+                          p,
+                          event.currentTarget.checked,
+                        );
+                        for (const input of inputs)
+                          input.checked = selected.includes(input.value);
+                      }}
                     />
                     {workspacePermissionLabel(p)}
                   </label>

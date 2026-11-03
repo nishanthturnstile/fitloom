@@ -1,76 +1,88 @@
 "use client";
 import { Search01Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useNavigationGuard } from "./navigation-guard";
-
+import { workspaceRoute, workspaceSearch } from "./workspace-route-policy";
 export function WorkspaceTopbar({
   base,
-  canReadMasters,
+  permissions,
 }: {
   base: string;
-  canReadMasters: boolean;
+  permissions: string[];
 }) {
   const pathname = usePathname(),
+    query = useSearchParams(),
     guard = useNavigationGuard();
-  const destination = `${base}/settings/garments`;
-  const search = () => {
-    if (pathname === destination)
-      window.dispatchEvent(new Event("fitloom:catalog-search"));
-    else guard.navigate(`${destination}?focus=search`);
+  const route = workspaceRoute(base, pathname, query),
+    search = workspaceSearch(base, pathname, query, permissions);
+  const activate = () => {
+    if (!search) return;
+    if (pathname === search.path) window.dispatchEvent(new Event(search.event));
+    else guard.navigate(search.href);
   };
-  // Keep one shortcut listener with current navigation protection.
+  const label = search?.label,
+    eventName = search?.event,
+    path = search?.path,
+    href = search?.href;
   useEffect(() => {
-    if (!canReadMasters) return;
+    if (!eventName || !path || !href) return;
     const shortcut = (event: KeyboardEvent) => {
       if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "k") {
         event.preventDefault();
-        if (pathname === destination)
-          window.dispatchEvent(new Event("fitloom:catalog-search"));
-        else guard.navigate(`${destination}?focus=search`);
+        if (pathname === path) window.dispatchEvent(new Event(eventName));
+        else guard.navigate(href);
       }
     };
     window.addEventListener("keydown", shortcut);
     return () => window.removeEventListener("keydown", shortcut);
-  }, [canReadMasters, pathname, destination, guard.navigate]);
-  const segment = pathname.slice(base.length);
-  const label =
-    segment === "/settings/shop"
-      ? "Shop profile"
-      : segment === "/settings/access"
-        ? "People & access"
-        : segment === "/settings/garments"
-          ? "Garments and services"
-          : segment === "/files"
-            ? "Private files"
-            : segment === "/settings"
-              ? "Settings"
-              : "Overview";
+  }, [eventName, path, href, pathname, guard.navigate]);
+  const customer = route.destination.kind === "customers";
   return (
     <div className="flex min-w-0 flex-1 items-center justify-between gap-3">
       <nav
         aria-label="Breadcrumb"
         className="min-w-0 text-sm text-muted-foreground"
       >
-        <a href={base} className="hover:text-foreground">
-          Workspace
-        </a>
-        <span aria-hidden="true" className="mx-2">
-          /
-        </span>
-        <span className="text-foreground">{label}</span>
+        {pathname === base ? (
+          <span aria-current="page" className="text-foreground">
+            Home
+          </span>
+        ) : (
+          <>
+            <a href={base} className="hover:text-foreground">
+              Home
+            </a>
+            <span aria-hidden="true" className="mx-2">
+              /
+            </span>
+            {customer && route.customerPage !== "register" ? (
+              <>
+                <a href={`${base}/customers`}>Customers</a>
+                <span aria-hidden="true" className="mx-2">
+                  /
+                </span>
+              </>
+            ) : null}
+            <span aria-current="page" className="text-foreground">
+              {customer && route.customerPage === "register"
+                ? "Customers"
+                : route.label}
+            </span>
+          </>
+        )}
       </nav>
-      {canReadMasters && (
+      {search && (
         <Button
           variant="outline"
           size="sm"
-          onClick={search}
-          aria-label="Search catalog"
+          onClick={activate}
+          aria-label={label}
         >
           <HugeiconsIcon icon={Search01Icon} data-icon="inline-start" />
-          <span className="hidden min-[600px]:inline">Search catalog</span>
+          <span className="hidden min-[600px]:inline">{label}</span>
           <kbd className="hidden font-mono text-xs text-muted-foreground min-[800px]:inline">
             ⌘ / Ctrl K
           </kbd>

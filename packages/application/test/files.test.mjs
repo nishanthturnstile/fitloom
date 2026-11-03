@@ -4,7 +4,8 @@ import { mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
-import { createPool } from "@fitloom/db";
+import { createPool, withScope } from "@fitloom/db";
+import { sql } from "drizzle-orm";
 import sharp from "sharp";
 import { migrateDatabase } from "../../db/scripts/migrate.mjs";
 import {
@@ -12,6 +13,8 @@ import {
   beginFile,
   blobKey,
   createBlobStore,
+  createCustomerPhotoService,
+  createCustomerService,
   createFileService,
   createWorkspaceService,
   processFoundationWork,
@@ -618,6 +621,357 @@ await test("private SeaweedFS files, current authority, attachment atomicity and
             [a.principal],
           );
         }
+      },
+    );
+    await t.test(
+      "CRM photos retain private purpose, owner, normalized content, replay, replacement and cleanup boundaries",
+      async () => {
+        const resolveIdentity = async () => ({ principalId: a.principal });
+        const crm = createCustomerService({ pool: web, resolveIdentity });
+        const photos = createCustomerPhotoService({
+          pool: web,
+          resolveIdentity,
+          store,
+        });
+        const otherPhotos = createCustomerPhotoService({
+          pool: web,
+          resolveIdentity: async () => ({ principalId: b.principal }),
+          store,
+        });
+        const envelope = (payload) => ({
+          operationKey: randomUUID(),
+          correlationId: randomUUID(),
+          payload,
+        });
+        const profile = {
+          name: "Photo contact",
+          phone: null,
+          email: null,
+          address: null,
+          taxCountryCode: null,
+          gstin: null,
+          segment: null,
+          notes: null,
+          preferences: { fit: null, fabric: null, design: null },
+          tags: [],
+        };
+        const attributes = {
+          relationship: null,
+          birthday: null,
+          gender: { kind: "unspecified" },
+          height: null,
+          weight: null,
+          notes: null,
+          preferences: { fit: null, fabric: null, design: null },
+        };
+        const created = await crm.command(
+          "customer.create",
+          a.target,
+          envelope({
+            profile,
+            selfWearer: { kind: "self", attributes },
+            intent: { kind: "check-first" },
+          }),
+        );
+        const owner = {
+          kind: "customer-avatar",
+          customerId: created.result.customerId,
+        };
+        const stage = async (targetOwner = owner) =>
+          (
+            await photos.command(
+              "customer-photo.begin",
+              a.target,
+              envelope({ owner: targetOwner }),
+            )
+          ).result.fileId;
+        const jpeg = await sharp(image)
+          .jpeg()
+          .withMetadata({ orientation: 6 })
+          .toBuffer();
+        assert.ok((await sharp(jpeg).metadata()).exif);
+        const put = (id, bytes = jpeg, type = "image/jpeg") =>
+          photos.upload(
+            a.target,
+            id,
+            new Request("http://localhost/photo", {
+              method: "PUT",
+              headers: { "content-type": type },
+              body: bytes,
+            }),
+          );
+        const first = await stage();
+        const uploaded = await put(first);
+        await assert.rejects(otherPhotos.read(b.target, first));
+        await assert.rejects(photos.read(a.target, first));
+        await assert.rejects(upload(a, first));
+        await assert.rejects(
+          a.command(attachFile, {
+            fileId: first,
+            expectedVersion: uploaded.version,
+          }),
+        );
+        await assert.rejects(
+          a.command(retireFile, {
+            fileId: first,
+            expectedVersion: uploaded.version,
+          }),
+        );
+        await assert.rejects(a.files.download(a.target, first));
+        for (const query of [
+          sql`SELECT app.file_prepare(${first}::uuid,${jpeg.length},'image/jpeg',${"0".repeat(64)})`,
+          sql`SELECT app.file_finalize(${first}::uuid,1,'image/jpeg',${"0".repeat(64)})`,
+        ])
+          await assert.rejects(
+            withScope(
+              web,
+              { kind: "tenant", principalId: a.principal, ...a.target },
+              (db) => db.execute(query),
+            ),
+          );
+        assert.equal(
+          (await a.files.list(a.target)).some((f) => f.id === first),
+          false,
+        );
+        const bind = envelope({
+          owner,
+          fileId: first,
+          fileVersion: uploaded.version,
+          expectedVersion: 0,
+          note: "Synthetic staff permission note",
+        });
+        await admin.query("BEGIN");
+        try {
+          await admin.query(
+            "SELECT id FROM app.private_files WHERE id=$1 FOR UPDATE",
+            [first],
+          );
+          await assert.rejects(
+            photos.command("customer-photo.bind", a.target, bind),
+            (e) => e.code === "busy",
+          );
+        } finally {
+          await admin.query("ROLLBACK");
+        }
+        const bound = await photos.command(
+          "customer-photo.bind",
+          a.target,
+          bind,
+        );
+        assert.equal(bound.result.version, 1);
+        assert.deepEqual(
+          (await photos.command("customer-photo.bind", a.target, bind)).result,
+          bound.result,
+        );
+        const response = await photos.read(a.target, first);
+        assert.match(response.headers.get("content-disposition"), /^inline/);
+        assert.equal(
+          response.headers.get("cache-control"),
+          "private, no-store",
+        );
+        const normalized = Buffer.from(await response.arrayBuffer());
+        const meta = await sharp(normalized).metadata();
+        assert.equal(meta.exif, undefined);
+        assert.equal(meta.orientation, undefined);
+        assert.equal(meta.xmp, undefined);
+        assert.equal(
+          (
+            await photos.command(
+              "customer-photo.bind",
+              a.target,
+              envelope({ ...bind.payload, expectedVersion: 1 }),
+            )
+          ).result.changed,
+          false,
+        );
+        const foreign = await crm.command(
+          "customer.create",
+          a.target,
+          envelope({
+            profile: { ...profile, name: "Other contact" },
+            selfWearer: { kind: "none" },
+            intent: { kind: "check-first" },
+          }),
+        );
+        const second = await stage();
+        const secondUpload = await put(second);
+        await assert.rejects(
+          photos.command(
+            "customer-photo.bind",
+            a.target,
+            envelope({
+              owner: {
+                kind: "customer-avatar",
+                customerId: foreign.result.customerId,
+              },
+              fileId: second,
+              fileVersion: secondUpload.version,
+              expectedVersion: 0,
+              note: "Wrong owner",
+            }),
+          ),
+        );
+        const memberId = randomUUID();
+        await admin.query(
+          "INSERT INTO app.memberships(id,tenant_id,principal_id) VALUES($1,$2,$3)",
+          [memberId, a.target.tenantId, b.principal],
+        );
+        await admin.query(
+          "INSERT INTO app.location_grants(tenant_id,membership_id,location_id,role_id) SELECT $1,$2,$3,id FROM app.roles WHERE tenant_id=$1 AND preset='owner'",
+          [a.target.tenantId, memberId, a.target.locationId],
+        );
+        await assert.rejects(
+          otherPhotos.upload(
+            a.target,
+            second,
+            new Request("http://localhost/photo", {
+              method: "PUT",
+              headers: { "content-type": "image/jpeg" },
+              body: jpeg,
+            }),
+          ),
+          (e) => e.code === "unavailable",
+        );
+        const expired = await stage();
+        const expiredUpload = await put(expired);
+        await admin.query(
+          "UPDATE app.private_files SET created_at=now()-interval '48 hours',updated_at=now()-interval '48 hours' WHERE id=$1",
+          [expired],
+        );
+        await assert.rejects(
+          photos.command(
+            "customer-photo.bind",
+            a.target,
+            envelope({
+              owner,
+              fileId: expired,
+              fileVersion: expiredUpload.version,
+              expectedVersion: 1,
+              note: "Expired stage",
+            }),
+          ),
+          (e) => e.code === "version-conflict",
+        );
+        const bad = await stage();
+        await assert.rejects(put(bad, Buffer.from("not an image")));
+        assert.equal((await photos.slot(a.target, owner)).photo.fileId, first);
+        // CRM management works with no generic file-library grants.
+        await admin.query(
+          "DELETE FROM app.permission_grants WHERE tenant_id=$1 AND permission IN ('files.read','files.manage','masters.read','masters.manage','masters.rates.read')",
+          [a.target.tenantId],
+        );
+        const replacement = envelope({
+          owner,
+          fileId: second,
+          fileVersion: secondUpload.version,
+          expectedVersion: 1,
+          note: "Replacement permission note",
+        });
+        try {
+          await crm.command(
+            "customer.create",
+            a.target,
+            envelope({
+              profile: { ...profile, name: "No catalog rights contact" },
+              selfWearer: { kind: "none" },
+              intent: { kind: "check-first" },
+            }),
+          );
+          await photos.command("customer-photo.bind", a.target, replacement);
+          await assert.rejects(a.files.list(a.target));
+        } finally {
+          await admin.query(
+            "INSERT INTO app.permission_grants SELECT tenant_id,id,p FROM app.roles CROSS JOIN unnest(ARRAY['files.read','files.manage','masters.read','masters.manage','masters.rates.read']) p WHERE tenant_id=$1 AND preset='owner' ON CONFLICT DO NOTHING",
+            [a.target.tenantId],
+          );
+        }
+        await assert.rejects(photos.read(a.target, first));
+        await assert.rejects(
+          otherPhotos.command("customer-photo.bind", a.target, replacement),
+          (e) => e.code === "operation-conflict",
+        );
+        await admin.query(
+          "DELETE FROM app.permission_grants WHERE tenant_id=$1 AND permission='customers.photos.read'",
+          [a.target.tenantId],
+        );
+        try {
+          await assert.rejects(
+            photos.read(a.target, second),
+            (e) => e.code === "denied",
+          );
+          await assert.rejects(
+            photos.command("customer-photo.bind", a.target, replacement),
+            (e) => e.code === "denied",
+          );
+        } finally {
+          await admin.query(
+            "INSERT INTO app.permission_grants SELECT tenant_id,id,'customers.photos.read' FROM app.roles WHERE tenant_id=$1 AND preset='owner' ON CONFLICT DO NOTHING",
+            [a.target.tenantId],
+          );
+        }
+        const row = (
+          await admin.query(
+            "SELECT result::text FROM app.command_operations WHERE operation_key=$1",
+            [replacement.operationKey],
+          )
+        ).rows[0];
+        assert.equal(row.result.includes("Replacement permission note"), false);
+        await photos.command(
+          "customer-photo.remove",
+          a.target,
+          envelope({ owner, expectedVersion: 2 }),
+        );
+        await assert.rejects(photos.read(a.target, second));
+        assert.equal((await photos.slot(a.target, owner)).photo, null);
+        const face = {
+          kind: "wearer-photo",
+          customerId: owner.customerId,
+          wearerId: created.result.createdWearerId,
+          role: "face",
+        };
+        const faceFile = await stage(face),
+          faceUpload = await put(faceFile);
+        await photos.command(
+          "customer-photo.bind",
+          a.target,
+          envelope({
+            owner: face,
+            fileId: faceFile,
+            fileVersion: faceUpload.version,
+            expectedVersion: 0,
+            note: "Face photo permission",
+          }),
+        );
+        await crm.command(
+          "customer.archive",
+          a.target,
+          envelope({ customerId: owner.customerId, expectedVersion: 1 }),
+        );
+        await (await photos.read(a.target, faceFile)).arrayBuffer();
+        await assert.rejects(
+          photos.command(
+            "customer-photo.begin",
+            a.target,
+            envelope({ owner: face }),
+          ),
+          (e) => e.code === "version-conflict",
+        );
+        await admin.query(
+          "UPDATE app.private_files SET updated_at=now()-interval '48 hours' WHERE id=ANY($1::uuid[])",
+          [[first, second, bad, faceFile]],
+        );
+        await cleanup();
+        await run();
+        const states = (
+          await admin.query(
+            "SELECT id,state FROM app.private_files WHERE id=ANY($1::uuid[])",
+            [[first, second, bad, faceFile]],
+          )
+        ).rows;
+        assert.equal(states.find((f) => f.id === bad).state, "deleted");
+        assert.equal(states.find((f) => f.id === first).state, "deleted");
+        assert.equal(states.find((f) => f.id === faceFile).state, "attached");
+        await (await photos.read(a.target, faceFile)).arrayBuffer();
       },
     );
   } finally {

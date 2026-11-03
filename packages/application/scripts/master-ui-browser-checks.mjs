@@ -69,6 +69,12 @@ export async function exerciseGarmentUI(page, fixture) {
         semanticMuted: getComputedStyle(compatibility)
           .getPropertyValue("--muted")
           .trim(),
+        rootMuted: getComputedStyle(document.documentElement)
+          .getPropertyValue("--muted")
+          .trim(),
+        mutedText: getComputedStyle(compatibility)
+          .getPropertyValue("--muted-foreground")
+          .trim(),
         legacyMuted: getComputedStyle(compatibility)
           .getPropertyValue("--legacy-muted")
           .trim(),
@@ -92,8 +98,9 @@ export async function exerciseGarmentUI(page, fixture) {
       "Workspace control lost its Sans font",
     );
     check(
-      foundation?.semanticMuted !== foundation?.legacyMuted &&
-        foundation?.legacyMuted === "#65746a",
+      foundation?.semanticMuted === foundation?.rootMuted &&
+        foundation?.semanticMuted !== foundation?.mutedText &&
+        !foundation?.legacyMuted,
       "Legacy text token shadows preset muted background",
     );
     check(foundation?.monoLoaded, "IBM Plex Mono variable is missing");

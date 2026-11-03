@@ -31,6 +31,7 @@ export default async function WorkspaceLayout({
         locationName: context.workspace.locationName,
         permissions: context.workspace.permissions,
       }}
+      principalId={context.principalId}
       choices={context.choices}
       locale={context.locale}
     >

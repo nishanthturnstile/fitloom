@@ -138,6 +138,8 @@ Required behavior: Create, search, edit, archive, and restore customers with cou
 
 Acceptance: Name and mobile search work across paginated records. Duplicate contact information never silently merges wearers. Linked financial history remains readable after archival, and image failures have a fallback.
 
+Profile ownership clarification for phase 2 Build Two: the customer is the business/contact record. Optional birthday, gender, height, weight, and person/body photographs belong to a named wearer, including an explicitly created self wearer. A contact-only customer has no demographic profile until a wearer is added. Customer contact edits do not silently change wearer identity or physical details. See the [customer implementation plan](../implementation/plans/phase-2-build-2-customers.md).
+
 ### REQ-MEASURE: Versioned body and garment measurements
 
 Sequence: P1. Users: authorized staff; customer read access in P3.

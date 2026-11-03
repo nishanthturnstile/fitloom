@@ -21,6 +21,7 @@ const NavigationContext = createContext<{
   register: (protection: Protection | null) => void;
   confirmLeave: (reason?: Reason) => boolean;
   commitNavigation: (href: string) => void;
+  commitReload: () => void;
   navigate: (href: string) => void;
   locked: boolean;
 } | null>(null);
@@ -44,6 +45,10 @@ export function NavigationGuard({ children }: { children: ReactNode }) {
   const commitNavigation = useCallback((href: string) => {
     allowed.current = true;
     window.location.assign(href);
+  }, []);
+  const commitReload = useCallback(() => {
+    allowed.current = true;
+    window.location.reload();
   }, []);
   const navigate = useCallback(
     (href: string) => {
@@ -109,10 +114,17 @@ export function NavigationGuard({ children }: { children: ReactNode }) {
       register,
       confirmLeave,
       commitNavigation,
+      commitReload,
       navigate,
       locked: protection?.locked ?? false,
     }),
-    [confirmLeave, commitNavigation, navigate, protection?.locked],
+    [
+      confirmLeave,
+      commitNavigation,
+      commitReload,
+      navigate,
+      protection?.locked,
+    ],
   );
   return <NavigationContext value={value}>{children}</NavigationContext>;
 }

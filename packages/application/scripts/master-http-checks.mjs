@@ -220,6 +220,17 @@ export async function masterHttpChecks({
     try {
       await json(await command("garment.save", edit, key), 403);
       if (permission === "masters.read") {
+        const home = await fetch(
+          `${base}${workspacePath.replace("/api", "")}`,
+          { headers: { cookie } },
+        );
+        assert.equal(home.status, 200);
+        const homeHtml = await home.text();
+        assert.match(homeHtml, /Workspace tools/);
+        assert.doesNotMatch(
+          homeHtml,
+          /Catalog summary|Available garments|Catalog summary unavailable/,
+        );
         await json(await get("/catalog"), 403);
         await json(
           await get(

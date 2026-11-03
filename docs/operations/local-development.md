@@ -115,3 +115,13 @@ To run the setup browser regression on the Mac, prepare the demo account with `p
 Day 6 adds the `seaweedfs` service and successful one-shot `storage-init`, with a pinned image, private persistent data, separate environment/service credentials, and no storage forward through Tailscale. See [private files, operator commands, bootstrap, and recovery](private-files-and-operator-recovery.md). `pnpm validate` clears the guarded test bucket before resetting test schemas; it cannot delete development objects.
 
 Storage readiness includes actual write/read/delete probes in both buckets before application startup. Local SeaweedFS grows one volume at a time; settings live in `config/seaweedfs/master.toml`. Restart SeaweedFS after changing that file or its generated credential configuration. `node scripts/verify-private-files.mjs` exercises the existing demo workspace through HTTPS and can be repeated after a storage restart to verify its image digest.
+
+### Keep host output out of live containers
+
+Compose Watch synchronizes explicit source roots, public assets, runtime scripts, and the Next config. Package/lock/compiler configuration changes trigger image rebuilds through an explicit file list. New workspace packages must be added to these lists. Run pnpm dev:up after changing compose.yaml so the background watcher uses the new configuration.
+
+A workspace-root copy can replace Linux-generated dependencies or development Next files with host files. Keep node_modules, .next, dist, .turbo, private environment files, and .local outside sync roots. The Docker build context retains its own .dockerignore.
+
+Run node scripts/verify-compose-watch.mjs with the development stack and Watch active. It writes temporary non-sensitive probes, verifies source sync and output/dependency isolation, runs a host production build, and asserts stable service IDs plus account HTTP 200. It removes its probes afterward.
+
+Web and worker have a 180-second cold-start health grace period for compilation on the local Docker filesystem. A successful check marks the service healthy immediately. The worker probe checks its fresh heartbeat and PID without loading database/ORM modules. The web probe still checks HTTP and database availability. Startup remains bounded by the existing 240-second Compose wait.

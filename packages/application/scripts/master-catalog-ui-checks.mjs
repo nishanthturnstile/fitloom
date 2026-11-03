@@ -447,6 +447,22 @@ export async function exerciseStarterUI(page, fixture) {
   };
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.goto(
+    `${fixture.base}/workspaces/${fixture.tenant}/${fixture.location}`,
+  );
+  await page.getByRole("heading", { name: "Home", exact: true }).waitFor();
+  await page
+    .getByText(
+      "No available garments yet. Open the catalog to create one or install starter templates.",
+      { exact: true },
+    )
+    .waitFor();
+  await page.getByText("Not installed", { exact: true }).waitFor();
+  await page.screenshot({
+    path: `${fixture.artifacts}/home-empty.png`,
+    fullPage: true,
+  });
+
+  await page.goto(
     `${fixture.base}/workspaces/${fixture.tenant}/${fixture.location}/settings/garments`,
   );
   check(

@@ -8,6 +8,7 @@ import {
 import { HugeiconsIcon } from "@hugeicons/react";
 import { usePathname, useSearchParams } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { workspaceRoute } from "./workspace-route-policy";
 
 export function WorkspaceNavigation({
   base,
@@ -21,7 +22,19 @@ export function WorkspaceNavigation({
   const groups = [
     {
       label: "Workspace",
-      items: [{ label: "Overview", href: base, icon: Home01Icon }],
+      items: [{ label: "Home", href: base, icon: Home01Icon }],
+    },
+    {
+      label: "Work",
+      items: permissions.includes("customers.read")
+        ? [
+            {
+              label: "Customers",
+              href: `${base}/customers`,
+              icon: UserGroupIcon,
+            },
+          ]
+        : [],
     },
     {
       label: "Catalog",
@@ -83,7 +96,10 @@ export function WorkspaceNavigation({
               {group.items.map((item) => {
                 const url = new URL(item.href, "https://fitloom.invalid");
                 const active =
-                  pathname === url.pathname &&
+                  (item.label === "Customers"
+                    ? workspaceRoute(base, pathname, query).destination.kind ===
+                      "customers"
+                    : pathname === url.pathname) &&
                   (pathname.endsWith("/garments")
                     ? (query.get("kind") ?? "garment") ===
                       (url.searchParams.get("kind") ?? "garment")

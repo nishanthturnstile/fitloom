@@ -1,5 +1,9 @@
 "use client";
-import { type FormEvent, useState } from "react";
+import { type FormEvent, useEffect, useState } from "react";
+import {
+  clearCustomerReturns,
+  listenForCustomerContextClear,
+} from "@/components/workspace/customer-return-session";
 
 type User = { name: string; email: string };
 type View =
@@ -43,6 +47,8 @@ async function request(path: string, body: Record<string, unknown>) {
         ? data.code
         : "",
     );
+  if (path.startsWith("/sign-in") || path === "/sign-out")
+    clearCustomerReturns(true);
   return data;
 }
 export function AccountPanel({
@@ -60,6 +66,7 @@ export function AccountPanel({
   testingInboxURL?: string;
   destination?: string;
 }) {
+  useEffect(listenForCustomerContextClear, []);
   const [user, setUser] = useState(resetToken ? null : initialUser),
     [view, setView] = useState<View>(resetToken ? "reset" : "signin"),
     [busy, setBusy] = useState(false),

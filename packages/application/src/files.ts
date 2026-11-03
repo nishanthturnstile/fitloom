@@ -1,14 +1,12 @@
-import { createHash } from "node:crypto";
 import {
   type createPool,
   type TransactionDatabase,
   withScope,
 } from "@fitloom/db";
 import { sql } from "drizzle-orm";
-import sharp from "sharp";
 import { z } from "zod";
 import { type BlobStore, blobKey, referenceForFile } from "./blob-store.js";
-import { BodyReadError, readBoundedBody } from "./body.js";
+import { BodyReadError } from "./body.js";
 import {
   type Command,
   createCommandExecutor,
@@ -18,13 +16,17 @@ import {
 import { CommandError, sqlState } from "./errors.js";
 import type { Observe } from "./operations.js";
 import {
+  claimImageUpload,
+  normalizePrivateImage,
+  privateImageResponse,
+} from "./private-image.js";
+import {
   pageOffset,
   privateFileList,
   privateFilePage,
   workspaceTarget,
 } from "./workspace-contracts.js";
 
-let activeUploads = 0;
 const fileResult = z.strictObject({ id: uuid, version: z.int().nonnegative() });
 const metadata = z.strictObject({
   id: blobKey,
@@ -176,9 +178,7 @@ export function createFileService(options: {
       );
     },
     async upload(target: unknown, id: unknown, request: Request) {
-      if (activeUploads >= 2)
-        throw new CommandError("temporary", "Uploads are busy; try again");
-      activeUploads++;
+      const release = claimImageUpload();
       try {
         const parsedId = blobKey.safeParse(id);
         if (!parsedId.success)
@@ -191,45 +191,8 @@ export function createFileService(options: {
             z.unknown(),
           ),
         );
-        const declared = request.headers.get("content-type");
-        if (!["image/png", "image/jpeg"].includes(declared ?? ""))
-          throw new CommandError("validation", "Upload a JPEG or PNG image");
-        let bytes: Buffer;
-        let mediaType: "image/png" | "image/jpeg";
-        try {
-          const raw = await readBoundedBody(request, {
-            maxBytes: 5 * 1024 * 1024,
-            timeoutMs: 15000,
-          });
-          const image = sharp(raw, {
-            limitInputPixels: 12_000_000,
-            failOn: "warning",
-            animated: false,
-          });
-          const info = await image.metadata();
-          if (
-            (info.format !== "png" && info.format !== "jpeg") ||
-            (info.pages ?? 1) > 1 ||
-            `image/${info.format}` !== declared
-          )
-            throw new Error("Invalid image type");
-          mediaType = info.format === "png" ? "image/png" : "image/jpeg";
-          const rotated = image.rotate().timeout({ seconds: 5 });
-          bytes = await (info.format === "png"
-            ? rotated.png()
-            : rotated.jpeg({ quality: 90 })
-          ).toBuffer();
-          if (bytes.length === 0 || bytes.length > 5 * 1024 * 1024)
-            throw new Error("Encoded image exceeds limit");
-        } catch (error) {
-          throw new CommandError(
-            "validation",
-            error instanceof BodyReadError
-              ? error.message
-              : "Invalid image; use JPEG/PNG up to 5 MiB and 12 million pixels",
-          );
-        }
-        const digest = createHash("sha256").update(bytes).digest("hex");
+        const { bytes, mediaType, digest } =
+          await normalizePrivateImage(request);
         // Bind the validated content durably before any external write. A retry cannot choose different bytes.
         await scoped(target, (db) =>
           value(
@@ -260,7 +223,7 @@ export function createFileService(options: {
           );
         });
       } finally {
-        activeUploads--;
+        release();
       }
     },
     async download(target: unknown, id: unknown): Promise<Response> {
@@ -275,29 +238,11 @@ export function createFileService(options: {
             metadata,
           ),
         );
-      const file = await get();
-      let body: ReadableStream<Uint8Array>;
       try {
-        body = await options.store.open(referenceForFile(file), file.size);
+        return await privateImageResponse(get, options.store, "attachment");
       } catch (error) {
         return fileError(error);
       }
-      try {
-        await get();
-      } catch (error) {
-        await body.cancel().catch(() => {});
-        throw error;
-      }
-      return new Response(body, {
-        headers: {
-          "Content-Type": file.mediaType,
-          "Content-Length": String(file.size),
-          "Content-Disposition": `attachment; filename="${file.id}.${file.mediaType === "image/png" ? "png" : "jpg"}"`,
-          "Cache-Control": "private, no-store",
-          "X-Content-Type-Options": "nosniff",
-          "Content-Security-Policy": "default-src 'none'; sandbox",
-        },
-      });
     },
   };
 }

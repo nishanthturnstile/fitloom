@@ -48,10 +48,17 @@ export function privateJson(data: unknown, status = 200) {
 export async function safeRoute(
   run: () => Promise<Response>,
   masterErrors = false,
+  errorAdapter?: (error: unknown) => Response,
 ) {
   try {
     return await run();
   } catch (error) {
+    if (errorAdapter) {
+      const response = errorAdapter(error);
+      if (error instanceof BodyReadError)
+        response.headers.set("Connection", "close");
+      return response;
+    }
     if (error instanceof BodyReadError) {
       const response = privateJson(
         {
@@ -109,32 +116,40 @@ export async function safeRoute(
 export async function mutation(
   request: Request,
   run: (input: unknown) => Promise<Response>,
-  options: { bodyLimit?: "master-definition"; masterErrors?: boolean } = {},
+  options: {
+    bodyLimit?: "master-definition" | "customer-profile";
+    masterErrors?: boolean;
+    errorAdapter?: (error: unknown) => Response;
+  } = {},
 ) {
-  return safeRoute(async () => {
-    const { config } = identityEnvironment(process.env);
-    const origins = [
-      new URL(config.baseURL).origin,
-      ...config.trustedOrigins.map((value) => new URL(value).origin),
-    ];
-    if (!origins.includes(request.headers.get("origin") ?? ""))
-      throw new CommandError("access", "Origin denied");
-    if (!request.headers.get("content-type")?.startsWith("application/json"))
-      throw new CommandError("validation", "JSON required");
-    const bytes = await readBoundedBody(request, {
-      maxBytes: options.bodyLimit === "master-definition" ? 131072 : 16384,
-      timeoutMs: 5000,
-    });
-    let input: unknown;
-    try {
-      input = JSON.parse(
-        new TextDecoder("utf-8", { fatal: true }).decode(bytes),
-      );
-    } catch {
-      throw new CommandError("validation", "Invalid JSON");
-    }
-    return run(input);
-  }, options.masterErrors);
+  return safeRoute(
+    async () => {
+      const { config } = identityEnvironment(process.env);
+      const origins = [
+        new URL(config.baseURL).origin,
+        ...config.trustedOrigins.map((value) => new URL(value).origin),
+      ];
+      if (!origins.includes(request.headers.get("origin") ?? ""))
+        throw new CommandError("access", "Origin denied");
+      if (!request.headers.get("content-type")?.startsWith("application/json"))
+        throw new CommandError("validation", "JSON required");
+      const bytes = await readBoundedBody(request, {
+        maxBytes: options.bodyLimit ? 131072 : 16384,
+        timeoutMs: 5000,
+      });
+      let input: unknown;
+      try {
+        input = JSON.parse(
+          new TextDecoder("utf-8", { fatal: true }).decode(bytes),
+        );
+      } catch {
+        throw new CommandError("validation", "Invalid JSON");
+      }
+      return run(input);
+    },
+    options.masterErrors,
+    options.errorAdapter,
+  );
 }
 export function invocation(input: unknown, scope: unknown) {
   if (

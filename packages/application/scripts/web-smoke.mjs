@@ -7,8 +7,10 @@ import { createPool } from "@fitloom/db";
 import sharp from "sharp";
 import { signFixture } from "../dist/index.js";
 import { totp } from "../test/auth-helpers.mjs";
+import { customerHttpChecks } from "./customer-http-checks.mjs";
 import { masterHttpChecks } from "./master-http-checks.mjs";
 import { masterUiChecks } from "./master-ui-checks.mjs";
+import { workspaceHomeHttpChecks } from "./workspace-home-http-checks.mjs";
 
 const root = new URL("../../../", import.meta.url),
   base = "http://localhost:24411";
@@ -92,6 +94,20 @@ for (const child of [web, worker]) {
   child.stderr.resume();
 }
 const pause = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+// Fresh worker startup includes database/queue initialization and durable work.
+// Use one bounded observation policy for both restart scenarios.
+async function waitForWorker(check, message) {
+  const started = Date.now();
+  while (Date.now() - started < 30000) {
+    assert.ok(
+      worker.exitCode === null && worker.signalCode === null,
+      "Worker exited before recovery",
+    );
+    if (await check()) return Date.now() - started;
+    await pause(200);
+  }
+  assert.fail(message);
+}
 async function failureServer(overrides, run) {
   const failureBase = "http://127.0.0.1:24412";
   const child = spawn(
@@ -188,22 +204,19 @@ try {
   worker = startWorker();
   worker.stdout.resume();
   worker.stderr.resume();
-  let applied = false;
-  for (let i = 0; i < 50; i++) {
-    if (
+  const receiptRecoveryMs = await waitForWorker(
+    async () =>
       (
         await admin.query(
           "SELECT outcome FROM app.provider_inbox WHERE id=$1",
           [receipt],
         )
-      ).rows[0].outcome === "applied"
-    ) {
-      applied = true;
-      break;
-    }
-    await pause(200);
-  }
-  assert.ok(applied, "Actual worker restart processes the durable receipt");
+      ).rows[0].outcome === "applied",
+    "Actual worker restart processes the durable receipt",
+  );
+  console.log(
+    `Worker receipt recovered ${receiptRecoveryMs} ms after restart.`,
+  );
   assert.equal(
     (
       await admin.query(
@@ -358,7 +371,16 @@ try {
   assert.equal(view.status, 200);
   assert.ok(view.headers.get("cache-control").includes("no-store"));
   assert.equal((await view.json()).owner.email, email);
+  await workspaceHomeHttpChecks({ base, workspacePath, cookie });
+  const customers = await customerHttpChecks({
+    base,
+    workspacePath,
+    api,
+    cookie,
+    admin,
+  });
   await masterHttpChecks({ base, workspacePath, api, cookie, admin, tenant });
+  await workspaceHomeHttpChecks({ base, workspacePath, cookie });
   if (process.env.MASTER_UI_CHECKS === "1")
     await masterUiChecks({
       base,
@@ -368,6 +390,7 @@ try {
       admin,
       tenant,
       location: choice.locationId,
+      customers,
     });
   const settingsPage = await fetch(
     `${base}/workspaces/${tenant}/${choice.locationId}/settings/garments`,
@@ -661,23 +684,17 @@ try {
   worker = startWorker();
   worker.stdout.resume();
   worker.stderr.resume();
-  let resumed = false;
-  for (let n = 0; n < 30; n++) {
-    if (
+  const restartMs = await waitForWorker(
+    async () =>
       (
         await (
           await fetch(`${base}/api/operator/status`, { headers: { cookie } })
         ).json()
-      ).worker.state === "observed"
-    ) {
-      resumed = true;
-      break;
-    }
-    await pause(200);
-  }
-  assert.ok(resumed, "Restart refreshes durable worker observation");
+      ).worker.state === "observed",
+    "Restart refreshes durable worker observation",
+  );
   console.log(
-    `Worker drain observed: ${drainMs} ms; stopped telemetry became stale and recovered after restart.`,
+    `Worker drain observed: ${drainMs} ms; stopped telemetry became stale and recovered ${restartMs} ms after restart.`,
   );
   const outageIntent = await (await api(`${workspacePath}/files`, {})).json();
   const outageFile = outageIntent.result.id;

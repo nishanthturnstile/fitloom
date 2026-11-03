@@ -239,6 +239,48 @@
       "when": 1793510820283,
       "tag": "0033_master_page_bounds",
       "breakpoints": true
+    },
+    {
+      "idx": 34,
+      "version": "7",
+      "when": 1793627944136,
+      "tag": "0034_customer_foundation",
+      "breakpoints": true
+    },
+    {
+      "idx": 35,
+      "version": "7",
+      "when": 1793634199424,
+      "tag": "0035_customer_authority",
+      "breakpoints": true
+    },
+    {
+      "idx": 36,
+      "version": "7",
+      "when": 1793637833996,
+      "tag": "0036_customer_review_consistency",
+      "breakpoints": true
+    },
+    {
+      "idx": 37,
+      "version": "7",
+      "when": 1793678478481,
+      "tag": "0037_customer_private_photos",
+      "breakpoints": true
+    },
+    {
+      "idx": 38,
+      "version": "7",
+      "when": 1793678980611,
+      "tag": "0038_customer_photo_owner_keys",
+      "breakpoints": true
+    },
+    {
+      "idx": 39,
+      "version": "7",
+      "when": 1793682399735,
+      "tag": "0039_customer_photo_stage_expiry",
+      "breakpoints": true
     }
   ]
 }

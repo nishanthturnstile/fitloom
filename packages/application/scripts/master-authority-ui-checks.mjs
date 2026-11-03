@@ -72,7 +72,7 @@ export async function exerciseMasterAuthorityUI(page, fixture) {
     });
     return { authorityUiPassed: true };
   }
-  if (fixture.phase === "prepare-garment") {
+  if (fixture.phase === "restore-addon") {
     await click("Refresh access");
     await page
       .getByText("Access refreshed. Your local draft is preserved.", {
@@ -82,7 +82,9 @@ export async function exerciseMasterAuthorityUI(page, fixture) {
     await page
       .getByLabel("Add-on name", { exact: true })
       .fill(await page.evaluate(() => window.fitloomAuthorityLabel));
-    await page.goto(settings);
+    return { authorityUiPassed: true };
+  }
+  if (fixture.phase === "prepare-garment") {
     const response = await page.request.get(
       `${api}/masters/garments/${fixture.pricedId}`,
     );
