@@ -1,0 +1,51 @@
+{
+  "extends": ["//"],
+  "tasks": {
+    "dev": {
+      "passThroughEnv": [
+        "PORT",
+        "HOSTNAME",
+        "LOG_LEVEL",
+        "FITLOOM_ENV",
+        "AUTH_DATABASE_URL",
+        "AUTH_BASE_URL",
+        "AUTH_TRUSTED_ORIGINS",
+        "AUTH_SECRET",
+        "MAIL_ENCRYPTION_KEY",
+        "AUTH_PROXY_HEADER",
+        "MAIL_PROVIDER",
+        "WEB_DATABASE_URL",
+        "MAILPIT_PUBLIC_URL",
+        "FIXTURE_INBOX_ENABLED",
+        "FIXTURE_INBOX_SECRET",
+        "STORAGE_ENDPOINT",
+        "STORAGE_BUCKET",
+        "STORAGE_ACCESS_KEY",
+        "STORAGE_SECRET_KEY"
+      ]
+    },
+    "start": {
+      "passThroughEnv": [
+        "PORT",
+        "HOSTNAME",
+        "LOG_LEVEL",
+        "FITLOOM_ENV",
+        "AUTH_DATABASE_URL",
+        "AUTH_BASE_URL",
+        "AUTH_TRUSTED_ORIGINS",
+        "AUTH_SECRET",
+        "MAIL_ENCRYPTION_KEY",
+        "AUTH_PROXY_HEADER",
+        "MAIL_PROVIDER",
+        "WEB_DATABASE_URL",
+        "MAILPIT_PUBLIC_URL",
+        "FIXTURE_INBOX_ENABLED",
+        "FIXTURE_INBOX_SECRET",
+        "STORAGE_ENDPOINT",
+        "STORAGE_BUCKET",
+        "STORAGE_ACCESS_KEY",
+        "STORAGE_SECRET_KEY"
+      ]
+    }
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "name": "fitloom",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@12.16.1",
+  "engines": {
+    "node": ">=26.13.0 <27",
+    "pnpm": ">=12.16.1 <13"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.6.4",
+    "@types/node": "26.6.6",
+    "turbo": "2.11.10",
+    "typescript": "7.0.2"
+  },
+  "scripts": {
+    "dev": "node scripts/compose.mjs up",
+    "dev:web": "node scripts/compose.mjs up",
+    "dev:worker": "node scripts/compose.mjs up",
+    "build": "turbo run build",
+    "start": "node scripts/compose.mjs up",
+    "lint": "biome check .",
+    "format": "biome format --write .",
+    "format:check": "biome format .",
+    "typecheck": "turbo run typecheck",
+    "check": "pnpm lint && pnpm typecheck",
+    "test": "node scripts/compose.mjs test",
+    "setup:local": "node scripts/compose.mjs up",
+    "dev:up": "node scripts/compose.mjs up",
+    "dev:down": "node scripts/compose.mjs down",
+    "dev:status": "node scripts/compose.mjs status",
+    "dev:logs": "node scripts/compose.mjs logs",
+    "dev:watch": "docker compose watch --no-up web worker",
+    "test:workspace": "pnpm --filter @fitloom/application test:storage-reset && pnpm --filter @fitloom/db test && pnpm --filter @fitloom/application test",
+    "validate": "node scripts/compose.mjs validate",
+    "db:migrate": "node scripts/compose.mjs migrate",
+    "dev:account": "node scripts/compose.mjs account",
+    "operator:bootstrap": "node scripts/compose.mjs operator-bootstrap",
+    "operator:recover-mfa": "node scripts/compose.mjs operator-recover-mfa",
+    "verify:recovery": "node scripts/compose.mjs recovery",
+    "verify:resources": "node scripts/verify-foundation-resources.mjs"
+  }
+}

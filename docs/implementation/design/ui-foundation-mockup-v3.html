@@ -1,0 +1,946 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#ffffff">
+<title>Fitloom · UI foundation v3</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;450;500;600&family=Noto+Sans:wght@400;500;600;650;700&display=swap" rel="stylesheet">
+<style>
+/* Source: the final preset block in apps/web/src/app/globals.css.
+   This document is an isolated design artifact. It makes no network writes. */
+:root {
+  color-scheme: light;
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.148 0.004 228.8);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.148 0.004 228.8);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.148 0.004 228.8);
+  --primary: oklch(0.508 0.118 165.612);
+  --primary-foreground: oklch(0.979 0.021 166.113);
+  --secondary: oklch(0.967 0.001 286.375);
+  --secondary-foreground: oklch(0.21 0.006 285.885);
+  --muted: oklch(0.963 0.002 197.1);
+  --muted-foreground: oklch(0.56 0.021 213.5);
+  --accent: oklch(0.963 0.002 197.1);
+  --accent-foreground: oklch(0.218 0.008 223.9);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.925 0.005 214.3);
+  --input: oklch(0.925 0.005 214.3);
+  --ring: oklch(0.723 0.014 214.4);
+  --sidebar: oklch(0.987 0.002 197.1);
+  --sidebar-foreground: oklch(0.148 0.004 228.8);
+  --sidebar-primary: oklch(0.596 0.145 163.225);
+  --sidebar-primary-foreground: oklch(0.979 0.021 166.113);
+  --sidebar-accent: oklch(0.963 0.002 197.1);
+  --sidebar-accent-foreground: oklch(0.218 0.008 223.9);
+  --sidebar-border: oklch(0.925 0.005 214.3);
+  --sidebar-ring: oklch(0.723 0.014 214.4);
+  --radius: .625rem;
+  --radius-md: calc(var(--radius) * .8);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-4xl: calc(var(--radius) * 2.6);
+  --font-sans: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-heading: 'Noto Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace;
+  --page: color-mix(in oklab, var(--muted) 57%, var(--background));
+  --primary-soft: color-mix(in oklab, var(--primary) 7%, var(--background));
+  --shadow-xs: 0 1px 2px oklch(0.148 0.004 228.8 / .05);
+  --card-shadow: var(--shadow-xs), 0 0 0 1px oklch(0.148 0.004 228.8 / .10);
+  --sidebar-width: 216px;
+  --review-height: 48px;
+  --topbar-height: 58px;
+}
+* { box-sizing: border-box; }
+html { scroll-padding-top: 180px; }
+body { margin: 0; color: var(--foreground); font: 14px/1.5 var(--font-sans); -webkit-font-smoothing: antialiased; }
+button, input, select, textarea { color: inherit; font: inherit; }
+button, a, input, select, textarea { -webkit-tap-highlight-color: transparent; }
+button { cursor: pointer; }
+button, a, input, select, textarea { transition: background .15s, color .15s, box-shadow .15s, border-color .15s; }
+button:disabled { opacity: .5; cursor: not-allowed; }
+:focus-visible { outline: 3px solid color-mix(in oklab, var(--ring) 50%, transparent); outline-offset: 2px; }
+input:focus-visible, select:focus-visible, textarea:focus-visible { border-color: var(--ring); outline-offset: 0; }
+a { color: inherit; text-decoration: none; }
+h1, h2, h3, h4, p, ol, ul { margin: 0; }
+ol, ul { list-style: none; padding: 0; }
+h1, h2, h3 { font-family: var(--font-heading); font-weight: 500; }
+h1 { font-size: 28px; line-height: 1.25; letter-spacing: -.9px; }
+h2 { font-size: 16px; line-height: 1.5; letter-spacing: -.25px; }
+h3 { font-size: 14px; }
+strong { font-weight: 500; }
+small { font-size: 12px; }
+[hidden] { display: none !important; }
+.sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.svg-defs { position: absolute; width: 0; height: 0; overflow: hidden; }
+.icon { display: block; width: 18px; height: 18px; flex-shrink: 0; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 12px; letter-spacing: -.3px; }
+.muted { color: var(--muted-foreground); }
+.eyebrow { font-size: 10px; line-height: 1.5; font-weight: 500; letter-spacing: .12em; text-transform: uppercase; color: var(--muted-foreground); }
+.flex { display: flex; align-items: center; gap: 8px; }
+.spread { justify-content: space-between; }
+.stack { display: flex; flex-direction: column; gap: 20px; min-width: 0; }
+.separator { height: 1px; background: var(--border); flex-shrink: 0; }
+.btn { display: inline-flex; justify-content: center; align-items: center; gap: 6px; min-height: 36px; padding: 6px 11px; border: 1px solid transparent; border-radius: var(--radius-md); font-size: 14px; font-weight: 500; line-height: 22px; white-space: nowrap; background: transparent; }
+.btn .icon { width: 16px; height: 16px; }
+.btn:active:not(:disabled) { transform: translateY(1px); }
+.btn-primary { background: var(--primary); color: var(--primary-foreground); }
+.btn-primary:hover { background: color-mix(in oklab, var(--primary) 80%, transparent); }
+.btn-outline { background: var(--background); border-color: var(--border); box-shadow: var(--shadow-xs); }
+.btn-outline:hover, .btn-ghost:hover { background: var(--muted); }
+.btn-sm { min-height: 32px; padding: 4px 10px; }
+.btn-icon { width: 32px; min-height: 32px; padding: 6px; color: var(--muted-foreground); }
+.text-link { display: inline-flex; align-items: center; gap: 5px; font-size: 13px; font-weight: 500; color: var(--primary); border-radius: 4px; }
+.text-link .icon { width: 15px; height: 15px; }
+.text-link:hover { text-decoration: underline; text-underline-offset: 4px; }
+.badge { display: inline-flex; width: fit-content; flex-shrink: 0; align-items: center; gap: 4px; height: 20px; padding: 0 8px; border: 1px solid transparent; border-radius: var(--radius-4xl); font-size: 12px; line-height: 18px; font-weight: 500; white-space: nowrap; }
+.badge-outline { border-color: var(--border); background: transparent; }
+.badge-secondary { background: var(--secondary); color: var(--secondary-foreground); }
+.badge-primary { background: var(--primary); color: var(--primary-foreground); }
+.badge-soft { background: var(--primary-soft); color: var(--primary); }
+.badge .dot { width: 4px; height: 4px; background: currentColor; border-radius: 50%; }
+.card { min-width: 0; border-radius: var(--radius-xl); background: var(--card); color: var(--card-foreground); box-shadow: var(--card-shadow); overflow: hidden; }
+.card-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; padding: 22px 24px 18px; }
+.card-description { margin-top: 3px; color: var(--muted-foreground); font-size: 13px; }
+.card-content { padding: 0 24px 24px; }
+.card-footer { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 24px; border-top: 1px solid var(--border); font-size: 12px; color: var(--muted-foreground); }
+.input, .select, .textarea { width: 100%; min-width: 0; min-height: 36px; border: 1px solid var(--input); border-radius: var(--radius-md); padding: 6px 10px; background: transparent; box-shadow: var(--shadow-xs); }
+.input::placeholder, .textarea::placeholder { color: var(--muted-foreground); }
+.select { width: auto; padding-right: 30px; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23758388' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m7 10 5 5 5-5'/%3E%3C/svg%3E"); background-position: right 9px center; background-repeat: no-repeat; }
+.textarea { min-height: 88px; resize: vertical; }
+.field { display: flex; flex-direction: column; min-width: 0; gap: 8px; }
+.field > label, .field > .field-label { font-size: 14px; font-weight: 500; line-height: 1.25; }
+.field small { color: var(--muted-foreground); }
+.field-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+.field-wide { grid-column: 1 / -1; }
+.check { width: 16px; height: 16px; accent-color: var(--primary); cursor: pointer; margin: 0; flex-shrink: 0; }
+.switch { display: inline-flex; width: 32px; height: 19px; padding: 1px; flex-shrink: 0; border: 1px solid transparent; border-radius: 30px; background: var(--input); }
+.switch::after { content: ''; width: 15px; height: 15px; border-radius: 50%; background: var(--background); box-shadow: var(--shadow-xs); transition: transform .15s; }
+.switch[aria-checked=true] { background: var(--primary); }
+.switch[aria-checked=true]::after { transform: translateX(13px); }
+/* Neutral review chrome, deliberately outside the application. */
+.review-bar { position: sticky; top: 0; z-index: 50; display: flex; align-items: center; gap: 24px; min-height: 48px; padding: 7px 20px; background: var(--background); border-bottom: 1px solid var(--border); font-size: 12px; }
+.review-caption { color: var(--muted-foreground); white-space: nowrap; }
+.review-caption strong { color: var(--foreground); margin-right: 5px; }
+.review-screens { display: flex; gap: 3px; }
+.review-screens button { min-height: 32px; border: 1px solid transparent; padding: 4px 11px; border-radius: 7px; font-size: 12px; color: var(--muted-foreground); background: transparent; white-space: nowrap; }
+.review-screens button:hover { color: var(--foreground); background: var(--muted); }
+.review-screens button[aria-pressed=true] { color: var(--foreground); background: var(--muted); border-color: var(--border); }
+.review-note { margin-left: auto; color: var(--muted-foreground); font-size: 11px; }
+/* Persistent application shell. */
+.app-shell { display: grid; grid-template-columns: var(--sidebar-width) minmax(0, 1fr); align-items: stretch; min-height: 940px; }
+.sidebar { min-width: 0; background: var(--sidebar); border-right: 1px solid var(--sidebar-border); }
+.side-inner { position: sticky; top: var(--review-height); display: flex; min-height: 828px; flex-direction: column; gap: 25px; padding: 26px 12px 18px; }
+.brand { display: flex; align-items: center; gap: 9px; padding-inline: 9px; font-family: var(--font-heading); font-size: 21px; font-weight: 650; letter-spacing: -.8px; }
+.brand-mark { display: grid; width: 30px; height: 30px; place-items: center; border-radius: 9px; background: var(--primary); color: var(--primary-foreground); }
+.brand-mark .icon { width: 22px; height: 22px; }
+.workspace-select { display: flex; align-items: center; gap: 8px; width: 100%; border: 1px solid var(--border); border-radius: var(--radius-md); padding: 9px; background: var(--background); text-align: left; box-shadow: var(--shadow-xs); }
+.workspace-select:hover { background: var(--muted); }
+.workspace-avatar { display: grid; place-items: center; width: 30px; height: 30px; border: 1px solid var(--border); border-radius: 7px; font-size: 10px; font-weight: 600; }
+.workspace-copy { flex: 1; min-width: 0; }
+.workspace-copy strong { display: block; font-size: 13px; }
+.workspace-copy small { display: block; font-size: 11px; color: var(--muted-foreground); }
+.workspace-select > .icon { width: 14px; height: 14px; }
+.nav-stack { display: flex; flex-direction: column; gap: 24px; }
+.nav-group { display: flex; flex-direction: column; gap: 3px; }
+.nav-label { padding: 0 10px 6px; font-size: 10px; letter-spacing: .1em; font-weight: 500; color: var(--muted-foreground); text-transform: uppercase; }
+.nav-link { display: flex; align-items: center; gap: 10px; min-height: 36px; padding: 7px 10px; border: 0; border-radius: var(--radius-md); background: transparent; color: var(--muted-foreground); text-align: left; font-size: 13px; white-space: nowrap; }
+.nav-link:hover { color: var(--foreground); background: var(--sidebar-accent); }
+.nav-link[aria-current=page] { color: var(--primary); background: var(--primary-soft); font-weight: 500; }
+.nav-link .badge { margin-left: auto; font-size: 10px; padding: 0 6px; height: 18px; }
+.sidebar-foot { margin-top: auto; padding: 20px 7px 0; }
+.build-note { display: flex; align-items: center; gap: 7px; color: var(--muted-foreground); font-size: 11px; padding-bottom: 16px; }
+.build-note .dot { width: 5px; height: 5px; background: var(--primary); border-radius: 50%; }
+.account { display: flex; align-items: center; gap: 9px; padding-top: 16px; border-top: 1px solid var(--border); }
+.avatar { display: grid; place-items: center; width: 30px; height: 30px; flex-shrink: 0; background: var(--secondary); border-radius: 50%; font-size: 10px; font-weight: 500; }
+.account-copy { flex: 1; font-size: 12px; }
+.account-copy small { display: block; font-size: 10px; color: var(--muted-foreground); }
+.mobile-menu { display: none; }
+.main { min-width: 0; background: var(--page); }
+.topbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: var(--topbar-height); padding: 10px 32px; border-bottom: 1px solid var(--border); background: var(--background); }
+.crumbs { display: flex; align-items: center; gap: 10px; min-width: 0; font-size: 12px; color: var(--muted-foreground); }
+.crumbs .icon { width: 13px; height: 13px; }
+.crumb-current { color: var(--foreground); }
+.command { display: flex; align-items: center; gap: 8px; border: 0; padding: 4px 0 4px 8px; border-radius: 6px; color: var(--muted-foreground); background: transparent; font-size: 12px; }
+.command:hover { color: var(--foreground); }
+kbd { font: 10px var(--font-sans); border: 1px solid var(--border); border-radius: 4px; padding: 1px 4px; margin-left: 16px; }
+.page { min-width: 0; }
+.content { padding: 32px; max-width: 1550px; margin-inline: auto; }
+.page-heading { display: flex; align-items: center; justify-content: space-between; gap: 24px; margin-bottom: 28px; }
+.page-heading .eyebrow { margin-bottom: 7px; }
+.lede { color: var(--muted-foreground); margin-top: 9px; max-width: 64ch; font-size: 14px; }
+.heading-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; flex-wrap: wrap; }
+/* Home: catalogue facts and readiness, with no operational metrics. */
+.catalog-counts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin-bottom: 24px; }
+.count { padding: 22px 24px; position: relative; }
+.count + .count::before { content: ''; position: absolute; top: 22px; bottom: 22px; left: 0; width: 1px; background: var(--border); }
+.count-label { display: flex; align-items: center; justify-content: space-between; color: var(--muted-foreground); font-size: 13px; gap: 8px; }
+.count-label .icon { width: 17px; height: 17px; }
+.count-number { display: block; margin: 12px 0 6px; font: 400 30px/1.1 var(--font-mono); letter-spacing: -1.5px; }
+.count small { color: var(--muted-foreground); font-size: 12px; }
+.home-grid { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 24px; align-items: start; }
+.setup-header { align-items: center; }
+.progress-number { color: var(--primary); font-family: var(--font-mono); font-size: 12px; }
+.progress-track { height: 5px; background: var(--muted); border-radius: 8px; overflow: hidden; margin: 0 24px 12px; }
+.progress-track span { display: block; width: 50%; height: 5px; background: var(--primary); border-radius: inherit; }
+.setup-list { padding: 0 24px 12px; }
+.setup-row { display: flex; align-items: center; gap: 13px; padding: 15px 0; border-bottom: 1px solid var(--border); }
+.setup-row:last-child { border-bottom: 0; }
+.setup-marker { display: grid; place-items: center; width: 26px; height: 26px; flex-shrink: 0; border: 1px solid var(--border); border-radius: 50%; color: var(--muted-foreground); font: 11px var(--font-mono); }
+.setup-marker.done { background: var(--primary-soft); border-color: transparent; color: var(--primary); }
+.setup-marker .icon { width: 15px; height: 15px; }
+.setup-copy { min-width: 0; flex: 1; }
+.setup-copy strong { display: block; }
+.setup-copy small { display: block; margin-top: 2px; color: var(--muted-foreground); }
+.setup-row > .icon { width: 15px; height: 15px; color: var(--primary); }
+.recent-head { align-items: center; }
+.recent-row { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-top: 1px solid var(--border); }
+.recent-row:hover .recent-name { color: var(--primary); }
+.garment-mark { display: grid; place-items: center; width: 38px; height: 38px; flex-shrink: 0; border: 1px solid var(--border); border-radius: 9px; color: color-mix(in oklab, var(--foreground) 65%, var(--background)); background: var(--sidebar); }
+.garment-mark .icon { width: 26px; height: 26px; stroke-width: 1.25; }
+.recent-copy { flex: 1; min-width: 0; }
+.recent-copy small { display: block; margin-top: 2px; color: var(--muted-foreground); }
+.recent-time { font-size: 12px; color: var(--muted-foreground); }
+.next-build .card-header { padding-bottom: 12px; }
+.next-build h2 { font-size: 19px; line-height: 1.45; letter-spacing: -.45px; }
+.next-build p { color: var(--muted-foreground); margin-top: 9px; font-size: 13px; line-height: 1.6; }
+.next-illustration { position: relative; margin: 16px 24px 18px; padding: 18px; border: 1px solid var(--border); border-radius: 10px; background: var(--sidebar); }
+.person-line { display: flex; align-items: center; gap: 10px; padding-bottom: 13px; border-bottom: 1px solid var(--border); }
+.person-lines { display: grid; gap: 6px; }
+.person-lines span { display: block; width: 84px; height: 4px; border-radius: 4px; background: var(--border); }
+.person-lines span:last-child { width: 52px; }
+.measure-sample { display: flex; justify-content: space-between; padding-top: 12px; font-size: 11px; color: var(--muted-foreground); }
+.measure-sample .mono { font-size: 11px; color: var(--foreground); }
+.next-build .card-content { padding-top: 0; }
+.roadmap { margin-top: 23px; padding-top: 19px; border-top: 1px solid var(--border); display: grid; gap: 13px; }
+.roadmap li { display: flex; justify-content: space-between; gap: 10px; font-size: 12px; color: var(--muted-foreground); }
+.roadmap li strong { color: var(--foreground); }
+.scope-note { display: flex; align-items: flex-start; gap: 8px; margin: 16px 4px 0; font-size: 12px; color: var(--muted-foreground); line-height: 1.6; }
+.scope-note .icon { width: 15px; height: 15px; margin-top: 2px; }
+/* Line tabs, table and filters mirror the installed component language. */
+.line-tabs { display: flex; align-items: stretch; gap: 22px; border-bottom: 1px solid var(--border); overflow-x: auto; }
+.line-tab { position: relative; display: flex; align-items: center; justify-content: center; gap: 7px; min-height: 43px; padding: 8px 2px 12px; border: 0; border-bottom: 2px solid transparent; background: transparent; color: var(--muted-foreground); font-size: 14px; font-weight: 500; white-space: nowrap; }
+.line-tab:hover { color: var(--foreground); }
+.line-tab[aria-selected=true], .line-tab[aria-pressed=true] { color: var(--foreground); border-bottom-color: var(--foreground); }
+.line-tab .badge { font-family: var(--font-mono); height: 18px; font-size: 10px; padding: 0 6px; background: var(--muted); }
+.register-tabs { margin-bottom: 22px; }
+.toolbar { display: flex; gap: 10px; align-items: center; margin-bottom: 18px; flex-wrap: wrap; }
+.search-field { position: relative; flex: 1; min-width: 210px; max-width: 370px; }
+.search-field .icon { position: absolute; top: 10px; left: 10px; width: 16px; height: 16px; color: var(--muted-foreground); pointer-events: none; }
+.search-field .input { padding-left: 34px; background: var(--background); }
+.toolbar .select { background-color: var(--background); font-size: 13px; }
+.toolbar .toolbar-end { margin-left: auto; font-size: 12px; color: var(--muted-foreground); }
+.table-scroll { position: relative; width: 100%; overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; text-align: left; white-space: nowrap; }
+th { height: 40px; padding: 0 8px; font-weight: 500; font-size: 12px; background: color-mix(in oklab, var(--muted) 48%, var(--background)); }
+td { padding: 8px; vertical-align: middle; }
+th:first-child, td:first-child { padding-left: 24px; }
+th:last-child, td:last-child { padding-right: 20px; }
+tr { border-bottom: 1px solid var(--border); transition: background .15s; }
+tbody tr:last-child { border-bottom: 0; }
+tbody tr:hover { background: color-mix(in oklab, var(--muted) 50%, transparent); }
+.garment-cell { display: flex; align-items: center; gap: 12px; min-width: 195px; }
+.garment-cell small { display: block; margin-top: 1px; color: var(--muted-foreground); }
+.garment-cell strong:hover { color: var(--primary); }
+.garment-cell .garment-mark { width: 40px; height: 44px; background: transparent; border-color: transparent; }
+.garment-cell .garment-mark .icon { width: 30px; height: 30px; }
+.rate { text-align: right; }
+.rate-unset { color: var(--muted-foreground); font-size: 12px; }
+.rate-unset::before { content: ''; display: inline-block; width: 4px; height: 4px; border-radius: 50%; background: var(--ring); margin-right: 6px; vertical-align: middle; }
+.register-footer { min-height: 54px; }
+.empty-state { padding: 42px 24px; text-align: center; }
+.empty-state p { color: var(--muted-foreground); margin: 6px 0 16px; }
+.catalog-note { display: flex; align-items: flex-start; gap: 11px; margin-top: 20px; padding: 15px 0; color: var(--muted-foreground); font-size: 13px; }
+.catalog-note > .icon { color: var(--primary); margin-top: 2px; }
+.catalog-note strong { display: block; color: var(--foreground); margin-bottom: 3px; }
+/* Editor: a task rail, working form, always-readable preview and history. */
+.editor-header { position: sticky; top: var(--review-height); z-index: 25; display: flex; align-items: center; gap: 14px; padding: 18px 32px; background: var(--background); border-bottom: 1px solid var(--border); }
+.editor-header .back { border-right: 1px solid var(--border); padding-right: 14px; margin-right: 2px; }
+.editor-title-wrap { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.editor-title-wrap h1 { overflow-wrap: anywhere; font-size: 22px; letter-spacing: -.6px; }
+.editor-title-copy { min-width: 0; flex: 1; }
+.editor-title-copy p { font-size: 12px; color: var(--muted-foreground); margin-top: 4px; }
+.editor-header > .garment-mark { background: var(--sidebar); width: 42px; height: 46px; }
+.editor-content { padding-top: 26px; padding-bottom: 32px; }
+.editor-layout { display: grid; grid-template-columns: 154px minmax(0, 1fr) 250px; gap: 24px; align-items: start; }
+.step-rail { position: sticky; top: calc(var(--review-height) + 118px); display: grid; gap: 4px; }
+.step-rail > .eyebrow { padding: 0 9px 12px; }
+.step-button { display: flex; gap: 9px; align-items: center; min-height: 39px; width: 100%; border: 1px solid transparent; border-radius: var(--radius-md); padding: 8px; color: var(--muted-foreground); text-align: left; background: transparent; font-size: 12px; white-space: nowrap; }
+.step-button:hover { background: var(--muted); color: var(--foreground); }
+.step-button[aria-pressed=true] { color: var(--primary); background: var(--primary-soft); border-color: color-mix(in oklab, var(--primary) 12%, transparent); font-weight: 500; }
+.step-number { font-family: var(--font-mono); font-size: 10px; color: var(--muted-foreground); }
+.step-button[aria-pressed=true] .step-number { color: var(--primary); }
+.step-help { margin: 21px 9px; padding-top: 16px; border-top: 1px solid var(--border); font-size: 11px; line-height: 1.65; color: var(--muted-foreground); }
+.editor-main { min-width: 0; }
+.section-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; margin-bottom: 22px; }
+.section-heading h2 { font-size: 20px; line-height: 1.3; letter-spacing: -.5px; }
+.section-heading p { color: var(--muted-foreground); margin-top: 7px; font-size: 13px; line-height: 1.6; }
+.section-heading > .badge { margin-top: 3px; }
+.editor-panel { display: flex; flex-direction: column; gap: 18px; }
+.measure-config { display: flex; align-items: center; flex-wrap: wrap; justify-content: space-between; gap: 12px; padding: 13px 16px; }
+.measure-config label { display: flex; align-items: center; gap: 10px; color: var(--muted-foreground); font-size: 12px; }
+.measure-config .select { min-height: 30px; padding-block: 3px; font-size: 12px; }
+.measure-config .flex { font-size: 12px; }
+.measure-card .card-header { padding: 18px 18px 14px; align-items: center; }
+.measure-card h3 { font-size: 14px; }
+.measure-card .card-description { font-size: 12px; }
+.measure-columns { display: grid; grid-template-columns: minmax(0, 1fr) 95px 68px 28px; gap: 12px; padding: 10px 18px 10px 43px; border-block: 1px solid var(--border); background: var(--sidebar); font-size: 10px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted-foreground); }
+.measurement-row { display: grid; grid-template-columns: 14px minmax(0, 1fr) 95px 68px 28px; gap: 12px; align-items: center; padding: 16px 16px; border-bottom: 1px solid var(--border); }
+.measurement-row:last-child { border-bottom: 0; }
+.measure-grip { color: var(--muted-foreground); opacity: .6; }
+.measure-grip .icon { width: 13px; height: 15px; }
+.measure-name strong { display: block; font-size: 14px; }
+.measure-name small { display: block; font-size: 11px; margin-top: 3px; color: var(--muted-foreground); }
+.measure-range { color: var(--muted-foreground); font-size: 11px; white-space: nowrap; }
+.measurement-row .switch { margin-left: 13px; }
+.measurement-row .btn-icon { width: 28px; min-height: 28px; }
+.add-line { width: 100%; display: flex; align-items: center; justify-content: center; gap: 7px; padding: 11px; border: 0; border-top: 1px solid var(--border); background: transparent; color: var(--primary); font-size: 13px; }
+.add-line .icon { width: 15px; height: 15px; }
+.add-line:hover { background: var(--primary-soft); }
+.editor-note { display: flex; align-items: flex-start; gap: 9px; color: var(--muted-foreground); font-size: 12px; line-height: 1.7; padding-inline: 2px; }
+.editor-note .icon { width: 15px; height: 15px; margin-top: 3px; }
+.step-footer { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; padding-top: 18px; }
+.step-footer .btn { max-width: 100%; white-space: normal; }
+.step-footer > :last-child { margin-left: auto; }
+.inspector { position: sticky; top: calc(var(--review-height) + 118px); display: grid; gap: 16px; min-width: 0; }
+.preview-card .card-header { padding: 17px 18px 0; align-items: center; }
+.preview-card .line-tabs { gap: 18px; margin: 8px 18px 0; }
+.preview-card .line-tab { font-size: 12px; min-height: 39px; padding-bottom: 9px; }
+.preview-card .card-content { padding: 16px 18px 18px; }
+.preview-form-title { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; }
+.preview-form-title .garment-mark { width: 33px; height: 36px; }
+.preview-form-title small { color: var(--muted-foreground); font-size: 10px; display: block; margin-top: 2px; }
+.preview-field { display: flex; flex-direction: column; gap: 5px; margin-bottom: 12px; }
+.preview-field label { font-size: 12px; font-weight: 500; }
+.preview-field label em { color: var(--primary); font-style: normal; margin-left: 3px; }
+.preview-input { position: relative; }
+.preview-input .input { padding-right: 32px; font-family: var(--font-mono); font-size: 12px; }
+.preview-input span { position: absolute; right: 10px; top: 9px; color: var(--muted-foreground); font-size: 11px; }
+.preview-foot { color: var(--muted-foreground); font-size: 10px; line-height: 1.6; margin-top: 16px; }
+.garment-preview { display: grid; place-items: center; padding: 20px 0; color: var(--primary); }
+.garment-preview .icon { width: 132px; height: 152px; stroke-width: .65; }
+.history-card .card-header { padding: 16px 18px 8px; align-items: center; }
+.history-card h3 { font-size: 13px; }
+.history-list { padding: 0 18px 15px; }
+.history-item { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 12px; }
+.history-item:last-child { border: 0; padding-bottom: 0; }
+.history-item small { display: block; color: var(--muted-foreground); font-size: 10px; margin-top: 3px; }
+.history-item .mono { font-size: 10px; color: var(--muted-foreground); }
+.history-item .dot { display: inline-block; width: 5px; height: 5px; margin-right: 6px; border-radius: 50%; background: var(--primary); vertical-align: middle; }
+.form-card .card-header { padding: 20px; }
+.form-card .card-content { padding: 0 20px 20px; }
+.choice-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+.choice { padding: 6px 10px; border: 1px solid var(--border); background: transparent; border-radius: var(--radius-md); font-size: 12px; }
+.choice:hover { background: var(--muted); }
+.choice[aria-pressed=true] { border-color: var(--primary); background: var(--primary-soft); color: var(--primary); }
+.construction-group { padding: 16px 20px; border-top: 1px solid var(--border); }
+.construction-group p { color: var(--muted-foreground); font-size: 12px; margin-top: 4px; }
+.service-row { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 18px 20px; border-top: 1px solid var(--border); }
+.service-row small { display: block; margin-top: 4px; color: var(--muted-foreground); font-size: 12px; }
+.rate-input { position: relative; width: 120px; flex-shrink: 0; }
+.rate-input > span:not(.sr-only) { position: absolute; top: 8px; left: 10px; color: var(--muted-foreground); }
+.rate-input .input { padding-left: 27px; font-family: var(--font-mono); font-size: 12px; }
+.addon-empty { text-align: center; padding: 30px 24px; }
+.addon-empty .garment-mark { margin: 0 auto 14px; }
+.addon-empty p { color: var(--muted-foreground); font-size: 13px; max-width: 34ch; margin: 7px auto 18px; }
+.save-bar { position: sticky; bottom: 0; z-index: 30; display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 13px 32px; border-top: 1px solid var(--border); background: var(--background); box-shadow: 0 -4px 16px oklch(0.148 0.004 228.8 / .025); }
+.save-state { display: flex; align-items: center; gap: 10px; font-size: 13px; }
+.save-state > .icon { width: 17px; height: 17px; color: var(--primary); }
+.save-state small { display: block; color: var(--muted-foreground); font-size: 11px; margin-top: 1px; }
+.save-actions { display: flex; align-items: center; gap: 8px; }
+/* Native dialogs keep keyboard focus and Escape behavior local to the artifact. */
+dialog { width: min(450px, calc(100% - 32px)); margin: auto; padding: 24px; border: 0; border-radius: var(--radius-xl); color: var(--popover-foreground); background: var(--popover); box-shadow: 0 0 0 1px oklch(0.148 0.004 228.8 / .1), 0 15px 55px oklch(0.148 0.004 228.8 / .12); }
+dialog::backdrop { background: oklch(0.148 0.004 228.8 / .14); backdrop-filter: blur(3px); }
+dialog h2 { font-size: 18px; padding-right: 22px; }
+dialog > p { color: var(--muted-foreground); margin: 8px 0 22px; font-size: 13px; }
+.dialog-close { position: absolute; top: 16px; right: 16px; }
+.dialog-actions { display: flex; align-items: center; justify-content: flex-end; gap: 8px; margin-top: 24px; }
+.library-item { display: flex; align-items: center; gap: 10px; padding: 13px 0; border-top: 1px solid var(--border); }
+.library-item .badge { margin-left: auto; }
+.dialog-note { font-size: 12px; color: var(--muted-foreground); margin-top: 16px; }
+.toast { position: fixed; bottom: 82px; left: 50%; transform: translateX(-50%); width: max-content; max-width: calc(100% - 32px); z-index: 80; padding: 12px 17px; border-radius: var(--radius-md); color: var(--popover-foreground); background: var(--popover); border: 1px solid var(--border); box-shadow: 0 4px 20px oklch(0.148 0.004 228.8 / .1); font-size: 13px; }
+@media (max-width: 1280px) {
+  .home-grid { grid-template-columns: minmax(0, 1fr) 270px; gap: 20px; }
+  .content { padding-inline: 26px; }
+  .editor-layout { grid-template-columns: 144px minmax(0, 1fr) 230px; gap: 18px; }
+  .editor-header, .topbar, .save-bar { padding-inline: 26px; }
+  .page-heading { align-items: flex-start; }
+  .page-heading .heading-actions { max-width: 350px; justify-content: flex-end; }
+  .count { padding-inline: 20px; }
+}
+@media (min-width: 1025px) and (max-width: 1180px) {
+  .editor-layout { grid-template-columns: 144px minmax(0, 1fr); }
+  .inspector { position: static; grid-column: 2; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; }
+  .home-grid { grid-template-columns: minmax(0, 1fr); }
+  .home-aside { display: grid; grid-template-columns: minmax(0, 1fr) 240px; gap: 20px; }
+  .next-illustration { display: none; }
+}
+@media (max-width: 1024px) {
+  .app-shell { grid-template-columns: minmax(0, 1fr); min-height: 0; }
+  .sidebar { border-right: 0; border-bottom: 1px solid var(--border); }
+  .side-inner { position: static; min-height: 0; padding: 12px 22px; gap: 14px; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; }
+  .brand { padding: 0; font-size: 19px; }
+  .brand-mark { width: 28px; height: 28px; }
+  .workspace-select { width: 190px; justify-self: end; padding: 5px 8px; }
+  .workspace-avatar { display: none; }
+  .workspace-copy strong { font-size: 12px; }
+  .workspace-copy small { font-size: 10px; }
+  .mobile-menu { display: inline-flex; }
+  .nav-stack { display: none; grid-column: 1 / -1; flex-direction: row; overflow-x: auto; gap: 20px; padding-top: 4px; }
+  .sidebar.menu-open .nav-stack { display: flex; }
+  .nav-group { flex-direction: row; gap: 4px; }
+  .nav-label, .sidebar-foot { display: none; }
+  .topbar { min-height: 48px; }
+  .main { min-height: 860px; }
+  .editor-layout { grid-template-columns: 144px minmax(0, 1fr) 230px; gap: 18px; }
+  .step-button { font-size: 12px; }
+  .review-note { font-size: 10px; }
+}
+@media (max-width: 900px) {
+  .home-grid { grid-template-columns: minmax(0, 1fr); }
+  .home-aside { display: grid; grid-template-columns: minmax(0, 1fr) 240px; gap: 20px; }
+  .next-illustration { display: none; }
+  .page-heading .heading-actions { max-width: 210px; }
+  .editor-layout { grid-template-columns: 140px minmax(0, 1fr); }
+  .inspector { position: static; grid-column: 2; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; }
+  .count-label .icon { display: none; }
+}
+@media (max-width: 720px) {
+  .review-bar { padding: 7px 12px; gap: 12px; justify-content: center; }
+  .review-caption { display: none; }
+  .review-note { display: none; }
+  .review-screens { width: 100%; justify-content: center; }
+  .review-screens button { flex: 1; max-width: 150px; }
+  .side-inner { padding: 11px 16px; gap: 12px; }
+  .brand { font-size: 18px; gap: 7px; }
+  .brand-mark { width: 26px; height: 26px; }
+  .brand-mark .icon { width: 19px; height: 19px; }
+  .workspace-select { width: min(174px, 100%); }
+  .workspace-copy strong { font-size: 11px; }
+  .workspace-copy small { display: none; }
+  .workspace-select > .icon { width: 12px; }
+  .mobile-menu { width: 28px; }
+  .topbar { padding-inline: 18px; }
+  .command span, .command kbd { display: none; }
+  .command { padding: 5px; }
+  .crumbs { gap: 7px; font-size: 11px; }
+  .content { padding: 25px 18px 28px; }
+  h1 { font-size: 26px; }
+  .page-heading { flex-direction: column; align-items: stretch; gap: 20px; margin-bottom: 24px; }
+  .page-heading .heading-actions { max-width: none; justify-content: flex-start; }
+  .heading-actions .btn { flex: 1; font-size: 13px; }
+  .catalog-counts { grid-template-columns: repeat(2, minmax(0, 1fr)); margin-bottom: 20px; }
+  .count { padding: 20px; }
+  .count:nth-child(3), .count:nth-child(4) { border-top: 1px solid var(--border); }
+  .count:nth-child(3)::before { display: none; }
+  .count-label .icon { display: block; }
+  .count-number { font-size: 28px; margin-top: 10px; }
+  .home-grid { gap: 20px; }
+  .home-aside { display: block; }
+  .next-illustration { display: block; }
+  .card-header { padding: 20px 20px 16px; gap: 12px; }
+  .card-content { padding-inline: 20px; }
+  .card-footer { padding-inline: 20px; flex-wrap: wrap; }
+  .setup-list { padding-inline: 20px; }
+  .progress-track { margin-inline: 20px; }
+  .setup-row { gap: 10px; flex-wrap: wrap; }
+  .setup-row .setup-copy { flex-basis: calc(100% - 40px); }
+  .setup-row > .badge, .setup-row > .text-link { margin-left: 36px; }
+  .setup-copy small { font-size: 12px; }
+  .recent-time { font-size: 11px; }
+  .recent-row { gap: 10px; }
+  .recent-copy small { font-size: 11px; }
+  .recent-head .text-link { font-size: 12px; white-space: nowrap; }
+  .toolbar { gap: 8px; }
+  .search-field { max-width: none; flex-basis: 100%; }
+  .toolbar .select { flex: 1; min-width: 0; }
+  .toolbar-end { display: none; }
+  .register-tabs { margin-bottom: 18px; }
+  .line-tabs { gap: 20px; }
+  .register-table { min-width: 820px; }
+  .register-footer { font-size: 11px; }
+  .register-footer > .muted { display: none; }
+  .editor-header { display: grid; grid-template-columns: 22px minmax(0, 1fr); padding: 14px 18px; gap: 8px 10px; }
+  .editor-title-copy { grid-column: 2; }
+  .editor-header > .btn { grid-column: 2; justify-self: start; }
+  .editor-header .back { padding-right: 9px; margin-right: 0; }
+  .editor-header > .garment-mark { display: none; }
+  .editor-title-wrap h1 { font-size: 20px; }
+  .editor-header > .btn { min-height: 32px; font-size: 12px; }
+  .editor-layout { grid-template-columns: minmax(0, 1fr); gap: 23px; }
+  .step-rail { display: flex; gap: 5px; overflow-x: auto; position: static; padding-bottom: 7px; }
+  .step-rail > .eyebrow, .step-help { display: none; }
+  .step-button { width: auto; flex-shrink: 0; padding: 7px 10px; }
+  .inspector { grid-column: auto; grid-template-columns: minmax(0, 1fr); }
+  .preview-card .card-content { display: block; }
+  .preview-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 14px; }
+  .editor-content { padding-top: 18px; }
+  .section-heading { margin-bottom: 18px; }
+  .measure-columns { display: none; }
+  .measurement-row { grid-template-columns: 12px minmax(0, 1fr) 32px 28px; gap: 10px; padding: 16px; }
+  .measure-name { grid-column: 2; }
+  .measure-range { grid-column: 2; grid-row: 2; margin-top: -6px; }
+  .measurement-row .switch { grid-column: 3; grid-row: 1; margin-left: 0; }
+  .measurement-row > .btn-icon { grid-column: 4; grid-row: 1; }
+  .measure-name small { font-size: 11px; }
+  .field-grid { gap: 18px; }
+  .field-grid > .field { grid-column: 1 / -1; }
+  .service-row { flex-wrap: wrap; gap: 12px; }
+  .rate-input { width: 100%; }
+  .save-bar { padding: 12px 18px; flex-wrap: wrap; gap: 10px; }
+  .save-state { width: 100%; }
+  .save-state small { display: inline; margin-left: 6px; }
+  .save-actions { width: 100%; justify-content: flex-end; }
+  .save-actions .btn { flex: 1; }
+  .save-state { font-size: 12px; }
+  .save-state small { font-size: 10px; }
+  .input, .select, .textarea { font-size: 16px; }
+  .toast { bottom: 130px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; scroll-behavior: auto !important; }
+}
+</style>
+</head>
+<body>
+<svg class="svg-defs" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <symbol id="i-loom" viewBox="0 0 24 24"><path d="M6 4v16M12 4v16M18 4v16M3 8h18M3 16h18"/><path d="m6 4 12 16"/></symbol>
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M3.5 10 12 3.5l8.5 6.5v8a2.5 2.5 0 0 1-2.5 2.5H6A2.5 2.5 0 0 1 3.5 18Z"/><path d="M9 20.5V14a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v6.5"/></symbol>
+  <symbol id="i-shirt" viewBox="0 0 24 24"><path d="m8 3-5 3-1 5 4 1 1-3v12h10V9l1 3 4-1-1-5-5-3"/><path d="m8 3 4 4 4-4M8 3v4l4 1 4-1V3M12 8v13M14.5 11h1"/></symbol>
+  <symbol id="i-blouse" viewBox="0 0 24 24"><path d="m8 4-5 3-1 5 4 1 1-3 1 5-1 5h10l-1-5 1-5 1 3 4-1-1-5-5-3"/><path d="M8 4c0 6 8 6 8 0M8 16h8"/></symbol>
+  <symbol id="i-trouser" viewBox="0 0 24 24"><path d="M6 3h12l1 18h-5l-2-11-2 11H5L6 3Z"/><path d="M6 6h12M12 3v6M8 6v3M16 6v3"/></symbol>
+  <symbol id="i-sherwani" viewBox="0 0 24 24"><path d="m9 2-5 3-2 9 4 1 2-8-1 15h10L16 7l2 8 4-1-2-9-5-3M9 2v3h6V2M12 5v17"/><path d="M14 8h.1M14 11h.1M14 14h.1M14 17h.1M16 10h-1"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="7" r="3.5"/><path d="M4.5 21v-2a7.5 7.5 0 0 1 15 0v2M9 21h6"/></symbol>
+  <symbol id="i-orders" viewBox="0 0 24 24"><path d="M7 4H5v17l4-2 3 2 3-2 4 2V4h-2M9 3h6v4H9zM8 11h8M8 15h5"/></symbol>
+  <symbol id="i-scissors" viewBox="0 0 24 24"><circle cx="5.5" cy="6" r="3"/><circle cx="5.5" cy="18" r="3"/><path d="m8 7.5 12 12M8 16.5l12-12M12 12l2-2"/></symbol>
+  <symbol id="i-ruler" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="10" rx="2"/><path d="M7 7v5M11 7v3M15 7v5M19 7v3"/></symbol>
+  <symbol id="i-layers" viewBox="0 0 24 24"><path d="m3 7 9-4 9 4-9 4-9-4ZM3 12l9 4 9-4M3 17l9 4 9-4"/></symbol>
+  <symbol id="i-settings" viewBox="0 0 24 24"><path d="m10 3-.8 2.5-2 .9-2.5-.6L3 9l1.8 1.8v2.4L3 15l1.7 3.2 2.5-.6 2 .9L10 21h4l.8-2.5 2-.9 2.5.6L21 15l-1.8-1.8v-2.4L21 9l-1.7-3.2-2.5.6-2-.9L14 3Z"/><circle cx="12" cy="12" r="3"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="7"/><path d="m16 16 4.5 4.5"/></symbol>
+  <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m8 10 4 4 4-4"/></symbol>
+  <symbol id="i-right" viewBox="0 0 24 24"><path d="M4 12h16m-6-6 6 6-6 6"/></symbol>
+  <symbol id="i-back" viewBox="0 0 24 24"><path d="M20 12H4m6-6-6 6 6 6"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4.5 4.5L19 7"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+  <symbol id="i-more" viewBox="0 0 24 24"><circle cx="5" cy="12" r=".8"/><circle cx="12" cy="12" r=".8"/><circle cx="19" cy="12" r=".8"/></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></symbol>
+  <symbol id="i-grip" viewBox="0 0 24 24"><path d="M8 5h.01M16 5h.01M8 12h.01M16 12h.01M8 19h.01M16 19h.01" stroke-width="3"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 18.5A2.5 2.5 0 0 1 6.5 16H20V3H6.5A2.5 2.5 0 0 0 4 5.5V19a2 2 0 0 0 2 2h14M8 7h8M8 11h5"/></symbol>
+  <symbol id="i-save" viewBox="0 0 24 24"><path d="M5 3h12l4 4v14H3V3h2ZM8 3v6h8V3M7 21v-7h10v7"/></symbol>
+  <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+  <symbol id="i-arrow-up-right" viewBox="0 0 24 24"><path d="M7 17 17 7M7 7h10v10"/></symbol>
+</svg>
+
+<header class="review-bar" aria-label="Design review controls">
+  <span class="review-caption"><strong>Fitloom</strong> / Foundation v3</span>
+  <nav class="review-screens" aria-label="Mockup screens">
+    <button type="button" data-screen="home" aria-pressed="true" aria-controls="screen-home">01 Home</button>
+    <button type="button" data-screen="garments" aria-pressed="false" aria-controls="screen-garments">02 Garments</button>
+    <button type="button" data-screen="editor" aria-pressed="false" aria-controls="screen-editor">03 Editor</button>
+  </nav>
+  <span class="review-note">Design artifact · base-vega / mist</span>
+</header>
+<div class="app-shell">
+  <aside class="sidebar" aria-label="Workspace sidebar">
+    <div class="side-inner">
+      <a class="brand" href="#home" data-screen="home" aria-label="Fitloom home"><span class="brand-mark"><svg class="icon" aria-hidden="true"><use href="#i-loom"/></svg></span>fitloom</a>
+      <button class="workspace-select" type="button" data-dialog="workspace-dialog" aria-haspopup="dialog"><span class="workspace-avatar">FD</span><span class="workspace-copy"><strong>Fitloom Demo</strong><small>Main workspace</small></span><svg class="icon" aria-hidden="true"><use href="#i-chevron"/></svg></button>
+      <button class="btn btn-ghost btn-icon mobile-menu" type="button" id="menu-toggle" aria-label="Toggle navigation" aria-expanded="false" aria-controls="workspace-nav"><svg class="icon" aria-hidden="true"><use href="#i-menu"/></svg></button>
+      <nav class="nav-stack" id="workspace-nav" aria-label="Workspace navigation">
+        <div class="nav-group"><span class="nav-label">Workspace</span>
+          <a class="nav-link" href="#home" data-screen="home" aria-current="page"><svg class="icon" aria-hidden="true"><use href="#i-home"/></svg>Home</a>
+          <button class="nav-link" type="button" data-notice="Customer profiles and measurement records are the next build."><svg class="icon" aria-hidden="true"><use href="#i-user"/></svg>Customers<span class="badge badge-outline">Next</span></button>
+          <button class="nav-link" type="button" data-notice="Orders are planned for phase 3."><svg class="icon" aria-hidden="true"><use href="#i-orders"/></svg>Orders<span class="badge badge-outline">Phase 3</span></button>
+          <button class="nav-link" type="button" data-notice="Production is planned for phase 4."><svg class="icon" aria-hidden="true"><use href="#i-scissors"/></svg>Production<span class="badge badge-outline">Phase 4</span></button>
+        </div>
+        <div class="nav-group"><span class="nav-label">Catalogue</span>
+          <a class="nav-link" href="#garments" data-screen="garments"><svg class="icon" aria-hidden="true"><use href="#i-shirt"/></svg>Garments<span class="badge badge-secondary" id="nav-count">4</span></a>
+          <button class="nav-link" type="button" data-open-step="services"><svg class="icon" aria-hidden="true"><use href="#i-scissors"/></svg>Services &amp; rates</button>
+          <button class="nav-link" type="button" data-open-step="addons"><svg class="icon" aria-hidden="true"><use href="#i-layers"/></svg>Add-ons</button>
+        </div>
+        <div class="nav-group"><span class="nav-label">Manage</span>
+          <button class="nav-link" type="button" data-dialog="workspace-dialog"><svg class="icon" aria-hidden="true"><use href="#i-settings"/></svg>Workspace settings</button>
+        </div>
+      </nav>
+      <div class="sidebar-foot">
+        <p class="build-note"><span class="dot"></span>Catalogue setup · Phase 2</p>
+        <div class="account"><span class="avatar">DO</span><span class="account-copy">Demo Owner<small>Workspace owner</small></span><button class="btn btn-ghost btn-icon" type="button" aria-label="Account details" data-notice="Signed in as Demo Owner in this design artifact."><svg class="icon" aria-hidden="true"><use href="#i-more"/></svg></button></div>
+      </div>
+    </div>
+  </aside>
+  <div class="main">
+    <header class="topbar">
+      <nav class="crumbs" aria-label="Breadcrumb"><span>Fitloom Demo</span><span aria-hidden="true">/</span><span>Main</span><span aria-hidden="true">/</span><span class="crumb-current" id="breadcrumb">Overview</span></nav>
+      <button class="command" type="button" id="search-shortcut" aria-label="Search garments, Command or Control K"><svg class="icon" aria-hidden="true"><use href="#i-search"/></svg><span>Search catalogue</span><kbd>⌘ K</kbd></button>
+    </header>
+
+    <main class="page content" id="screen-home" aria-labelledby="home-title">
+      <section class="page-heading">
+        <div><p class="eyebrow">Fitloom Demo / Main</p><h1 id="home-title" tabindex="-1">A good fit starts here.</h1><p class="lede">Your catalogue, setup progress and the next step for your workspace.</p></div>
+        <div class="heading-actions"><button class="btn btn-outline" type="button" data-screen="garments">View catalogue<svg class="icon" aria-hidden="true"><use href="#i-right"/></svg></button></div>
+      </section>
+      <section class="card catalog-counts" aria-label="Catalogue counts">
+        <div class="count"><p class="count-label">Garments<svg class="icon" aria-hidden="true"><use href="#i-shirt"/></svg></p><strong class="count-number" id="home-garments">04</strong><small id="home-origins">3 starter · 1 custom</small></div>
+        <div class="count"><p class="count-label">Services<svg class="icon" aria-hidden="true"><use href="#i-scissors"/></svg></p><strong class="count-number">02</strong><small>Stitching &amp; alteration</small></div>
+        <div class="count"><p class="count-label">Add-ons<svg class="icon" aria-hidden="true"><use href="#i-layers"/></svg></p><strong class="count-number">00</strong><small>Optional extras</small></div>
+        <div class="count"><p class="count-label">Saved revisions<svg class="icon" aria-hidden="true"><use href="#i-clock"/></svg></p><strong class="count-number" id="home-revisions">09</strong><small>Across your catalogue</small></div>
+      </section>
+      <div class="home-grid">
+        <div class="stack">
+          <section class="card" aria-labelledby="setup-title">
+            <header class="card-header setup-header"><div><h2 id="setup-title">Make the catalogue yours</h2><p class="card-description">A few checks before you start measuring.</p></div><span class="progress-number">2 / 4 ready</span></header>
+            <div class="progress-track" role="progressbar" aria-label="Catalogue setup" aria-valuenow="2" aria-valuemin="0" aria-valuemax="4"><span></span></div>
+            <ol class="setup-list">
+              <li class="setup-row"><span class="setup-marker done"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg></span><span class="setup-copy"><strong>Build your garment catalogue</strong><small>Shirt, Blouse, Trouser and Sherwani are in place.</small></span><span class="badge badge-soft">Ready</span></li>
+              <li class="setup-row"><span class="setup-marker done"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg></span><span class="setup-copy"><strong>Connect your services</strong><small>New stitching and Alteration are available.</small></span><span class="badge badge-soft">Ready</span></li>
+              <li class="setup-row"><span class="setup-marker">03</span><span class="setup-copy"><strong>Review measurement forms</strong><small>Check required fields, units and accepted ranges.</small></span><button class="text-link btn-ghost" style="border:0;background:transparent;padding:0" type="button" data-open-step="measurements">Review<svg class="icon" aria-hidden="true"><use href="#i-right"/></svg></button></li>
+              <li class="setup-row"><span class="setup-marker">04</span><span class="setup-copy"><strong>Set your service rates</strong><small>Starter rates are unset. Choose your own prices.</small></span><button class="text-link btn-ghost" style="border:0;background:transparent;padding:0" type="button" data-open-step="services">Set rates<svg class="icon" aria-hidden="true"><use href="#i-right"/></svg></button></li>
+            </ol>
+            <footer class="card-footer"><span>Add-ons are optional. You can configure them later.</span><button class="text-link" style="border:0;background:transparent;padding:0" type="button" data-open-step="addons">Explore add-ons</button></footer>
+          </section>
+          <section class="card" aria-labelledby="recent-title">
+            <header class="card-header recent-head"><h2 id="recent-title">Recently edited</h2><a class="text-link" href="#garments" data-screen="garments">All garments<svg class="icon" aria-hidden="true"><use href="#i-right"/></svg></a></header>
+            <div class="card-content" id="recent-list"></div>
+          </section>
+        </div>
+        <aside class="home-aside">
+          <section class="card next-build" aria-labelledby="next-title">
+            <header class="card-header"><span class="eyebrow">Up next</span><span class="badge badge-outline">Next build</span></header>
+            <div class="card-content" style="padding-bottom:0"><h2 id="next-title">A place for every<br>customer's measurements.</h2><p>Use your garment forms to record measurements and keep a customer's fit in one place.</p></div>
+            <div class="next-illustration" aria-hidden="true"><div class="person-line"><span class="avatar"><svg class="icon"><use href="#i-user"/></svg></span><span class="person-lines"><span></span><span></span></span><svg class="icon muted" style="margin-left:auto;width:15px"><use href="#i-ruler"/></svg></div><div class="measure-sample"><span>Chest</span><span class="mono">96.0 <span class="muted">cm</span></span></div><div class="measure-sample"><span>Shoulder</span><span class="mono">44.0 <span class="muted">cm</span></span></div></div>
+            <div class="card-content"><p style="font-size:12px;margin-top:14px">Customer profiles will be available in the next build.</p><ol class="roadmap"><li><strong>Customers &amp; measurements</strong><span>Next</span></li><li><span>Orders</span><span>Phase 3</span></li><li><span>Production</span><span>Phase 4</span></li></ol></div>
+          </section>
+          <p class="scope-note"><svg class="icon" aria-hidden="true"><use href="#i-info"/></svg><span>This overview reflects catalogue setup. Orders and production will follow in later phases.</span></p>
+        </aside>
+      </div>
+    </main>
+
+    <main class="page content" id="screen-garments" aria-labelledby="garments-title" hidden>
+      <section class="page-heading"><div><p class="eyebrow">Catalogue</p><h1 id="garments-title" tabindex="-1">Garments</h1><p class="lede">The forms, construction choices and rates behind every fit.</p></div><div class="heading-actions"><button class="btn btn-outline" type="button" data-dialog="library-dialog"><svg class="icon" aria-hidden="true"><use href="#i-book"/></svg>Install starter library</button><button class="btn btn-primary" type="button" data-dialog="create-dialog"><svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg>Create garment</button></div></section>
+      <nav class="line-tabs register-tabs" aria-label="Garment origin filters"><button class="line-tab" type="button" data-origin="all" aria-pressed="true">All garments<span class="badge" id="all-count">4</span></button><button class="line-tab" type="button" data-origin="standard" aria-pressed="false">Starter<span class="badge">3</span></button><button class="line-tab" type="button" data-origin="custom" aria-pressed="false">Custom<span class="badge" id="custom-count">1</span></button></nav>
+      <div class="toolbar" aria-label="Search and filter garments"><label class="search-field"><span class="sr-only">Search garments</span><svg class="icon" aria-hidden="true"><use href="#i-search"/></svg><input class="input" type="search" id="garment-search" placeholder="Search garments…"></label><select class="select" id="status-filter" aria-label="Filter by status"><option value="all">All statuses</option><option value="active">Active</option><option value="draft">Draft</option></select><select class="select" id="category-filter" aria-label="Filter by category"><option value="all">All categories</option><option value="Tailoring">Tailoring</option><option value="Ceremonial">Ceremonial</option></select><span class="toolbar-end">Rates in <span class="mono">INR</span></span></div>
+      <section class="card" aria-label="Garment catalogue register">
+        <div class="table-scroll" tabindex="0" role="region" aria-label="Garments table, scroll horizontally on small screens"><table class="register-table"><caption class="sr-only">Garment definitions, measurement counts, default stitching rates and saved revisions</caption><thead><tr><th scope="col">Garment</th><th scope="col">Category</th><th scope="col">Measurements</th><th scope="col" class="rate">Stitching rate</th><th scope="col">Revision</th><th scope="col">Status</th><th scope="col"><span class="sr-only">Open garment</span></th></tr></thead><tbody id="garment-rows"></tbody></table></div>
+        <div class="empty-state" id="empty-filter" hidden><h3>No garments found</h3><p>Try another name or clear the current filters.</p><button class="btn btn-outline btn-sm" type="button" id="clear-filters">Clear filters</button></div>
+        <footer class="card-footer register-footer"><span id="visible-count" role="status">Showing 4 of 4 garments</span><span class="muted">Main workspace · INR</span></footer>
+      </section>
+      <div class="catalog-note"><svg class="icon" aria-hidden="true"><use href="#i-info"/></svg><div><strong>Your rates, your way.</strong>Starter garments arrive with service rates unset. Sherwani shows a sample custom rate of <span class="mono">₹2,400</span>.</div></div>
+    </main>
+
+    <main class="page" id="screen-editor" aria-labelledby="editor-title" hidden>
+      <header class="editor-header">
+        <a class="back" href="#garments" data-screen="garments" aria-label="Back to garments"><svg class="icon muted" aria-hidden="true"><use href="#i-back"/></svg></a>
+        <span class="garment-mark"><svg class="icon" aria-hidden="true"><use id="editor-glyph" href="#i-shirt"/></svg></span>
+        <div class="editor-title-copy"><div class="editor-title-wrap"><h1 id="editor-title" tabindex="-1">Shirt</h1><span class="badge badge-soft" id="editor-status">Active</span><span class="badge badge-outline mono" id="editor-revision">Rev 4</span></div><p id="editor-subtitle">Starter definition · Tailoring · Main workspace</p></div>
+        <button class="btn btn-outline btn-sm" type="button" id="header-preview"><svg class="icon" aria-hidden="true"><use href="#i-arrow-up-right"/></svg>Preview form</button>
+      </header>
+      <div class="content editor-content">
+        <div class="editor-layout">
+          <nav class="step-rail" aria-label="Garment editor steps"><p class="eyebrow">Garment setup</p>
+            <button class="step-button" type="button" data-step="identity" aria-pressed="false"><span class="step-number">01</span>Identity</button>
+            <button class="step-button" type="button" data-step="measurements" aria-pressed="true"><span class="step-number">02</span>Measurements</button>
+            <button class="step-button" type="button" data-step="construction" aria-pressed="false"><span class="step-number">03</span>Construction</button>
+            <button class="step-button" type="button" data-step="services" aria-pressed="false"><span class="step-number">04</span>Services &amp; rates</button>
+            <button class="step-button" type="button" data-step="addons" aria-pressed="false"><span class="step-number">05</span>Add-ons</button>
+            <button class="step-button" type="button" data-step="preview" aria-pressed="false"><span class="step-number">06</span>Preview &amp; history</button>
+            <p class="step-help">Changes create a new revision. Previously saved measurements keep their original definition.</p>
+          </nav>
+          <section class="editor-main" aria-label="Garment configuration">
+            <header class="section-heading"><div><h2 id="step-title">Measurements</h2><p id="step-description">Choose what to measure, in the order you work.</p></div><span class="badge badge-outline" id="step-counter">02 / 06</span></header>
+            <div class="editor-panel" data-step-panel="measurements">
+              <div class="card measure-config"><label for="measurement-unit">Default unit<select class="select" id="measurement-unit"><option value="cm">Centimetres · cm</option><option value="in">Inches · in</option></select></label><span class="flex"><svg class="icon muted" style="width:15px" aria-hidden="true"><use href="#i-ruler"/></svg><span id="field-count">4 fields</span></span></div>
+              <section class="card measure-card" aria-labelledby="body-title"><header class="card-header"><div><h3 id="body-title">Body measurements</h3><p class="card-description" id="required-count">4 fields · 3 required</p></div><span class="badge badge-secondary">Section 01</span></header><div class="measure-columns" aria-hidden="true"><span>Measurement</span><span>Range</span><span>Required</span><span></span></div><div id="measurement-rows"></div><button class="add-line" type="button" data-dialog="measurement-dialog"><svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg>Add measurement</button></section>
+              <p class="editor-note"><svg class="icon" aria-hidden="true"><use href="#i-info"/></svg><span>These are form fields, not customer values. Set a range to catch entry mistakes. Customer measurements come in the next build.</span></p>
+            </div>
+            <div class="editor-panel" data-step-panel="identity" hidden>
+              <section class="card form-card"><header class="card-header"><div><h3>Garment details</h3><p class="card-description">Name the definition your team will use.</p></div></header><div class="card-content field-grid"><div class="field field-wide"><label for="garment-name">Garment name</label><input class="input" id="garment-name" value="Shirt" maxlength="60" required></div><div class="field"><label for="garment-category">Category</label><select class="select" id="garment-category"><option>Tailoring</option><option>Ceremonial</option></select></div><div class="field"><label for="garment-applicability">Applicability</label><select class="select" id="garment-applicability"><option>Masculine</option><option>Feminine</option><option>Unisex</option></select></div><div class="field field-wide"><label for="garment-notes">Internal notes</label><textarea class="textarea" id="garment-notes">Everyday shirt with a choice of collar and cuff finishes.</textarea><small>Visible to your team when editing the catalogue.</small></div></div></section>
+            </div>
+            <div class="editor-panel" data-step-panel="construction" hidden>
+              <section class="card form-card"><header class="card-header"><div><h3>Construction choices</h3><p class="card-description">Select the default for each group.</p></div></header><div id="construction-groups"></div></section>
+              <p class="editor-note"><svg class="icon" aria-hidden="true"><use href="#i-info"/></svg>These choices describe the garment. They do not add a service charge.</p>
+            </div>
+            <div class="editor-panel" data-step-panel="services" hidden>
+              <section class="card form-card"><header class="card-header"><div><h3>Services &amp; default rates</h3><p class="card-description">Set a garment-specific rate in INR.</p></div><span class="badge badge-outline">INR</span></header><div class="service-row"><div><strong>New stitching</strong><small>Make a new garment from fabric.</small></div><label class="rate-input"><span aria-hidden="true">₹</span><span class="sr-only">New stitching rate in INR</span><input class="input" type="number" min="0" step="1" id="stitching-rate" placeholder="Unset"></label></div><div class="service-row"><div><strong>Alteration</strong><small>Adjust an existing garment.</small></div><label class="rate-input"><span aria-hidden="true">₹</span><span class="sr-only">Alteration rate in INR</span><input class="input" type="number" min="0" step="1" id="alteration-rate" placeholder="Unset"></label></div></section>
+              <p class="editor-note"><svg class="icon" aria-hidden="true"><use href="#i-info"/></svg>Leave a rate empty until you decide a price. Unset does not mean ₹0.</p>
+            </div>
+            <div class="editor-panel" data-step-panel="addons" hidden><section class="card addon-empty"><span class="garment-mark"><svg class="icon" aria-hidden="true"><use href="#i-layers"/></svg></span><h3>No add-ons connected</h3><p>Add-ons are optional, fixed-price extras such as lining or special buttons.</p><button class="btn btn-outline btn-sm" type="button" data-notice="The add-on catalogue is empty. This design keeps optional extras separate from construction choices.">Browse add-ons</button></section><p class="editor-note"><svg class="icon" aria-hidden="true"><use href="#i-info"/></svg>Your garment can be saved without add-ons.</p></div>
+            <div class="editor-panel" data-step-panel="preview" hidden><section class="card form-card"><header class="card-header"><div><h3>Ready for a closer look</h3><p class="card-description">Check the form beside this editor before saving.</p></div></header><div class="card-content"><div class="flex spread" style="padding-bottom:16px"><span>Measurements</span><span class="mono" id="review-fields">04 fields</span></div><div class="separator" role="separator"></div><div class="flex spread" style="padding-block:16px"><span>Default unit</span><span class="mono" id="review-unit">cm</span></div><div class="separator" role="separator"></div><div class="flex spread" style="padding-top:16px"><span>New stitching rate</span><span id="review-rate" class="mono muted">Unset</span></div></div></section><p class="editor-note"><svg class="icon" aria-hidden="true"><use href="#i-clock"/></svg>Saving creates a revision. The history rail keeps earlier versions visible.</p></div>
+            <footer class="step-footer"><button class="btn btn-ghost btn-sm" type="button" id="previous-step"><svg class="icon" aria-hidden="true"><use href="#i-back"/></svg><span>Identity</span></button><button class="btn btn-outline btn-sm" type="button" id="next-step"><span>Construction</span><svg class="icon" aria-hidden="true"><use href="#i-right"/></svg></button></footer>
+          </section>
+          <aside class="inspector" aria-label="Form preview and revision history">
+            <section class="card preview-card" id="preview-card" aria-labelledby="preview-title"><header class="card-header"><h3 id="preview-title">Form preview</h3><span class="badge badge-secondary">Live</span></header><div class="line-tabs" role="tablist" aria-label="Preview display"><button class="line-tab" type="button" role="tab" id="form-tab" aria-selected="true" aria-controls="form-preview" data-preview="form" tabindex="0">Form</button><button class="line-tab" type="button" role="tab" id="garment-tab" aria-selected="false" aria-controls="garment-preview" data-preview="garment" tabindex="-1">Garment</button></div><div class="card-content" role="tabpanel" id="form-preview" aria-labelledby="form-tab"><div class="preview-form-title"><span class="garment-mark"><svg class="icon" aria-hidden="true"><use class="preview-glyph" href="#i-shirt"/></svg></span><div><strong class="preview-name">Shirt</strong><small>Measurement form</small></div></div><div class="preview-fields" id="preview-fields"></div><p class="preview-foot">Preview only. Values entered here are not customer records.</p></div><div class="card-content" role="tabpanel" id="garment-preview" aria-labelledby="garment-tab" hidden><div class="garment-preview"><svg class="icon" aria-hidden="true"><use class="preview-glyph" href="#i-shirt"/></svg></div><p class="preview-foot">Garment reference · <span class="preview-name">Shirt</span></p></div></section>
+            <section class="card history-card" aria-labelledby="history-title"><header class="card-header"><h3 id="history-title">Revision history</h3><svg class="icon muted" style="width:15px" aria-hidden="true"><use href="#i-clock"/></svg></header><ol class="history-list" id="history-list"></ol></section>
+          </aside>
+        </div>
+      </div>
+      <footer class="save-bar"><div class="save-state"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg><span><strong id="save-label">All changes saved</strong><small id="save-detail">Revision 4 · saved 2 hours ago</small></span></div><div class="save-actions"><button class="btn btn-ghost" type="button" id="discard-button" disabled>Discard changes</button><button class="btn btn-primary" type="button" id="save-button" disabled><svg class="icon" aria-hidden="true"><use href="#i-save"/></svg>Save revision</button></div></footer>
+    </main>
+  </div>
+</div>
+
+<dialog id="workspace-dialog" aria-labelledby="workspace-dialog-title"><button class="btn btn-ghost btn-icon dialog-close" type="button" data-close aria-label="Close workspace details"><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></button><h2 id="workspace-dialog-title">Fitloom Demo</h2><p>One workspace for the main tailoring desk.</p><div class="field"><span class="field-label">Current location</span><span class="input" style="display:flex;justify-content:space-between">Main<span class="badge badge-soft">Selected</span></span></div><p class="dialog-note">Workspace and account settings are outside this design artifact.</p><div class="dialog-actions"><button class="btn btn-outline" type="button" data-close>Done</button></div></dialog>
+<dialog id="library-dialog" aria-labelledby="library-dialog-title"><button class="btn btn-ghost btn-icon dialog-close" type="button" data-close aria-label="Close starter library"><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></button><h2 id="library-dialog-title">Starter library</h2><p>Start with common garment forms, then adapt them to your shop.</p><div class="library-item"><svg class="icon" aria-hidden="true"><use href="#i-shirt"/></svg>Shirt<span class="badge badge-soft">Installed</span></div><div class="library-item"><svg class="icon" aria-hidden="true"><use href="#i-blouse"/></svg>Blouse<span class="badge badge-soft">Installed</span></div><div class="library-item"><svg class="icon" aria-hidden="true"><use href="#i-trouser"/></svg>Trouser<span class="badge badge-soft">Installed</span></div><p class="dialog-note">All three starter definitions are already installed in this sample workspace. Rates stay unset until you enter them.</p><div class="dialog-actions"><button class="btn btn-outline" type="button" data-close>Done</button><button class="btn btn-primary" type="button" id="review-starters">Review garments</button></div></dialog>
+<dialog id="create-dialog" aria-labelledby="create-dialog-title"><button class="btn btn-ghost btn-icon dialog-close" type="button" data-close aria-label="Cancel create garment"><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></button><h2 id="create-dialog-title">Create a garment</h2><p>Begin with a name. Add measurements and rates in the editor.</p><form id="create-form"><div class="field"><label for="new-garment-name">Garment name</label><input class="input" id="new-garment-name" placeholder="e.g. Kurta" required maxlength="60" pattern=".*\S.*"></div><p class="dialog-note">Changes in this artifact last until the page is reloaded.</p><div class="dialog-actions"><button class="btn btn-outline" type="button" data-close>Cancel</button><button class="btn btn-primary" type="submit">Continue to editor<svg class="icon" aria-hidden="true"><use href="#i-right"/></svg></button></div></form></dialog>
+<dialog id="measurement-dialog" aria-labelledby="measurement-dialog-title"><button class="btn btn-ghost btn-icon dialog-close" type="button" data-close aria-label="Cancel measurement"><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></button><h2 id="measurement-dialog-title">Add measurement</h2><p>A new field for this garment's measurement form.</p><form id="measurement-form"><div class="field"><label for="new-measurement-name">Measurement name</label><input class="input" id="new-measurement-name" placeholder="e.g. Neck" required maxlength="40" pattern=".*\S.*"></div><div class="flex" style="margin-top:18px"><input class="check" id="new-measurement-required" type="checkbox"><label for="new-measurement-required">Required measurement</label></div><div class="dialog-actions"><button class="btn btn-outline" type="button" data-close>Cancel</button><button class="btn btn-primary" type="submit">Add measurement</button></div></form></dialog>
+<dialog id="edit-measurement-dialog" aria-labelledby="edit-measurement-title"><button class="btn btn-ghost btn-icon dialog-close" type="button" data-close aria-label="Cancel measurement options"><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></button><h2 id="edit-measurement-title">Measurement options</h2><p>Adjust the accepted range for this field.</p><form id="edit-measurement-form"><div class="field-grid"><div class="field"><label for="range-min">Minimum</label><input class="input" id="range-min" type="number" min="0" step="0.1" required></div><div class="field"><label for="range-max">Maximum</label><input class="input" id="range-max" type="number" min="0" step="0.1" required></div></div><p class="dialog-note" id="range-unit-note">Values in centimetres.</p><div class="dialog-actions"><button class="btn btn-outline" type="button" data-close>Cancel</button><button class="btn btn-primary" type="submit">Apply range</button></div></form></dialog>
+<div class="toast" id="toast" role="status" hidden></div>
+<script>
+(() => {
+  'use strict';
+  const $ = (selector) => document.querySelector(selector);
+  const $$ = (selector) => [...document.querySelectorAll(selector)];
+  const escapeHTML = (value) => String(value).replace(/[&<>"']/g, (char) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+  const icon = (name, extra = '') => `<svg class="icon ${extra}" aria-hidden="true"><use href="#i-${name}"/></svg>`;
+  const mark = (name) => `<span class="garment-mark">${icon(name)}</span>`;
+  const field = (name, description, min, max, required = true) => ({name, description, min, max, required});
+  const garments = [
+    {id:'shirt', name:'Shirt', glyph:'shirt', origin:'standard', category:'Tailoring', applicability:'Masculine', revision:4, status:'active', edited:'2 hours ago', rate:'', alteration:'', unit:'cm', notes:'Everyday shirt with a choice of collar and cuff finishes.', choices:[['Collar','Spread','Point','Band'],['Cuff','Single button','Double button','French'],['Hem','Curved','Straight']], fields:[field('Chest','Body circumference',60,160),field('Shoulder','Shoulder to shoulder',30,70),field('Sleeve','Shoulder point to wrist',20,90),field('Shirt length','High shoulder to hem',40,110,false)]},
+    {id:'blouse', name:'Blouse', glyph:'blouse', origin:'standard', category:'Tailoring', applicability:'Feminine', revision:1, status:'active', edited:'2 days ago', rate:'', alteration:'', unit:'cm', notes:'Fitted blouse with adjustable neckline and sleeve choices.', choices:[['Neckline','Round','Boat','V neck'],['Sleeve finish','Plain','Piped']], fields:[field('Chest','Body circumference',60,160),field('Shoulder','Shoulder to shoulder',25,60),field('Sleeve','Shoulder point to sleeve edge',5,80),field('Blouse length','High shoulder to hem',25,65),field('Waist','Body circumference',45,150,false)]},
+    {id:'trouser', name:'Trouser', glyph:'trouser', origin:'standard', category:'Tailoring', applicability:'Unisex', revision:2, status:'active', edited:'3 days ago', rate:'', alteration:'', unit:'cm', notes:'Tailored trousers with a choice of fit and hem finish.', choices:[['Fit','Straight','Tapered','Relaxed'],['Hem','Plain','Turn-up']], fields:[field('Waist','Body circumference',45,160),field('Hip','Fullest hip circumference',60,180),field('Inseam','Crotch to hem',45,110),field('Trouser length','Waist to hem',60,130)]},
+    {id:'sherwani', name:'Sherwani', glyph:'sherwani', origin:'custom', category:'Ceremonial', applicability:'Unisex', revision:2, status:'active', edited:'1 day ago', rate:'2400', alteration:'', unit:'cm', notes:'Ceremonial long coat. The stitching rate is a sample custom price.', choices:[['Collar','Band','Embroidered band'],['Front','Concealed','Exposed buttons'],['Lining','Full','Half']], fields:[field('Chest','Body circumference',60,160),field('Shoulder','Shoulder to shoulder',30,70),field('Sleeve','Shoulder point to wrist',20,90),field('Sherwani length','High shoulder to hem',80,140),field('Waist','Body circumference',45,160),field('Neck','Neck circumference',25,60,false)]}
+  ];
+  let selectedId = 'shirt';
+  let draft = structuredClone(garments[0]);
+  let dirty = false;
+  let currentScreen = 'home';
+  let currentStep = 'measurements';
+  let currentOrigin = 'all';
+  let editingField = 0;
+  let toastTimer;
+  let isNew = false;
+  const steps = {
+    identity: ['Identity','Set the name and details your team will see.'],
+    measurements: ['Measurements','Choose what to measure, in the order you work.'],
+    construction: ['Construction','Set the default choices for this garment.'],
+    services: ['Services & rates','Price each service for this garment.'],
+    addons: ['Add-ons','Connect optional extras to this definition.'],
+    preview: ['Preview & history','Review the form and your saved revisions.']
+  };
+  const stepKeys = Object.keys(steps);
+  function notify(message) {
+    $('#toast').textContent = message;
+    $('#toast').hidden = false;
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => { $('#toast').hidden = true; }, 3500);
+  }
+  function showScreen(screen, focus = true) {
+    currentScreen = screen;
+    $$('.page').forEach((page) => { page.hidden = page.id !== `screen-${screen}`; });
+    $$('.review-screens [data-screen]').forEach((button) => button.setAttribute('aria-pressed', String(button.dataset.screen === screen)));
+    $$('.nav-link[data-screen]').forEach((link) => {
+      if (link.dataset.screen === (screen === 'editor' ? 'garments' : screen)) link.setAttribute('aria-current', 'page');
+      else link.removeAttribute('aria-current');
+    });
+    $('#breadcrumb').textContent = screen === 'home' ? 'Overview' : screen === 'garments' ? 'Garments' : `Garments / ${draft.name}`;
+    $('.sidebar').classList.remove('menu-open');
+    $('#menu-toggle').setAttribute('aria-expanded','false');
+    if (focus) { window.scrollTo({top:0, behavior:'instant'}); $(`#${screen === 'home' ? 'home' : screen === 'garments' ? 'garments' : 'editor'}-title`).focus({preventScroll:true}); }
+  }
+  function showStep(key) {
+    currentStep = key;
+    const index = stepKeys.indexOf(key);
+    $$('.step-button').forEach((button) => button.setAttribute('aria-pressed', String(button.dataset.step === key)));
+    $$('[data-step-panel]').forEach((panel) => { panel.hidden = panel.dataset.stepPanel !== key; });
+    $('#step-title').textContent = steps[key][0];
+    $('#step-description').textContent = steps[key][1];
+    $('#step-counter').textContent = `${String(index+1).padStart(2,'0')} / 06`;
+    $('#previous-step').hidden = index === 0;
+    $('#next-step').hidden = index === stepKeys.length - 1;
+    if (index > 0) $('#previous-step span').textContent = steps[stepKeys[index-1]][0];
+    if (index < stepKeys.length-1) $('#next-step span').textContent = steps[stepKeys[index+1]][0];
+    updateReview();
+  }
+  function renderCatalogue() {
+    $('#garment-rows').innerHTML = garments.map((g) => `<tr data-id="${g.id}"><td><div class="garment-cell">${mark(g.glyph)}<span><a href="#editor" data-edit="${g.id}"><strong>${escapeHTML(g.name)}</strong></a><small>${g.origin === 'standard' ? 'Starter definition' : 'Custom definition'}</small></span></div></td><td class="muted">${g.category}</td><td><span class="mono">${String(g.fields.length).padStart(2,'0')}</span> <span class="muted" style="font-size:12px">fields</span></td><td class="rate">${g.rate === '' ? '<span class="rate-unset">Unset</span>' : `<span class="mono">₹${Number(g.rate).toLocaleString('en-IN')}</span>`}</td><td><span class="mono muted">Rev ${g.revision}</span></td><td><span class="badge ${g.status === 'active' ? 'badge-soft' : 'badge-secondary'}">${g.status === 'active' ? 'Active' : 'Draft'}</span></td><td><a class="btn btn-ghost btn-icon" href="#editor" data-edit="${g.id}" aria-label="Edit ${escapeHTML(g.name)}">${icon('right')}</a></td></tr>`).join('');
+    const recent = [...garments].sort((a,b) => { const rank = (g) => g.edited === 'just now' ? -1 : ({shirt:0,sherwani:1,blouse:2,trouser:3}[g.id] ?? 4); return rank(a)-rank(b); }).slice(0,3);
+    $('#recent-list').innerHTML = recent.map((g) => `<a class="recent-row" href="#editor" data-edit="${g.id}">${mark(g.glyph)}<span class="recent-copy"><strong class="recent-name">${escapeHTML(g.name)}</strong><small>${g.fields.length} measurements · <span class="mono" style="font-size:10px">Rev ${g.revision}</span></small></span><span class="recent-time">${g.edited}</span>${icon('right','muted')}</a>`).join('');
+    $('#home-garments').textContent = String(garments.length).padStart(2,'0');
+    $('#home-origins').textContent = `3 starter · ${garments.filter((g) => g.origin === 'custom').length} custom`;
+    $('#home-revisions').textContent = String(garments.reduce((sum,g) => sum + g.revision,0)).padStart(2,'0');
+    $('#all-count').textContent = garments.length;
+    $('#custom-count').textContent = garments.filter((g) => g.origin === 'custom').length;
+    $('#nav-count').textContent = garments.length;
+    filterGarments();
+  }
+  function filterGarments() {
+    const query = $('#garment-search').value.trim().toLowerCase();
+    let count = 0;
+    $$('#garment-rows tr').forEach((row) => {
+      const g = garments.find((item) => item.id === row.dataset.id);
+      const visible = g.name.toLowerCase().includes(query) && (currentOrigin === 'all' || currentOrigin === g.origin) && ($('#status-filter').value === 'all' || $('#status-filter').value === g.status) && ($('#category-filter').value === 'all' || $('#category-filter').value === g.category);
+      row.hidden = !visible;
+      if (visible) count++;
+    });
+    $('#visible-count').textContent = `Showing ${count} of ${garments.length} garments`;
+    $('#empty-filter').hidden = count > 0;
+  }
+  const displayRange = (value) => draft.unit === 'in' ? Math.round(value / 2.54 * 10) / 10 : value;
+  function renderMeasurements() {
+    $('#measurement-rows').innerHTML = draft.fields.map((f,index) => `<div class="measurement-row"><span class="measure-grip" aria-hidden="true">${icon('grip')}</span><span class="measure-name"><strong>${escapeHTML(f.name)}</strong><small>${escapeHTML(f.description)}</small></span><span class="measure-range mono">${displayRange(f.min)}–${displayRange(f.max)} ${draft.unit}</span><button class="switch" type="button" role="switch" aria-label="${escapeHTML(f.name)} required" aria-checked="${f.required}" data-required="${index}"></button><button class="btn btn-ghost btn-icon" type="button" data-field-options="${index}" aria-label="${escapeHTML(f.name)} measurement options">${icon('more')}</button></div>`).join('');
+    $('#field-count').textContent = `${draft.fields.length} fields`;
+    $('#required-count').textContent = `${draft.fields.length} fields · ${draft.fields.filter((f) => f.required).length} required`;
+    renderPreview();
+  }
+  function renderPreview() {
+    const previousValues = Object.fromEntries($$('#preview-fields input').map((input) => [input.dataset.fieldName,input.value]));
+    $('#preview-fields').innerHTML = draft.fields.map((f,index) => `<div class="preview-field"><label for="preview-field-${index}">${escapeHTML(f.name)}${f.required ? '<em aria-label="required">*</em>' : ''}</label><div class="preview-input"><input class="input" type="number" step="0.1" min="${displayRange(f.min)}" max="${displayRange(f.max)}" id="preview-field-${index}" data-field-name="${escapeHTML(f.name)}" placeholder="0.0" value="${escapeHTML(previousValues[f.name] || '')}" aria-label="${escapeHTML(f.name)} preview value in ${draft.unit}"><span>${draft.unit}</span></div></div>`).join('');
+    updateReview();
+  }
+  function renderHistory() {
+    const saved = garments.find((g) => g.id === selectedId);
+    $('#history-list').innerHTML = saved ? Array.from({length:Math.min(saved.revision,3)}, (_,index) => `<li class="history-item"><span>${index === 0 ? '<span class="dot"></span>' : ''}Revision ${saved.revision-index}<small>${index === 0 ? 'Current saved definition' : index === 1 ? 'Measurement form updated' : 'Construction choices updated'}</small></span><span class="mono">${index === 0 ? saved.edited === 'just now' ? 'Now' : 'Latest' : 'Earlier'}</span></li>`).join('') : '<li class="history-item"><span>No saved revisions<small>Save this draft to start its history.</small></span></li>';
+  }
+  function renderEditor() {
+    $('#editor-title').textContent = draft.name;
+    $('#editor-glyph').setAttribute('href',`#i-${draft.glyph}`);
+    $$('.preview-glyph').forEach((item) => item.setAttribute('href',`#i-${draft.glyph}`));
+    $$('.preview-name').forEach((item) => { item.textContent = draft.name; });
+    $('#editor-status').textContent = draft.status === 'active' ? 'Active' : 'Draft';
+    $('#editor-revision').textContent = draft.revision ? `Rev ${draft.revision}` : 'Unsaved';
+    $('#editor-subtitle').textContent = `${draft.origin === 'standard' ? 'Starter' : 'Custom'} definition · ${draft.category} · Main workspace`;
+    $('#garment-name').value = draft.name;
+    $('#garment-category').value = draft.category;
+    $('#garment-applicability').value = draft.applicability;
+    $('#garment-notes').value = draft.notes;
+    $('#stitching-rate').value = draft.rate;
+    $('#alteration-rate').value = draft.alteration;
+    $('#measurement-unit').value = draft.unit;
+    $('#construction-groups').innerHTML = draft.choices.map((group,index) => `<div class="construction-group"><h3>${group[0]}</h3><p>Choose a default. Other options stay available.</p><div class="choice-row" role="group" aria-label="Default ${group[0].toLowerCase()}">${group.slice(1).map((choice,choiceIndex) => `<button class="choice" type="button" data-choice="${index}" aria-pressed="${choiceIndex === 0}">${choice}</button>`).join('')}</div></div>`).join('');
+    renderMeasurements(); renderHistory(); updateSaveState();
+  }
+  function updateReview() {
+    $('#review-fields').textContent = `${String(draft.fields.length).padStart(2,'0')} fields`;
+    $('#review-unit').textContent = draft.unit;
+    $('#review-rate').textContent = draft.rate === '' ? 'Unset' : `₹${Number(draft.rate).toLocaleString('en-IN')}`;
+  }
+  function updateSaveState() {
+    $('#save-label').textContent = dirty ? 'Unsaved changes' : 'All changes saved';
+    $('#save-detail').textContent = dirty ? 'Save as a new revision' : `Revision ${draft.revision} · saved ${draft.edited}`;
+    $('#save-button').disabled = !dirty;
+    $('#discard-button').disabled = !dirty;
+    $('.save-state use').setAttribute('href',dirty ? '#i-clock' : '#i-check');
+  }
+  function markDirty() { dirty = true; updateSaveState(); }
+  function openEditor(id, step = 'measurements') {
+    if (dirty && id !== selectedId) { notify('Save or discard your current changes before opening another garment.'); showScreen('editor'); return; }
+    if (id !== selectedId || !dirty) {
+      selectedId = id; draft = structuredClone(garments.find((g) => g.id === id)); dirty = false; isNew = false;
+      $('#preview-fields').innerHTML = ''; renderEditor();
+    }
+    showStep(step); showScreen('editor');
+  }
+  function openDialog(id) { $(`#${id}`).showModal(); }
+  document.addEventListener('click', (event) => {
+    const button = event.target.closest('a, button');
+    if (!button) return;
+    if (button.dataset.screen) { event.preventDefault(); showScreen(button.dataset.screen); }
+    if (button.dataset.edit) { event.preventDefault(); openEditor(button.dataset.edit); }
+    if (button.dataset.step) showStep(button.dataset.step);
+    if (button.dataset.openStep) { showScreen('editor'); showStep(button.dataset.openStep); }
+    if (button.dataset.dialog) openDialog(button.dataset.dialog);
+    if (button.hasAttribute('data-close')) button.closest('dialog').close();
+    if (button.dataset.notice) notify(button.dataset.notice);
+    if (button.dataset.origin) {
+      currentOrigin = button.dataset.origin;
+      $$('[data-origin]').forEach((tab) => tab.setAttribute('aria-pressed',String(tab === button)));
+      filterGarments();
+    }
+    if (button.dataset.required !== undefined) {
+      const index = Number(button.dataset.required);
+      draft.fields[index].required = !draft.fields[index].required;
+      button.setAttribute('aria-checked',String(draft.fields[index].required));
+      $('#required-count').textContent = `${draft.fields.length} fields · ${draft.fields.filter((f) => f.required).length} required`;
+      markDirty(); renderPreview();
+    }
+    if (button.dataset.fieldOptions !== undefined) {
+      editingField = Number(button.dataset.fieldOptions);
+      const f = draft.fields[editingField];
+      $('#edit-measurement-title').textContent = `${f.name} options`;
+      $('#range-min').value = displayRange(f.min); $('#range-max').value = displayRange(f.max);
+      $('#range-unit-note').textContent = `Values in ${draft.unit === 'cm' ? 'centimetres' : 'inches'}.`; $('#range-max').setCustomValidity('');
+      openDialog('edit-measurement-dialog');
+    }
+    if (button.dataset.choice !== undefined) {
+      const group = draft.choices[Number(button.dataset.choice)];
+      const index = group.indexOf(button.textContent);
+      group.splice(1,0,group.splice(index,1)[0]);
+      button.parentElement.querySelectorAll('button').forEach((choice) => choice.setAttribute('aria-pressed',String(choice === button)));
+      markDirty();
+    }
+    if (button.dataset.preview) {
+      $$('[data-preview]').forEach((tab) => { tab.setAttribute('aria-selected',String(tab === button)); tab.tabIndex = tab === button ? 0 : -1; });
+      $('#form-preview').hidden = button.dataset.preview !== 'form';
+      $('#garment-preview').hidden = button.dataset.preview !== 'garment';
+    }
+  });
+  $('#menu-toggle').addEventListener('click', () => { const open = $('.sidebar').classList.toggle('menu-open'); $('#menu-toggle').setAttribute('aria-expanded',String(open)); });
+  [$('#garment-search'),$('#status-filter'),$('#category-filter')].forEach((input) => input.addEventListener('input',filterGarments));
+  $('#clear-filters').addEventListener('click', () => { $('#garment-search').value = ''; $('#status-filter').value = 'all'; $('#category-filter').value = 'all'; currentOrigin = 'all'; $$('[data-origin]').forEach((tab) => tab.setAttribute('aria-pressed',String(tab.dataset.origin === 'all'))); filterGarments(); });
+  function focusSearch() { showScreen('garments'); $('#garment-search').focus(); }
+  $('#search-shortcut').addEventListener('click',focusSearch);
+  document.addEventListener('keydown',(event) => { if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k' && !$('dialog[open]')) { event.preventDefault(); focusSearch(); } });
+  $('#measurement-unit').addEventListener('change', () => { draft.unit = $('#measurement-unit').value; $('#preview-fields').innerHTML = ''; markDirty(); renderMeasurements(); });
+  [['garment-name','name'],['garment-category','category'],['garment-applicability','applicability'],['garment-notes','notes'],['stitching-rate','rate'],['alteration-rate','alteration']].forEach(([id,key]) => {
+    $(`#${id}`).addEventListener('input',() => {
+      draft[key] = $(`#${id}`).value; if (key === 'name') $('#garment-name').setCustomValidity(''); markDirty(); updateReview();
+      if (key === 'name') { $('#editor-title').textContent = draft.name || 'Untitled garment'; $$('.preview-name').forEach((node) => { node.textContent = draft.name || 'Untitled garment'; }); }
+    });
+  });
+  $('#previous-step').addEventListener('click', () => showStep(stepKeys[stepKeys.indexOf(currentStep)-1]));
+  $('#next-step').addEventListener('click', () => showStep(stepKeys[stepKeys.indexOf(currentStep)+1]));
+  $('#header-preview').addEventListener('click', () => { $('#form-tab').click(); $('#preview-card').scrollIntoView({block:'center', behavior:matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth'}); $('#form-tab').focus({preventScroll:true}); });
+  $$('[role=tab]').forEach((tab) => tab.addEventListener('keydown',(event) => {
+    if (['ArrowLeft','ArrowRight','Home','End'].includes(event.key)) { event.preventDefault(); const tabs = $$('[role=tab]'); const target = event.key === 'Home' ? tabs[0] : event.key === 'End' ? tabs[tabs.length-1] : tabs[(tabs.indexOf(tab) + (event.key === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length]; target.click(); target.focus(); }
+  }));
+  $('#review-starters').addEventListener('click', () => { $('#library-dialog').close(); showScreen('garments'); });
+  $('#create-form').addEventListener('submit', (event) => {
+    event.preventDefault();
+    if (dirty) { $('#create-dialog').close(); showScreen('editor'); notify('Save or discard your current changes before creating a garment.'); return; }
+    const name = $('#new-garment-name').value.trim();
+    draft = {id:`custom-${Date.now()}`,name,glyph:'shirt',origin:'custom',category:'Tailoring',applicability:'Unisex',revision:0,status:'draft',edited:'just now',rate:'',alteration:'',unit:'cm',notes:'',choices:[['Finish','Plain','Piped']],fields:[]};
+    selectedId = draft.id; isNew = true; dirty = true;
+    $('#create-dialog').close(); $('#create-form').reset(); $('#preview-fields').innerHTML = '';
+    renderEditor(); showStep('identity'); showScreen('editor');
+  });
+  $('#measurement-form').addEventListener('submit',(event) => {
+    event.preventDefault();
+    draft.fields.push(field($('#new-measurement-name').value.trim(),'Custom measurement',1,200,$('#new-measurement-required').checked));
+    $('#measurement-dialog').close(); $('#measurement-form').reset(); markDirty(); renderMeasurements(); notify('Measurement added to the form.');
+  });
+  $('#range-min').addEventListener('input', () => $('#range-max').setCustomValidity(''));
+  $('#range-max').addEventListener('input', () => $('#range-max').setCustomValidity(''));
+  $('#edit-measurement-form').addEventListener('submit',(event) => {
+    event.preventDefault();
+    const min = Number($('#range-min').value), max = Number($('#range-max').value);
+    if (min >= max) { $('#range-max').setCustomValidity('Maximum must be greater than minimum.'); $('#range-max').reportValidity(); return; }
+    draft.fields[editingField].min = draft.unit === 'in' ? min * 2.54 : min;
+    draft.fields[editingField].max = draft.unit === 'in' ? max * 2.54 : max;
+    $('#edit-measurement-dialog').close(); markDirty(); renderMeasurements();
+  });
+  $('#save-button').addEventListener('click', () => {
+    if (!draft.name.trim()) { showStep('identity'); $('#garment-name').setCustomValidity('Enter a garment name.'); $('#garment-name').reportValidity(); return; }
+    if ([$('#stitching-rate'),$('#alteration-rate')].some((input) => !input.validity.valid)) { showStep('services'); [$('#stitching-rate'),$('#alteration-rate')].find((input) => !input.validity.valid).reportValidity(); return; }
+    draft.name = draft.name.trim(); draft.revision++; draft.edited = 'just now';
+    const index = garments.findIndex((g) => g.id === selectedId);
+    if (index < 0) garments.push(structuredClone(draft)); else garments[index] = structuredClone(draft);
+    dirty = false; isNew = false; renderCatalogue(); renderEditor();
+    notify(`Revision ${draft.revision} saved in this artifact. Reloading resets sample data.`);
+  });
+  $('#discard-button').addEventListener('click', () => {
+    if (isNew) { selectedId = 'shirt'; draft = structuredClone(garments[0]); isNew = false; dirty = false; renderEditor(); showScreen('garments'); }
+    else { draft = structuredClone(garments.find((g) => g.id === selectedId)); dirty = false; renderEditor(); }
+    notify('Unsaved changes discarded.');
+  });
+  new ResizeObserver(([entry]) => document.documentElement.style.setProperty('--review-height',`${entry.target.getBoundingClientRect().height}px`)).observe($('.review-bar'));
+  renderCatalogue(); renderEditor(); showStep('measurements');
+  const initialScreen = location.hash.slice(1);
+  showScreen(['home','garments','editor'].includes(initialScreen) ? initialScreen : 'home',false);
+})();
+</script>
+</body>
+</html>

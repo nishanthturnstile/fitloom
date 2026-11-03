@@ -1,0 +1,35 @@
+{
+  "name": "@fitloom/db",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "node": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch --preserveWatchOutput",
+    "typecheck": "tsc --noEmit",
+    "db:local": "node ../../scripts/compose.mjs up",
+    "db:migrate": "node --env-file-if-exists=.env scripts/migrate.mjs",
+    "db:generate": "drizzle-kit generate",
+    "db:auth-generate": "auth generate --config ./auth.config.ts --output ./src/auth-schema.ts --yes",
+    "test": "pnpm build && node --env-file-if-exists=.env --test test/*.test.mjs"
+  },
+  "devDependencies": {
+    "@types/pg": "8.23.1",
+    "auth": "1.7.14",
+    "drizzle-kit": "0.31.11",
+    "typescript": "7.0.2"
+  },
+  "dependencies": {
+    "@better-auth/drizzle-adapter": "1.7.14",
+    "better-auth": "1.7.14",
+    "drizzle-orm": "0.45.4",
+    "pg": "8.23.1",
+    "pg-boss": "12.38.0"
+  }
+}

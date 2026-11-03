@@ -1,0 +1,8 @@
+# Small local buckets grow one volume at a time. No eager preallocation.
+[master.volume_growth]
+copy_1 = 1
+copy_2 = 1
+copy_3 = 1
+copy_other = 1
+threshold = 0.9
+allocation_deferral = "0s" # Single-node local stack; startup also verifies actual S3 reads/writes.

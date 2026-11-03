@@ -1,0 +1,39 @@
+{
+  "name": "@fitloom/web",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --hostname 0.0.0.0 --port 24410",
+    "build": "next build",
+    "start": "next start --hostname 0.0.0.0 --port 24410",
+    "lint": "biome check .",
+    "format": "biome format --write .",
+    "typecheck": "next typegen && tsc --noEmit"
+  },
+  "dependencies": {
+    "@base-ui/react": "^1.9.0",
+    "@fitloom/application": "workspace:*",
+    "@fitloom/db": "workspace:*",
+    "@hugeicons/core-free-icons": "^4.4.0",
+    "@hugeicons/react": "^1.1.10",
+    "class-variance-authority": "^0.7.1",
+    "cn": "^0.5.1",
+    "next": "16.4.3",
+    "pino": "10.4.0",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "server-only": "0.0.1",
+    "shadcn": "^4.23.0",
+    "tw-animate-css": "^1.4.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/turbopack": "4.3.3",
+    "@types/node": "26.6.6",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "tailwindcss": "4.3.3",
+    "typescript": "7.0.2"
+  },
+  "type": "module",
+  "description": "Fitloom web interface and API"
+}

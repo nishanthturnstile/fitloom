@@ -1,0 +1,45 @@
+{
+  "extends": ["//"],
+  "tasks": {
+    "dev": {
+      "passThroughEnv": [
+        "PORT",
+        "HOSTNAME",
+        "LOG_LEVEL",
+        "FITLOOM_ENV",
+        "WORKER_DATABASE_URL",
+        "MAIL_ENCRYPTION_KEY",
+        "MAIL_PROVIDER",
+        "MAILPIT_HOST",
+        "MAILPIT_SMTP_PORT",
+        "MAIL_FROM",
+        "RESEND_API_KEY",
+        "FILE_STAGING_ROOT",
+        "STORAGE_ENDPOINT",
+        "STORAGE_BUCKET",
+        "STORAGE_ACCESS_KEY",
+        "STORAGE_SECRET_KEY"
+      ]
+    },
+    "start": {
+      "passThroughEnv": [
+        "PORT",
+        "HOSTNAME",
+        "LOG_LEVEL",
+        "FITLOOM_ENV",
+        "WORKER_DATABASE_URL",
+        "MAIL_ENCRYPTION_KEY",
+        "MAIL_PROVIDER",
+        "MAILPIT_HOST",
+        "MAILPIT_SMTP_PORT",
+        "MAIL_FROM",
+        "RESEND_API_KEY",
+        "FILE_STAGING_ROOT",
+        "STORAGE_ENDPOINT",
+        "STORAGE_BUCKET",
+        "STORAGE_ACCESS_KEY",
+        "STORAGE_SECRET_KEY"
+      ]
+    }
+  }
+}
