@@ -27,8 +27,8 @@ Keep tenant and location identity, typed order lines, and module boundaries in t
 | Phase | Build | Result | Depends on |
 | --- | --- | --- | --- |
 | 1 | Project structure and internal application foundations | Locally runnable application, safe records, independent tenants | 1A → 1B complete locally; 1C and 1D are deferred |
-| 2 | Customers, garment masters, and measurements | A tailor can record reusable, versioned cutting information | 1B; next implementation phase |
-| 3 | Orders, pricing, collections, and documents | A tailor can accept and bill a real order | 2 |
+| 2 | Customers, garment masters, and measurements | A tailor can record reusable, versioned cutting information | 1B; complete locally |
+| 3 | Orders, pricing, collections, and documents | A tailor can accept and bill a real order | 2; next implementation phase |
 | 4 | Production, trials, delivery, and daily control | Complete tailoring workflow within the production application | 3 |
 | 5 | Workshop depth and workforce finance | A team can plan work, handle rework, and pay workers | 4 |
 | 6 | Materials, stock, and procurement | A shop can buy, reserve, consume, and reconcile stock | 3–5 |
@@ -84,6 +84,8 @@ Shop payments remain required and are recorded manually. Phase 3 owns customer a
 Continue 1B → phase 2 → phase 3 and onward. Keep identity, security suspension, current permissions, tenant/location isolation, and technical resource limits. No subscription selection or commercial expiry should govern the internal business workflows. A later internal deployment must resolve the existing development-only admission guard without introducing subscription billing.
 
 ## Phase 2: Build the customer and measurement book
+
+Status: Complete locally on 2026-11-03. [Final acceptance](../implementation/evidence/phase-2-build-3-increment-8.md) records all 47 measurement scenarios, complete phase 2 regression, matched recovery and observed limits. The [capture/media handoff](../architecture/measurements.md) defines the exact snapshot and authority boundary for phase 3.
 
 Build garment masters before measurement entry, because measurement versions need a stable schema.
 

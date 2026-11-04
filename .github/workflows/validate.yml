@@ -1,0 +1,73 @@
+name: Validate
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+
+concurrency:
+  group: validate-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Database, application, build and HTTP
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      FITLOOM_APP_ORIGIN: http://localhost:24410
+      FITLOOM_MAIL_ORIGIN: http://localhost:24420
+    steps:
+      - name: Check out source
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+          fetch-depth: 2
+      - name: Check patch whitespace
+        run: git diff --check HEAD^ HEAD
+      - name: Set up Node
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version-file: .node-version
+      - name: Install tested Docker Compose
+        run: |
+          curl --fail --location --retry 3 --connect-timeout 10 --max-time 120 \
+            https://github.com/docker/compose/releases/download/v5.6.1/docker-compose-linux-x86_64 \
+            --output "$RUNNER_TEMP/docker-compose"
+          printf '47737f4236e6d3ccea7291995203f8f018058783b4c3a9469119811a0b5db8c0  %s\n' "$RUNNER_TEMP/docker-compose" | sha256sum --check
+          mkdir -p "$HOME/.docker/cli-plugins"
+          install -m 0755 "$RUNNER_TEMP/docker-compose" "$HOME/.docker/cli-plugins/docker-compose"
+          docker compose version
+      - name: Start isolated dependencies
+        run: |
+          mkdir -p .ci-logs
+          node scripts/compose.mjs up 2>&1 | tee .ci-logs/startup.log
+      - name: Validate application
+        run: node scripts/compose.mjs validate 2>&1 | tee .ci-logs/validate.log
+      - name: Record service status
+        if: always()
+        run: |
+          mkdir -p .ci-logs
+          docker compose ps --all > .ci-logs/services.log
+          docker compose logs --no-color --tail 100 seaweedfs storage-init bootstrap migrate > .ci-logs/dependencies.log
+      - name: Stop dependencies
+        if: always()
+        run: docker compose down --remove-orphans
+      - name: Save validation logs
+        if: always()
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: validation-logs
+          path: .ci-logs/*.log
+          include-hidden-files: true
+          if-no-files-found: ignore
+          retention-days: 7

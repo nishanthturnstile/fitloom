@@ -28,6 +28,7 @@ import {
   normalizePrivateImage,
   privateImageResponse,
 } from "./private-image.js";
+import { PRIVATE_IMAGE_MAX_BYTES } from "./private-image-limits.js";
 import { workspaceTarget } from "./workspace-contracts.js";
 
 async function value<T extends z.ZodType>(
@@ -42,7 +43,7 @@ async function value<T extends z.ZodType>(
 }
 const readMetadata = z.object({
   id: blobKey,
-  size: z.int().positive().max(5242880),
+  size: z.int().positive().max(PRIVATE_IMAGE_MAX_BYTES),
   mediaType: z.enum(["image/png", "image/jpeg"]),
   sha256: z.string().regex(/^[a-f0-9]{64}$/),
   version: z.int().nonnegative(),

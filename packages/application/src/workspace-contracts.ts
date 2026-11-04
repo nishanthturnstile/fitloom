@@ -240,6 +240,22 @@ export function workspacePermissionLabel(permission: string): string {
       return "View customer and wearer photos";
     case "customers.photos.manage":
       return "Manage customer and wearer photos";
+    case "measurements.read":
+      return "View wearer measurements and history";
+    case "measurements.manage":
+      return "Create and revise measurements";
+    case "measurements.archive":
+      return "Archive and restore measurements";
+    case "measurements.photos.read":
+      return "View measurement reference photos";
+    case "measurements.photos.manage":
+      return "Manage measurement reference photos";
+    case "measurements.cards.manage":
+      return "Issue and revoke measurement cards";
+    case "customers.import":
+      return "Import customers and wearers";
+    case "measurements.import":
+      return "Import measurement profiles";
     default:
       return permission;
   }
@@ -264,6 +280,14 @@ export const workspacePermission = z.enum([
   "customers.archive",
   "customers.photos.read",
   "customers.photos.manage",
+  "measurements.read",
+  "measurements.manage",
+  "measurements.archive",
+  "measurements.photos.read",
+  "measurements.photos.manage",
+  "measurements.cards.manage",
+  "customers.import",
+  "measurements.import",
 ]);
 export function workspacePermissionDependencies(permission: string): string[] {
   const base = permission === "workspace.read" ? [] : ["workspace.read"];
@@ -276,6 +300,19 @@ export function workspacePermissionDependencies(permission: string): string[] {
       return [...base, "customers.read"];
     case "customers.photos.manage":
       return [...base, "customers.manage", "customers.photos.read"];
+    case "measurements.read":
+      return [...base, "customers.read"];
+    case "measurements.manage":
+    case "measurements.archive":
+    case "measurements.photos.read":
+    case "measurements.cards.manage":
+      return [...base, "measurements.read"];
+    case "measurements.photos.manage":
+      return [...base, "measurements.manage", "measurements.photos.read"];
+    case "customers.import":
+      return [...base, "customers.read", "customers.manage"];
+    case "measurements.import":
+      return [...base, "measurements.manage"];
     default:
       return base;
   }
@@ -283,7 +320,10 @@ export function workspacePermissionDependencies(permission: string): string[] {
 export const customRoleInput = z
   .strictObject({
     name: z.string().trim().min(1).max(80),
-    permissions: z.array(workspacePermission).min(1).max(20),
+    permissions: z
+      .array(workspacePermission)
+      .min(1)
+      .max(workspacePermission.options.length),
   })
   .superRefine((role, context) => {
     if (!role.permissions.includes("workspace.read"))
@@ -343,6 +383,10 @@ export const workspaceDestination = z.discriminatedUnion("kind", [
   z.strictObject({ kind: z.literal("home") }),
   z.strictObject({ kind: z.literal("customers") }),
   z.strictObject({
+    kind: z.literal("imports"),
+    family: z.enum(["customers", "measurements"]),
+  }),
+  z.strictObject({
     kind: z.literal("catalog"),
     catalog: z.enum(["garment", "service", "addon"]),
   }),
@@ -363,7 +407,7 @@ export const workspaceSwitchResponse = z.strictObject({
   destination: z
     .string()
     .regex(
-      /^\/workspaces\/[0-9a-f-]{36}\/[0-9a-f-]{36}(?:\/(?:customers|files|settings(?:\/(?:shop|access|garments))?))?(?:\?kind=(?:service|addon))?$/i,
+      /^\/workspaces\/[0-9a-f-]{36}\/[0-9a-f-]{36}(?:\/(?:customers(?:\/import)?|measurements\/import|files|settings(?:\/(?:shop|access|garments))?))?(?:\?kind=(?:service|addon))?$/i,
     ),
 });
 export function resolveWorkspaceDestination(
@@ -378,6 +422,12 @@ export function resolveWorkspaceDestination(
       return base;
     case "customers":
       return allowed("customers.read") ? `${base}/customers` : base;
+    case "imports":
+      return allowed(`${requested.family}.import`)
+        ? `${base}/${requested.family}/import`
+        : allowed("customers.read")
+          ? `${base}/customers`
+          : base;
     case "catalog":
       return allowed("masters.read")
         ? `${base}/settings/garments${requested.catalog === "garment" ? "" : `?kind=${requested.catalog}`}`

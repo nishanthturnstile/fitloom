@@ -1,0 +1,254 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "maxItems": 20,
+  "type": "array",
+  "items": {
+    "oneOf": [
+      {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string",
+            "pattern": "^custom\\.[a-z0-9_]{1,60}$"
+          },
+          "label": {
+            "type": "string",
+            "pattern": "^[^\\p{Cc}\\p{Cs}]{1,100}$"
+          },
+          "required": {
+            "type": "boolean"
+          },
+          "help": {
+            "type": "string",
+            "pattern": "^[^\\p{Cc}\\p{Cs}]{0,500}$"
+          },
+          "kind": {
+            "type": "string",
+            "const": "length"
+          },
+          "basis": {
+            "type": "string",
+            "enum": ["body", "garment"]
+          },
+          "displayUnit": {
+            "type": "string",
+            "enum": ["in", "cm"]
+          },
+          "displayPrecision": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 6
+          },
+          "min": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?:0|[1-9]\\d{0,17})(?:\\.\\d{1,6})?$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "max": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?:0|[1-9]\\d{0,17})(?:\\.\\d{1,6})?$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "key",
+          "label",
+          "required",
+          "help",
+          "kind",
+          "basis",
+          "displayUnit",
+          "displayPrecision",
+          "min",
+          "max"
+        ],
+        "additionalProperties": false
+      },
+      {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string",
+            "pattern": "^custom\\.[a-z0-9_]{1,60}$"
+          },
+          "label": {
+            "type": "string",
+            "pattern": "^[^\\p{Cc}\\p{Cs}]{1,100}$"
+          },
+          "required": {
+            "type": "boolean"
+          },
+          "help": {
+            "type": "string",
+            "pattern": "^[^\\p{Cc}\\p{Cs}]{0,500}$"
+          },
+          "kind": {
+            "type": "string",
+            "const": "number"
+          },
+          "unit": {
+            "type": "string",
+            "enum": ["count", "unitless"]
+          },
+          "decimalPlaces": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 6
+          },
+          "min": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!-0(?:\\.0{1,6})?$)-?(?:0|[1-9]\\d{0,17})(?:\\.\\d{1,6})?$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "max": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!-0(?:\\.0{1,6})?$)-?(?:0|[1-9]\\d{0,17})(?:\\.\\d{1,6})?$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "key",
+          "label",
+          "required",
+          "help",
+          "kind",
+          "unit",
+          "decimalPlaces",
+          "min",
+          "max"
+        ],
+        "additionalProperties": false
+      },
+      {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string",
+            "pattern": "^custom\\.[a-z0-9_]{1,60}$"
+          },
+          "label": {
+            "type": "string",
+            "pattern": "^[^\\p{Cc}\\p{Cs}]{1,100}$"
+          },
+          "required": {
+            "type": "boolean"
+          },
+          "help": {
+            "type": "string",
+            "pattern": "^[^\\p{Cc}\\p{Cs}]{0,500}$"
+          },
+          "kind": {
+            "type": "string",
+            "const": "text"
+          },
+          "maxLength": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 500
+          }
+        },
+        "required": ["key", "label", "required", "help", "kind", "maxLength"],
+        "additionalProperties": false
+      },
+      {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string",
+            "pattern": "^custom\\.[a-z0-9_]{1,60}$"
+          },
+          "label": {
+            "type": "string",
+            "pattern": "^[^\\p{Cc}\\p{Cs}]{1,100}$"
+          },
+          "required": {
+            "type": "boolean"
+          },
+          "help": {
+            "type": "string",
+            "pattern": "^[^\\p{Cc}\\p{Cs}]{0,500}$"
+          },
+          "kind": {
+            "type": "string",
+            "const": "boolean"
+          }
+        },
+        "required": ["key", "label", "required", "help", "kind"],
+        "additionalProperties": false
+      },
+      {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string",
+            "pattern": "^custom\\.[a-z0-9_]{1,60}$"
+          },
+          "label": {
+            "type": "string",
+            "pattern": "^[^\\p{Cc}\\p{Cs}]{1,100}$"
+          },
+          "required": {
+            "type": "boolean"
+          },
+          "help": {
+            "type": "string",
+            "pattern": "^[^\\p{Cc}\\p{Cs}]{0,500}$"
+          },
+          "kind": {
+            "type": "string",
+            "const": "select"
+          },
+          "choices": {
+            "minItems": 1,
+            "maxItems": 30,
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "key": {
+                  "type": "string",
+                  "pattern": "^[a-z0-9_]{1,40}$"
+                },
+                "label": {
+                  "type": "string",
+                  "pattern": "^[^\\p{Cc}\\p{Cs}]{1,100}$"
+                },
+                "active": {
+                  "type": "boolean"
+                }
+              },
+              "required": ["key", "label", "active"],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": ["key", "label", "required", "help", "kind", "choices"],
+        "additionalProperties": false
+      }
+    ]
+  }
+}

@@ -1,0 +1,1073 @@
+$ node scripts/compose.mjs validate
+ Image fitloom-tools Building 
+#1 [internal] load local bake definitions
+#1 reading from stdin 534B done
+#1 DONE 0.0s
+
+#2 [internal] load build definition from Dockerfile.dev
+#2 transferring dockerfile: 1.07kB 0.0s done
+#2 DONE 0.0s
+
+#3 resolve image config for docker-image://docker.io/docker/dockerfile:1
+#3 ...
+
+#4 [auth] docker/dockerfile:pull token for registry-1.docker.io
+#4 DONE 0.0s
+
+#3 resolve image config for docker-image://docker.io/docker/dockerfile:1
+#3 DONE 1.7s
+
+#5 docker-image://docker.io/docker/dockerfile:1@sha256:4edf897a3ffa55b89f906fc8cc78afdb3f1834cc9c7083565e611a8a7d5fe99e
+#5 resolve docker.io/docker/dockerfile:1@sha256:4edf897a3ffa55b89f906fc8cc78afdb3f1834cc9c7083565e611a8a7d5fe99e 0.0s done
+#5 CACHED
+
+#6 [internal] load metadata for docker.io/library/node:26.13.0-bookworm-slim@sha256:bc0a2afd3b74ce12222fc8bab99271e66257f021078f5f4a5d687a77d280c1d9
+#6 ...
+
+#7 [auth] library/node:pull token for registry-1.docker.io
+#7 DONE 0.0s
+
+#6 [internal] load metadata for docker.io/library/node:26.13.0-bookworm-slim@sha256:bc0a2afd3b74ce12222fc8bab99271e66257f021078f5f4a5d687a77d280c1d9
+#6 DONE 1.4s
+
+#8 [internal] load .dockerignore
+#8 transferring context: 185B done
+#8 DONE 0.0s
+
+#9 [internal] load build context
+#9 DONE 0.0s
+
+#10 [stage-0  1/13] FROM docker.io/library/node:26.13.0-bookworm-slim@sha256:bc0a2afd3b74ce12222fc8bab99271e66257f021078f5f4a5d687a77d280c1d9
+#10 resolve docker.io/library/node:26.13.0-bookworm-slim@sha256:bc0a2afd3b74ce12222fc8bab99271e66257f021078f5f4a5d687a77d280c1d9 0.0s done
+#10 DONE 0.0s
+
+#9 [internal] load build context
+#9 transferring context: 158.98kB 10.8s
+#9 transferring context: 248.87kB 10.8s done
+#9 DONE 10.8s
+
+#11 [stage-0  5/13] COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+#11 CACHED
+
+#12 [stage-0  6/13] COPY apps/web/package.json ./apps/web/package.json
+#12 CACHED
+
+#13 [stage-0  2/13] RUN npm install --global pnpm@12.16.1
+#13 CACHED
+
+#14 [stage-0  7/13] COPY apps/worker/package.json ./apps/worker/package.json
+#14 CACHED
+
+#15 [stage-0  8/13] COPY packages/application/package.json ./packages/application/package.json
+#15 CACHED
+
+#16 [stage-0  9/13] COPY packages/db/package.json ./packages/db/package.json
+#16 CACHED
+
+#17 [stage-0  3/13] RUN mkdir -p /var/lib/fitloom/private-files && chown node:node /var/lib/fitloom/private-files
+#17 CACHED
+
+#18 [stage-0  4/13] WORKDIR /workspace
+#18 CACHED
+
+#19 [stage-0 10/13] RUN --mount=type=cache,id=fitloom-pnpm,target=/pnpm/store pnpm install --frozen-lockfile --store-dir=/pnpm/store && chown -R node:node /workspace
+#19 CACHED
+
+#20 [stage-0 11/13] COPY --chown=node:node . .
+#20 DONE 1.4s
+
+#21 [stage-0 12/13] COPY --chown=node:node --chmod=0644 pnpm-lock.yaml ./
+#21 DONE 0.1s
+
+#22 [stage-0 13/13] RUN pnpm --filter @fitloom/db build && pnpm --filter @fitloom/application build
+#22 0.541 $ tsc
+#22 3.580 $ tsc
+#22 DONE 13.3s
+
+#23 exporting to image
+#23 exporting layers
+#23 exporting layers 2.0s done
+#23 exporting manifest sha256:e163d9351909856ad54b60fdfb2477d79c21a4f8cdf24e20f83901d9f9e59312 0.0s done
+#23 exporting config sha256:d011082bde8b6f83b0c9c25ea7bc4ea28487c6daa84cfc4b0e1b7d2a7688bf6a 0.0s done
+#23 exporting attestation manifest sha256:7c1790c73543cf1a39d4c67969644d39f5c49035e847d389c080f784404c7986 0.0s done
+#23 exporting manifest list sha256:0de9c559f561c42372a85fd16e3f978f4b22b7b16de17cace40de781c99e1474
+#23 exporting manifest list sha256:0de9c559f561c42372a85fd16e3f978f4b22b7b16de17cace40de781c99e1474 0.0s done
+#23 naming to docker.io/library/fitloom-tools:latest done
+#23 unpacking to docker.io/library/fitloom-tools:latest
+#23 unpacking to docker.io/library/fitloom-tools:latest 0.9s done
+#23 DONE 3.1s
+
+#24 resolving provenance for metadata file
+#24 DONE 0.0s
+ Image fitloom-tools Built 
+ Container fitloom-tools-run-53dbd46eb297 Creating 
+ Container fitloom-tools-run-53dbd46eb297 Created 
+$ pnpm --filter @fitloom/application test:storage-reset && pnpm --filter @fitloom/db test && pnpm --filter @fitloom/application test
+$ node --env-file-if-exists=../db/.env scripts/reset-test-storage.mjs
+../db/.env not found. Continuing without it.
+Isolated test storage reset
+$ pnpm build && node --env-file-if-exists=.env --test test/*.test.mjs
+$ tsc
+.env not found. Continuing without it.
+.env not found. Continuing without it.
+▶ PostgreSQL roles, migrations, and tenant isolation
+  ✔ clean migrations, existing Owner upgrade, and repeated invocation (3170.239502ms)
+  ✔ restricted verified provisioning and principal discovery (140.120739ms)
+  ✔ runtime roles cannot manage schema, authority, or bypass RLS (356.255613ms)
+  ✔ missing context, wrong tenant, and unauthorized locations deny access (88.192409ms)
+  ✔ tenant-qualified foreign keys reject mixed-tenant references (37.698669ms)
+  ✔ pool reuse clears context after commit and rollback on the same backend (33.461742ms)
+  ✔ principal writes cannot change provisioning identity or another principal's draft (15.486102ms)
+  ✔ provisioning rolls back atomically and concurrent fresh retries create one tenant (157.651622ms)
+  ✔ caught SQL errors cannot report commit success (6.823866ms)
+  ✔ transaction timeouts reject without crashing and discard the connection (177.698306ms)
+  ✔ queue installation matches the pinned package and is inaccessible to runtime until handlers exist (215.771786ms)
+✔ PostgreSQL roles, migrations, and tenant isolation (4929.90488ms)
+ℹ tests 12
+ℹ suites 0
+ℹ pass 12
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 6321.077133
+$ pnpm --filter @fitloom/db build && pnpm build && node --env-file-if-exists=../db/.env --test --test-concurrency=1 test/*.test.mjs
+$ tsc
+$ tsc
+../db/.env not found. Continuing without it.
+../db/.env not found. Continuing without it.
+✔ late timed-out writes cannot overwrite a newer immutable object (9184.385556ms)
+✔ a paused consumer cannot read buffered bytes after the whole-stream deadline (12.14328ms)
+../db/.env not found. Continuing without it.
+✔ bounded body reader observes deadlines and disconnected clients (50.111811ms)
+✔ fixture freshness is rechecked after body ingestion (8.012986ms)
+../db/.env not found. Continuing without it.
+✔ decimal policies reject precision loss and use exact half-up rounding (8.103125ms)
+▶ real command transactions and journals
+  ✔ principal provisioning replay rechecks verification and rejects changed payload (22.437014ms)
+  ✔ concurrent normalized retries create exactly one effect and saved result (50.913372ms)
+  ✔ changed input conflicts, stale versions fail, and failed claims leave no record (77.02718ms)
+  ✔ replay checks current identity and current permissions before returning saved results (43.624775ms)
+  ✔ serialization retries roll back prior work and exhaustion stays bounded (52.334008ms)
+  ✔ balanced posting is immutable, source-unique, and permission checked on replay (60.409838ms)
+  ✔ reversal derives exact opposite lines, keeps original, and cannot cross owners or repeat (56.550854ms)
+  ✔ a same-tenant reversal cannot reach another location (26.251693ms)
+  ✔ invalid decimals and unbalanced or mixed-currency journal payloads fail before writes (2.305294ms)
+  ✔ injected failure after mutation, journal, audit, outcome, and outbox rolls back every effect (63.35504ms)
+  ✔ raw runtime SQL cannot bypass posting validation or commit incomplete operations (59.653757ms)
+  ✔ commercial and feature admission follow security; replay never consumes usage again (69.439013ms)
+  ✔ structured diagnostics retain IDs and timing without payloads; logger failures cannot undo commits (29.273994ms)
+✔ real command transactions and journals (910.480072ms)
+../db/.env not found. Continuing without it.
+Maximal Unicode profile contract bytes: 47739
+✔ customer names, notes and tags use Unicode code points and the SQL folding policy (12.255486ms)
+✔ strict max-metadata phone parsing preserves input and rejects extraction/extensions (14.53478ms)
+✔ wearer attributes preserve original decimal precision and exact unit bounds (3.754047ms)
+✔ create/update intentions and opaque operation results cannot smuggle scope or profile data (12.490191ms)
+✔ GSTIN and maximal Unicode create payload stay within the profile transport allowance (5.671074ms)
+✔ CRM role dependencies are shared by browser choices and server validation (1.404652ms)
+✔ customer browser subpaths remain free of transitive server and database imports (25.445293ms)
+✔ workspace route families and switches use current target permissions (80.00725ms)
+../db/.env not found. Continuing without it.
+▶ customer storage foundation and CRM authority
+  ✔ fresh owners alone receive CRM presets and roles enforce every dependency (49.699648ms)
+  ✔ database normalization matches browser NFC, ASCII folding and code-point limits (107.394973ms)
+  ✔ wearer ownership proves tenant, location and customer; original decimals remain strings (235.71642ms)
+  ✔ tag identity is normalized within the full parent scope (24.913538ms)
+  ✔ forced RLS and named-function-only access deny runtime table and helper bypasses (256.143897ms)
+  ✔ runtime commands atomically save profiles, wearers, lifecycle, no-ops and safe activity (449.161857ms)
+  ✔ duplicate reviews serialize competing saves and recover without storing candidate PII (639.209036ms)
+  ✔ actor-bound replay, current permissions, shared budgets and rollback enforce private boundaries (199.68989ms)
+✔ customer storage foundation and CRM authority (2316.273926ms)
+../db/.env not found. Continuing without it.
+▶ supported imports preserve atomic groups, private review, source identity and recoverable outcomes
+  ✔ import relations force RLS and expose no table or private helper privileges (51.475147ms)
+  ✔ full 200-row preview avoids interactive duplicate admission and mutates no business rows (620.534781ms)
+  ✔ customer and named wearer groups commit once, replay canonical phones, and preserve explicit ownership (741.809483ms)
+  ✔ complete measurement histories use sequence order, one profile and immutable exact source maps (784.752405ms)
+  ✔ revoked and format-specific roles protect preview, commit, mapping, status and replay (487.01326ms)
+  ✔ two concurrent tabs cannot duplicate one reviewed group or source map (158.814309ms)
+  ✔ two distinct batches serialize the same immutable source identity (339.030973ms)
+  ✔ customer group failures roll back every wearer, source map and command claim (169.155362ms)
+  ✔ candidate drift requires another review and reuse never overwrites customer fields (158.674798ms)
+  ✔ active original transactions block settlement and cancellation without hiding recovery (2122.86541ms)
+  ✔ recovery remains read-only after expiry, quota exhaustion, another lease and payload purge (59.133678ms)
+  ✔ cancellation preserves committed successes and reconciles all nine group states (1409.523773ms)
+  ✔ preview admission is shared, fresh-only, and limited to two concurrent parses (70.445586ms)
+  ✔ garment imports preserve five value kinds, custom lineage, saved labels and current schema review (582.207381ms)
+  ✔ shop-local future dates, changed complete sets and abandoned scheduling cannot commit silently (374.568638ms)
+✔ supported imports preserve atomic groups, private review, source identity and recoverable outcomes (8439.727003ms)
+../db/.env not found. Continuing without it.
+▶ private SeaweedFS files, current authority, attachment atomicity and cleanup
+  ✔ real S3 is private, credential-scoped, and finalized files need attachment before download (500.156568ms)
+  ✔ cross-tenant, location, path and current permission changes deny new downloads (64.392109ms)
+  ✔ actual content, decoded pixels, byte limits and immutable upload identity are enforced (434.391751ms)
+  ✔ interrupted finalization leaves a collectable orphan; referenced and recent objects survive (264.947346ms)
+  ✔ attachment holds the same metadata lock as cleanup; retirement is distinct from deletion (227.978431ms)
+  ✔ bounded pages keep stable ordering, scoped counts, and current authorization (1473.504658ms)
+  ✔ CRM photos retain private purpose, owner, normalized content, replay, replacement and cleanup boundaries (888.130296ms)
+✔ private SeaweedFS files, current authority, attachment atomicity and cleanup (4208.699931ms)
+../db/.env not found. Continuing without it.
+▶ verified identity, real Mailpit delivery, recovery, and operator MFA
+  ✔ card network admissions share PostgreSQL state and trust only the configured address header (173.041643ms)
+  ✔ registration maps one principal and atomically retains an encrypted verification email (470.79707ms)
+  ✔ Mailpit captures SMTP; verification is single-use and login restores a database session (370.482711ms)
+  ✔ logout, revocation, and password changes invalidate subsequent protected requests (1108.173505ms)
+  ✔ password recovery uses Mailpit, consumes its token once, and revokes every session (427.279998ms)
+  ✔ operator access requires a real recent challenge; backup codes are single-use (1477.970537ms)
+  ✔ resend works and expired verification/reset links fail (791.66846ms)
+  ✔ concurrent backup challenges consume a code only once (978.535667ms)
+  ✔ MFA failures lock the account across fresh challenges (1151.330247ms)
+  ✔ step-up MFA ignores arbitrary email fields and unrelated cookies for admission (786.136238ms)
+  ✔ persistent admission rejects repeat recovery requests despite spoofed forwarded addresses (143.79189ms)
+  ✔ SMTP failure persists safe attempts; retries, terminal failure, and expiry remain visible (629.390908ms)
+  ✔ auth/token and email intent roll back together when persistence fails (247.322226ms)
+  ✔ SMTP acceptance with lost database settlement remains uncertain and recoverable (602.34111ms)
+  ✔ operator bootstrap, durable lifecycle commands, supported owner recovery, and restricted MFA recovery (4641.827059ms)
+✔ verified identity, real Mailpit delivery, recovery, and operator MFA (14129.955071ms)
+../db/.env not found. Continuing without it.
+✔ stalled import requests time out and chunk callers can cancel (15067.022899ms)
+../db/.env not found. Continuing without it.
+▶ import scheduling preserves real connection, lock, statement and transaction timeouts
+  ✔ deadline and attempt policy stop fresh work without changing executor defaults (152.647044ms)
+  ✔ connection acquisition actually stops after three seconds (3034.543268ms)
+  ✔ contended advisory locks actually stop after two seconds (2010.602772ms)
+  ✔ a slow statement actually stops at ten seconds and the pool recovers (10022.394307ms)
+  ✔ multiple statements actually reach the twenty-second transaction timeout (20089.404391ms)
+✔ import scheduling preserves real connection, lock, statement and transaction timeouts (35483.990763ms)
+../db/.env not found. Continuing without it.
+✔ strict CSV parses every row, preserves opaque identity and inert formula text, and classifies group failures (336.251025ms)
+✔ canonical groups normalize phone and decimal spelling while complete histories retain source sequence and distinct profiles (34.047764ms)
+✔ generated grammar and templates use the runtime contracts; all kinds, custom ownership and stale mapping decisions are checked (224.018478ms)
+../db/.env not found. Continuing without it.
+▶ durable foundation jobs and signed provider inbox
+  ✔ exact raw signatures, size, replay window, and strict events reject before receipt (24.966248ms)
+  ✔ receipt and processing intent commit before acknowledgment; duplicate identity is durable (102.905563ms)
+  ✔ unordered and distinct duplicate effects cannot regress source state or resurrect cancellation (88.43146ms)
+  ✔ receipt insertion failure rolls back receipt and queue intent together (12.734981ms)
+  ✔ command rollback enqueues nothing; repeated dispatcher claims deduplicate committed outbox (107.328487ms)
+  ✔ revoked membership, consent, principal, and tenant suspension cancel delayed sensitive work (142.441754ms)
+  ✔ cancelled work cannot run; retry is authorized, tenant-qualified and audited (185.70802ms)
+  ✔ expired claims recover across worker instances and stale tokens cannot settle new attempts (74.810983ms)
+  ✔ real cleanup deletes only abandoned staging; preserves recent/attached and rejects symlinks (335.15582ms)
+✔ durable foundation jobs and signed provider inbox (1325.590538ms)
+../db/.env not found. Continuing without it.
+✔ original starter bundle allocates independent IDs, with no inferred prices (46.491045ms)
+✔ all field and construction variants render ordered, value-free previews (15.149758ms)
+✔ rate rejects "-0" (0.540937ms)
+✔ rate rejects "-0.000000" (0.219801ms)
+✔ rate rejects "-1" (0.55387ms)
+✔ rate rejects "NaN" (1.172349ms)
+✔ rate rejects "Infinity" (0.394614ms)
+✔ rate rejects "1e2" (0.512981ms)
+✔ rate rejects "01" (0.291039ms)
+✔ rate rejects "1.0000000" (0.419202ms)
+✔ rate rejects "1000000000000000000" (0.510934ms)
+✔ rate rejects 0 (0.118441ms)
+✔ rate rejects null (0.083157ms)
+✔ rate canonicalizes 0 (0.807871ms)
+✔ rate canonicalizes 12.34 (0.190172ms)
+✔ rate canonicalizes 999999999999999999.999999 (0.194715ms)
+✔ rate precedence retains zero and unset (0.146052ms)
+✔ definition rejects empty label (5.301617ms)
+✔ definition rejects unknown key (1.277497ms)
+✔ definition rejects unknown kind (1.122461ms)
+✔ definition rejects unknown semantic (1.041693ms)
+✔ definition rejects semantic basis (1.211393ms)
+✔ definition rejects cross-section reference (0.912472ms)
+✔ definition rejects duplicate field (1.197885ms)
+✔ definition rejects cross-kind duplicate (1.137356ms)
+✔ definition rejects duplicate option (1.101166ms)
+✔ definition rejects URL illustration (1.425244ms)
+✔ definition rejects SVG markup (0.866442ms)
+✔ definition rejects inverted bounds (6.244351ms)
+✔ definition rejects negative length (4.29514ms)
+✔ definition rejects negative zero length (1.504076ms)
+✔ definition rejects invalid decimal bound (1.880977ms)
+✔ definition rejects overflow bound (1.446669ms)
+✔ definition rejects precision bound (5.206253ms)
+✔ definition rejects duplicate binding (9.931795ms)
+✔ definition rejects empty required group (2.893536ms)
+✔ definition rejects too many fields (2.008589ms)
+✔ number and select policies have field-specific issues (5.118399ms)
+✔ normalized UUIDs cannot bypass duplicate identity checks (2.063776ms)
+✔ cosmetic edits preserve lineage; changed meaning and retired IDs fail (48.315622ms)
+✔ option ownership, group kind and number unit are immutable (1.778562ms)
+✔ copying a retired parent regenerates its live options too (2.889807ms)
+✔ save requires exact eligible overrides, explicit prices and a create/update variant (5.375666ms)
+✔ schema-only projections reject every supplied price property (14.050405ms)
+✔ query, collection, operation and issue bounds (9.041356ms)
+✔ UTF-8 estimate and transport envelope bounds (3.037701ms)
+✔ browser exports have no transitive server, database or secret imports (87.299986ms)
+✔ all illustration manifest entries resolve to original static SVGs (3.552772ms)
+✔ fresh identity admits a semantic change without altering the old definition (1.678505ms)
+✔ manifest schemas match their authoritative registries (0.289277ms)
+✔ service, add-on and lifecycle commands validate their own boundaries (5.621519ms)
+../db/.env not found. Continuing without it.
+▶ master storage, SQL validation, permissions and immutable tenant history
+  ✔ new Owner receives all permissions, other presets remain unchanged; GET does not seed (51.802472ms)
+  ✔ Drizzle declarations match actual master columns and references (113.304195ms)
+  ✔ custom-role management dependencies hold in application and direct SQL (47.520305ms)
+  ✔ canonical rates and bindings are extracted atomically; independent add-on history (51.856971ms)
+  ✔ rename/reorder/retire preserve exact v1 and reject retired or repurposed identities (128.888027ms)
+  ✔ inactive references carry forward only from locked current state (92.935899ms)
+  ✔ tenant and concrete-location authority plus independent schema-only projection (56.642969ms)
+  ✔ direct runtime table writes/reads and internal helpers are denied; no worker grants (1773.963963ms)
+  ✔ immutable versions, binding rows, one-way registry, pointers and finite numeric constraints (318.136536ms)
+  ✔ SQL rejects every definition defect and rate overflow before persistence (324.211748ms)
+  ✔ numeric checks reject NaN and negative values under direct privileged inserts (64.4771ms)
+  ✔ all field kinds and semantic signatures are revalidated in SQL (132.887136ms)
+  ✔ group kinds and option owners cannot be reassigned in direct SQL publication (54.273482ms)
+  ✔ tenant-qualified binding rows and creation locations reject foreign references (27.167356ms)
+  ✔ SQL UUID boundary accepts every RFC form admitted by the shared contract (36.116298ms)
+  ✔ SQL budget includes JSONB spacing and escaping; normalized stored document is bounded (76.716596ms)
+  ✔ NFC, Tamil and ASCII name reservation survive retirement (66.72603ms)
+  ✔ failed updates roll back pointers, versions, bindings and identity retirement together (85.449677ms)
+  ✔ two stale saves serialize with one conflict and rollback before audit completion is complete (96.03255ms)
+✔ master storage, SQL validation, permissions and immutable tenant history (3949.442437ms)
+../db/.env not found. Continuing without it.
+▶ master service commands, initialization, projections, catalog and replay
+  ✔ empty catalog GET is virtual; simultaneous successful install replays exact IDs (240.803778ms)
+  ✔ no-op installation preserves edits and catalog audit identity (147.058794ms)
+  ✔ bounded registers share filtered counts; cross-page reorder uses full catalog (1728.252608ms)
+  ✔ filtered pages, normalized prefixes and catalog audits use authoritative current state (529.195959ms)
+  ✔ lost-response retry returns exact version; changed payload and stale saves conflict (149.941906ms)
+  ✔ revoked rate authority blocks full save and replay, with price-free reads (115.198667ms)
+  ✔ starter collisions roll back the full bundle; new concurrent installs conflict safely (191.810247ms)
+  ✔ successful replay survives a later retired service dependency (63.371737ms)
+  ✔ bounded validation issues, safe error translation and rollback before completion (77.873405ms)
+✔ master service commands, initialization, projections, catalog and replay (3392.702892ms)
+../db/.env not found. Continuing without it.
+✔ card locators are closed same-origin paths and real PNG bytes decode to exactly that locator (316.097414ms)
+✔ card selections, expiry and public projection remain closed and bounded (7.847616ms)
+../db/.env not found. Continuing without it.
+✔ measurement decimals retain spelling and reject unsupported forms and negative zero (3.969955ms)
+✔ unit equality and ordering stay exact across recurring conversions and the full magnitude range (55.903232ms)
+✔ presentation reports rounding and never changes the source quantity (8.272739ms)
+✔ bounds are evaluated exactly in the pinned display unit (12.194267ms)
+✔ all five value kinds are strict and missing is distinct from false and zero (26.799913ms)
+✔ numbers enforce count, sign, decimal places and bounds without floating point (7.806441ms)
+✔ text uses code points and required text cannot be whitespace (50.559356ms)
+✔ select choices belong to their field and inactive carry-forward requires exact current content (31.411514ms)
+✔ body v1 uses the pinned manifest, fixed identities, and independent returned copies (17.146443ms)
+✔ intake snapshots reject management configuration and broken identities (4.401147ms)
+✔ measured dates require valid dates and an explicit shop-local today (1.451826ms)
+✔ value validation rejects ambiguous definitions and bounds its linked issues (3.172296ms)
+✔ measurement browser exports have no transitive server imports (60.812241ms)
+✔ measurement child routes classify before customer profiles and clear owner IDs on switching (155.639868ms)
+✔ photo changes are closed, bounded and independent of scalar capture (2.766106ms)
+✔ capture requires an exact version and a closed owner-qualified snapshot (7.979659ms)
+../db/.env not found. Continuing without it.
+✔ revision draft preserves false, zero, units and decimal spelling (3.707191ms)
+✔ reviewed rebase matches identity or unique compatible semantic, never labels or changed basis (13.044425ms)
+✔ ambiguous semantics and removed choices leave target values missing for review (1.150598ms)
+../db/.env not found. Continuing without it.
+✔ comparison equality and delta stay exact across units, small differences and maximum magnitude (33.507499ms)
+✔ false, zero, missing, text and field-owned choices are never coerced (6.708568ms)
+✔ known chest/bust and basis differences cannot be mapped by a matching label (4.008632ms)
+✔ ease is exact or explicitly rounded, remains nonnegative and respects decimal bounds (2.436638ms)
+✔ independent custom clones have fresh field/choice IDs and explicit source-owned choice maps (1.455027ms)
+✔ trends retain missing gaps and reject nonnumeric dimensions (3.057465ms)
+✔ comparison and trend requests are bounded and closed (3.254382ms)
+✔ copied custom choices compare only through their verified source-owned mapping (2.893467ms)
+✔ historical cross-basis trend candidates are incompatible gaps, never missing zeroes (0.522098ms)
+✔ delta presentation labels rounding while retaining exact signed ratios (0.649609ms)
+../db/.env not found. Continuing without it.
+▶ measurement storage, current authority and immutable history
+  ✔ body publication matches the bundle and Owner alone receives all new grants (54.177205ms)
+  ✔ two saved versions retain exact values, schema, author and opaque audit/replay results (256.064812ms)
+  ✔ no-op, archive and restore advance header revision separately from content sequence (235.169779ms)
+  ✔ SQL independently rejects malformed, foreign, empty and out-of-range values (397.337714ms)
+  ✔ custom identities retain meaning and retire once without historical mutation (198.625589ms)
+  ✔ runtime table/helper bypasses and privileged history/schema/pointer mutations are denied (255.576106ms)
+  ✔ scope and actor binding, revoked authority and archived-parent replay remain current (276.222244ms)
+  ✔ two concurrent edits serialize and parent locks reject fresh saves safely (140.526355ms)
+  ✔ book and exact history paginate without leaking master pricing or unrelated configuration (66.425195ms)
+  ✔ garment intake stays price-free, all five kinds persist and drift/retirement block fresh saves (540.249839ms)
+  ✔ Drizzle columns, forced RLS, named grants and deferred current-version constraints match storage (185.338071ms)
+  ✔ every core command rejects actor/location replay and changed envelopes; rollback leaves no content (403.751202ms)
+  ✔ shop-local dates and missing configuration fail without a machine-time fallback (351.359017ms)
+  ✔ independent copies verify same-wearer sources, fresh custom identities and derived manual provenance (534.472483ms)
+  ✔ reviewed body-to-garment ease is independently checked and retained in exact capture (455.10759ms)
+  ✔ bounded comparisons, trend continuation and missing gaps remain scoped and price-free (3132.898293ms)
+  ✔ measurement reservations precede content; normalized upload and failed-save recovery consume once (592.202063ms)
+  ✔ measurement photo authority is separate from workspace and CRM access; scalar revisions retain private membership (348.310004ms)
+  ✔ photo actor, planned version, expiry, fresh-file limits and storage interruption stay bounded (1087.200867ms)
+  ✔ photo authority is checked again after opening real object bytes (49.157004ms)
+  ✔ historical live photos survive cleanup; archived privacy revocation denies all versions and permits collection (537.769756ms)
+  ✔ cards fix all five value kinds and exact labels while rejecting unrelated data (478.567058ms)
+  ✔ current reader and issuer authority govern resolution; an authorized manager reissues under their own identity (327.860065ms)
+  ✔ profile, wearer and customer archives revoke permanently and expiry never broadens a grant (419.939635ms)
+  ✔ card limits, independent SQL validation, bounded lists and database-wide resolution admissions hold (1572.877999ms)
+  ✔ exact capture requires a version at the service and SQL boundaries (90.323337ms)
+  ✔ capture retains exact content as current measurement, author labels, schemas and lifecycle change (267.37183ms)
+  ✔ shop-local dates cross midnight in both offset directions without a UTC fallback (3.375254ms)
+  ✔ every retained import command claim is actor and location bound before replay (295.61308ms)
+  ✔ v2 publication rejects stale fresh saves while exact v1 content remains unchanged (173.923221ms)
+✔ measurement storage, current authority and immutable history (14277.706263ms)
+../db/.env not found. Continuing without it.
+▶ phase two review transactional corrections
+  ✔ retained mapped provenance is a no-op until content changes (404.364426ms)
+  ✔ one-connection preview, replay and admission limits remain usable (235.845369ms)
+  ✔ outcome export returns every group and matching counts in one stable statement (159.846767ms)
+  ✔ imported provenance can be retained without allowing forged imports (406.33292ms)
+  ✔ SQL preserves canonical bounds and explicit select omission (46.408823ms)
+  ✔ hidden standard garments are excluded from fresh selection but retained in history filters (282.369604ms)
+✔ phase two review transactional corrections (1842.450176ms)
+../db/.env not found. Continuing without it.
+✔ master mutations preserve transient SQL states for the executor retry loop (4.630972ms)
+✔ standard garment bounds use centimetres while custom bounds retain display units (22.263989ms)
+✔ an explicitly omitted select mapping cannot fall back to the same source choice (2.546615ms)
+✔ only revisions can retain server-owned provenance (15.743763ms)
+../db/.env not found. Continuing without it.
+▶ resumable setup and authorized workspaces
+  ✔ profile persistence failure rolls back the entire provisioning command (158.298952ms)
+  ✔ partial setup resumes on another service and consent gates provisioning (60.226951ms)
+  ✔ concurrent provisioning creates one complete tenant; another owner provisions independently (159.031737ms)
+  ✔ deliberately starting another setup creates a fresh durable identity without duplicating old shops (82.924875ms)
+  ✔ an earlier foundation shop can complete its profile without creating another tenant (61.879639ms)
+  ✔ invitations bind verified identity, accept once, and return only the authorized workspace (65.360755ms)
+  ✔ staff fields exclude owner contacts, team details, audit, and foreign-tenant references (91.304265ms)
+  ✔ current role changes affect the next query; self elevation and preset edits fail (143.033025ms)
+  ✔ delegated access administrators cannot exceed grants or remove the final owner (117.331905ms)
+  ✔ expired, revoked, and no-longer-delegable invitations cannot activate staff (104.802648ms)
+  ✔ selection preferences stay personal; revoked hints cannot become authority (116.373301ms)
+  ✔ All Locations needs explicit permission and access to every location (55.347063ms)
+  ✔ invitation mail is encrypted and delivered through isolated Mailpit (202.883191ms)
+✔ resumable setup and authorized workspaces (1595.472018ms)
+ℹ tests 264
+ℹ suites 0
+ℹ pass 264
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 158243.372306
+$ pnpm lint && pnpm typecheck
+$ biome check .
+apps/web/src/components/measurements/measurement-cards.tsx:107:5 lint/complexity/noUselessFragments  FIXABLE  ━━━━━━━━━━
+
+  i This fragment is unnecessary.
+  
+    105 │     return null;
+    106 │   return (
+  > 107 │     <>
+        │     ^^
+  > 108 │       <Sheet
+         ...
+  > 135 │       </Sheet>
+  > 136 │     </>
+        │     ^^^
+    137 │   );
+    138 │ }
+  
+  i A fragment is redundant if it contains only one child, or if it is the child of a html element, and is not a keyed fragment.
+  
+  i Unsafe fix: Remove the Fragment
+  
+    105 105 │       return null;
+    106 106 │     return (
+    107     │ - ····<>
+    108     │ - ······<Sheet
+        107 │ + ····<Sheet
+    109 108 │           open={open}
+    110 109 │           onOpenChange={(next) => {
+    ······· │ 
+    133 132 │             ) : null}
+    134 133 │           </SheetContent>
+    135     │ - ······</Sheet>
+    136     │ - ····</>
+        134 │ + ······</Sheet>
+    137 135 │     );
+    138 136 │   }
+  
+
+packages/application/scripts/domain-import-http-checks.mjs:132:20 lint/style/useTemplate  FIXABLE  ━━━━━━━━━━
+
+  i Template literals are preferred over string concatenation.
+  
+    130 │     await post(`${prefix}/recover`, {
+    131 │       ...recovery,
+  > 132 │       requestHash: "v1:" + "0".repeat(64),
+        │                    ^^^^^^^^^^^^^^^^^^^^^^
+    133 │     }),
+    134 │     403,
+  
+  i Template literals are easier to read than a chain of + operators and quotes, and they avoid mistakes with spaces and escaped quotes.
+  
+  i Unsafe fix: Use a template literal.
+  
+    130 130 │       await post(`${prefix}/recover`, {
+    131 131 │         ...recovery,
+    132     │ - ······requestHash:·"v1:"·+·"0".repeat(64),
+        132 │ + ······requestHash:·`v1:${"0".repeat(64)}`,
+    133 133 │       }),
+    134 134 │       403,
+  
+
+packages/application/scripts/domain-import-http-checks.mjs:139:47 lint/style/useTemplate  FIXABLE  ━━━━━━━━━━
+
+  i Template literals are preferred over string concatenation.
+  
+    137 │     await post(
+    138 │       `${prefix}/customers/commands/preview`,
+  > 139 │       invoke({ ...request.payload, namespace: ns + "-limited" }),
+        │                                               ^^^^^^^^^^^^^^^
+    140 │     ),
+    141 │     429,
+  
+  i Template literals are easier to read than a chain of + operators and quotes, and they avoid mistakes with spaces and escaped quotes.
+  
+  i Unsafe fix: Use a template literal.
+  
+    137 137 │       await post(
+    138 138 │         `${prefix}/customers/commands/preview`,
+    139     │ - ······invoke({·...request.payload,·namespace:·ns·+·"-limited"·}),
+        139 │ + ······invoke({·...request.payload,·namespace:·`${ns}-limited`·}),
+    140 140 │       ),
+    141 141 │       429,
+  
+
+packages/application/scripts/domain-import-http-checks.mjs:166:36 lint/style/useTemplate  FIXABLE  ━━━━━━━━━━
+
+  i Template literals are preferred over string concatenation.
+  
+    164 │     401,
+    165 │   );
+  > 166 │   const deniedOrigin = await fetch(base + prefix + "/customers/status", {
+        │                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    167 │     method: "POST",
+    168 │     headers: {
+  
+  i Template literals are easier to read than a chain of + operators and quotes, and they avoid mistakes with spaces and escaped quotes.
+  
+  i Unsafe fix: Use a template literal.
+  
+    164 164 │       401,
+    165 165 │     );
+    166     │ - ··const·deniedOrigin·=·await·fetch(base·+·prefix·+·"/customers/status",·{
+        166 │ + ··const·deniedOrigin·=·await·fetch(`${base·+·prefix}/customers/status`,·{
+    167 167 │       method: "POST",
+    168 168 │       headers: {
+  
+
+packages/application/scripts/domain-import-http-checks.mjs:195:24 lint/style/useTemplate  FIXABLE  ━━━━━━━━━━
+
+  i Template literals are preferred over string concatenation.
+  
+    193 │       )
+    194 │     ).rows[0].n;
+  > 195 │   const quote = (v) => '"' + String(v).replaceAll('"', '""') + '"',
+        │                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    196 │     text =
+    197 │       c.importCustomerColumns.join(",") +
+  
+  i Template literals are easier to read than a chain of + operators and quotes, and they avoid mistakes with spaces and escaped quotes.
+  
+  i Unsafe fix: Use a template literal.
+  
+    193 193 │         )
+    194 194 │       ).rows[0].n;
+    195     │ - ··const·quote·=·(v)·=>·'"'·+·String(v).replaceAll('"',·'""')·+·'"',
+        195 │ + ··const·quote·=·(v)·=>·`"${String(v).replaceAll('"',·'""')}"`,
+    196 196 │       text =
+    197 197 │         c.importCustomerColumns.join(",") +
+  
+
+packages/application/scripts/domain-import-http-checks.mjs:201:11 lint/style/useTemplate  FIXABLE  ━━━━━━━━━━
+
+  i Template literals are preferred over string concatenation.
+  
+    199 │       Array.from({ length: 200 }, (_, i) =>
+    200 │         [
+  > 201 │           "full_" + i,
+        │           ^^^^^^^^^^^
+    202 │           "HTTP bulk " + i,
+    203 │           "IN",
+  
+  i Template literals are easier to read than a chain of + operators and quotes, and they avoid mistakes with spaces and escaped quotes.
+  
+  i Unsafe fix: Use a template literal.
+  
+    199 199 │         Array.from({ length: 200 }, (_, i) =>
+    200 200 │           [
+    201     │ - ··········"full_"·+·i,
+        201 │ + ··········`full_${i}`,
+    202 202 │             "HTTP bulk " + i,
+    203 203 │             "IN",
+  
+
+packages/application/scripts/domain-import-http-checks.mjs:202:11 lint/style/useTemplate  FIXABLE  ━━━━━━━━━━
+
+  i Template literals are preferred over string concatenation.
+  
+    200 │         [
+    201 │           "full_" + i,
+  > 202 │           "HTTP bulk " + i,
+        │           ^^^^^^^^^^^^^^^^
+    203 │           "IN",
+    204 │           "98765" + String(40000 + i),
+  
+  i Template literals are easier to read than a chain of + operators and quotes, and they avoid mistakes with spaces and escaped quotes.
+  
+  i Unsafe fix: Use a template literal.
+  
+    200 200 │           [
+    201 201 │             "full_" + i,
+    202     │ - ··········"HTTP·bulk·"·+·i,
+        202 │ + ··········`HTTP·bulk·${i}`,
+    203 203 │             "IN",
+    204 204 │             "98765" + String(40000 + i),
+  
+
+packages/application/scripts/domain-import-http-checks.mjs:204:11 lint/style/useTemplate  FIXABLE  ━━━━━━━━━━
+
+  i Template literals are preferred over string concatenation.
+  
+    202 │           "HTTP bulk " + i,
+    203 │           "IN",
+  > 204 │           "98765" + String(40000 + i),
+        │           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    205 │           "",
+    206 │           "",
+  
+  i Template literals are easier to read than a chain of + operators and quotes, and they avoid mistakes with spaces and escaped quotes.
+  
+  i Unsafe fix: Use a template literal.
+  
+    202 202 │             "HTTP bulk " + i,
+    203 203 │             "IN",
+    204     │ - ··········"98765"·+·String(40000·+·i),
+        204 │ + ··········`98765${String(40000·+·i)}`,
+    205 205 │             "",
+    206 206 │             "",
+  
+
+packages/application/scripts/domain-import-http-checks.mjs:218:29 lint/style/useTemplate  FIXABLE  ━━━━━━━━━━
+
+  i Template literals are preferred over string concatenation.
+  
+    216 │       await post(
+    217 │         `${prefix}/customers/commands/preview`,
+  > 218 │         invoke({ namespace: ns + "-bulk", csv: text, bindings: [] }),
+        │                             ^^^^^^^^^^^^
+    219 │       ),
+    220 │       200,
+  
+  i Template literals are easier to read than a chain of + operators and quotes, and they avoid mistakes with spaces and escaped quotes.
+  
+  i Unsafe fix: Use a template literal.
+  
+    216 216 │         await post(
+    217 217 │           `${prefix}/customers/commands/preview`,
+    218     │ - ········invoke({·namespace:·ns·+·"-bulk",·csv:·text,·bindings:·[]·}),
+        218 │ + ········invoke({·namespace:·`${ns}-bulk`,·csv:·text,·bindings:·[]·}),
+    219 219 │         ),
+    220 220 │         200,
+  
+
+packages/application/scripts/domain-import-http-checks.mjs:365:7 lint/style/useTemplate  FIXABLE  ━━━━━━━━━━
+
+  i Template literals are preferred over string concatenation.
+  
+    363 │     assert.equal(row.items[0].counts.versions, 1);
+    364 │     const page = await fetch(
+  > 365 │       base + workspacePath.replace("/api", "") + "/measurements/import",
+        │       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    366 │       { headers: { cookie } },
+    367 │     );
+  
+  i Template literals are easier to read than a chain of + operators and quotes, and they avoid mistakes with spaces and escaped quotes.
+  
+  i Unsafe fix: Use a template literal.
+  
+    363 363 │       assert.equal(row.items[0].counts.versions, 1);
+    364 364 │       const page = await fetch(
+    365     │ - ······base·+·workspacePath.replace("/api",·"")·+·"/measurements/import",
+        365 │ + ······`${base·+·workspacePath.replace("/api",·"")}/measurements/import`,
+    366 366 │         { headers: { cookie } },
+    367 367 │       );
+  
+
+packages/application/scripts/domain-import-ui-checks.mjs:33:21 lint/style/useTemplate  FIXABLE  ━━━━━━━━━━
+
+  i Template literals are preferred over string concatenation.
+  
+    31 │       "Revoked preview stayed visible",
+    32 │     );
+  > 33 │     await page.goto(root + "/customers");
+       │                     ^^^^^^^^^^^^^^^^^^^
+    34 │     return { importDeniedPassed: true };
+    35 │   }
+  
+  i Template literals are easier to read than a chain of + operators and quotes, and they avoid mistakes with spaces and escaped quotes.
+  
+  i Unsafe fix: Use a template literal.
+  
+     31  31 │         "Revoked preview stayed visible",
+     32  32 │       );
+     33     │ - ····await·page.goto(root·+·"/customers");
+         33 │ + ····await·page.goto(`${root}/customers`);
+     34  34 │       return { importDeniedPassed: true };
+     35  35 │     }
+  
+
+packages/application/scripts/domain-import-ui-checks.mjs:190:19 lint/style/useTemplate  FIXABLE  ━━━━━━━━━━
+
+  i Template literals are preferred over string concatenation.
+  
+    188 │   };
+    189 │   // The shared leave guard must preserve a selected private file when exit is cancelled.
+  > 190 │   await page.goto(root + "/customers/import");
+        │                   ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    191 │   await page
+    192 │     .getByLabel("Source namespace", { exact: true })
+  
+  i Template literals are easier to read than a chain of + operators and quotes, and they avoid mistakes with spaces and escaped quotes.
+  
+  i Unsafe fix: Use a template literal.
+  
+    188 188 │     };
+    189 189 │     // The shared leave guard must preserve a selected private file when exit is cancelled.
+    190     │ - ··await·page.goto(root·+·"/customers/import");
+        190 │ + ··await·page.goto(`${root}/customers/import`);
+    191 191 │     await page
+    192 192 │       .getByLabel("Source namespace", { exact: true })
+  
+
+packages/application/scripts/domain-import-ui-checks.mjs:366:19 lint/style/useTemplate  FIXABLE  ━━━━━━━━━━
+
+  i Template literals are preferred over string concatenation.
+  
+    364 │   );
+    365 │   // A separate cancelled batch preserves its one committed success.
+  > 366 │   await page.goto(root + "/customers/import");
+        │                   ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    367 │   await page
+    368 │     .getByLabel("Source namespace", { exact: true })
+  
+  i Template literals are easier to read than a chain of + operators and quotes, and they avoid mistakes with spaces and escaped quotes.
+  
+  i Unsafe fix: Use a template literal.
+  
+    364 364 │     );
+    365 365 │     // A separate cancelled batch preserves its one committed success.
+    366     │ - ··await·page.goto(root·+·"/customers/import");
+        366 │ + ··await·page.goto(`${root}/customers/import`);
+    367 367 │     await page
+    368 368 │       .getByLabel("Source namespace", { exact: true })
+  
+
+packages/application/scripts/domain-import-ui-checks.mjs:369:11 lint/style/useTemplate  FIXABLE  ━━━━━━━━━━
+
+  i Template literals are preferred over string concatenation.
+  
+    367 │   await page
+    368 │     .getByLabel("Source namespace", { exact: true })
+  > 369 │     .fill(namespace + "-cancel");
+        │           ^^^^^^^^^^^^^^^^^^^^^
+    370 │   await page
+    371 │     .getByLabel("CSV file", { exact: true })
+  
+  i Template literals are easier to read than a chain of + operators and quotes, and they avoid mistakes with spaces and escaped quotes.
+  
+  i Unsafe fix: Use a template literal.
+  
+    367 367 │     await page
+    368 368 │       .getByLabel("Source namespace", { exact: true })
+    369     │ - ····.fill(namespace·+·"-cancel");
+        369 │ + ····.fill(`${namespace}-cancel`);
+    370 370 │     await page
+    371 371 │       .getByLabel("CSV file", { exact: true })
+  
+
+packages/application/scripts/domain-import-ui-checks.mjs:413:19 lint/style/useTemplate  FIXABLE  ━━━━━━━━━━
+
+  i Template literals are preferred over string concatenation.
+  
+    411 │   await capture("customer-import-cancelled");
+    412 │   // Leave another reviewed preview open for a real permission revocation check.
+  > 413 │   await page.goto(root + "/customers/import");
+        │                   ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    414 │   await page
+    415 │     .getByLabel("Source namespace", { exact: true })
+  
+  i Template literals are easier to read than a chain of + operators and quotes, and they avoid mistakes with spaces and escaped quotes.
+  
+  i Unsafe fix: Use a template literal.
+  
+    411 411 │     await capture("customer-import-cancelled");
+    412 412 │     // Leave another reviewed preview open for a real permission revocation check.
+    413     │ - ··await·page.goto(root·+·"/customers/import");
+        413 │ + ··await·page.goto(`${root}/customers/import`);
+    414 414 │     await page
+    415 415 │       .getByLabel("Source namespace", { exact: true })
+  
+
+packages/application/scripts/domain-import-ui-checks.mjs:416:11 lint/style/useTemplate  FIXABLE  ━━━━━━━━━━
+
+  i Template literals are preferred over string concatenation.
+  
+    414 │   await page
+    415 │     .getByLabel("Source namespace", { exact: true })
+  > 416 │     .fill(namespace + "-revoke");
+        │           ^^^^^^^^^^^^^^^^^^^^^
+    417 │   await page
+    418 │     .getByLabel("CSV file", { exact: true })
+  
+  i Template literals are easier to read than a chain of + operators and quotes, and they avoid mistakes with spaces and escaped quotes.
+  
+  i Unsafe fix: Use a template literal.
+  
+    414 414 │     await page
+    415 415 │       .getByLabel("Source namespace", { exact: true })
+    416     │ - ····.fill(namespace·+·"-revoke");
+        416 │ + ····.fill(`${namespace}-revoke`);
+    417 417 │     await page
+    418 418 │       .getByLabel("CSV file", { exact: true })
+  
+
+packages/application/scripts/generate-import-artifacts.mjs:21:5 lint/style/useTemplate  FIXABLE  ━━━━━━━━━━
+
+  i Template literals are preferred over string concatenation.
+  
+    19 │   await writeFile(
+    20 │     new URL(`${name}.schema.json`, directory),
+  > 21 │     JSON.stringify(schema, null, 2) + "\n",
+       │     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    22 │   );
+    23 │ await writeFile(
+  
+  i Template literals are easier to read than a chain of + operators and quotes, and they avoid mistakes with spaces and escaped quotes.
+  
+  i Unsafe fix: Use a template literal.
+  
+    19 19 │     await writeFile(
+    20 20 │       new URL(`${name}.schema.json`, directory),
+    21    │ - ····JSON.stringify(schema,·null,·2)·+·"\n",
+       21 │ + ····`${JSON.stringify(schema,·null,·2)}\n`,
+    22 22 │     );
+    23 23 │   await writeFile(
+  
+
+packages/application/scripts/generate-import-artifacts.mjs:25:3 lint/style/useTemplate  FIXABLE  ━━━━━━━━━━
+
+  i Template literals are preferred over string concatenation.
+  
+    23 │ await writeFile(
+    24 │   new URL("body-core-v1.manifest.json", directory),
+  > 25 │   JSON.stringify(manifest, null, 2) + "\n",
+       │   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    26 │ );
+    27 │ await writeFile(
+  
+  i Template literals are easier to read than a chain of + operators and quotes, and they avoid mistakes with spaces and escaped quotes.
+  
+  i Unsafe fix: Use a template literal.
+  
+    23 23 │   await writeFile(
+    24 24 │     new URL("body-core-v1.manifest.json", directory),
+    25    │ - ··JSON.stringify(manifest,·null,·2)·+·"\n",
+       25 │ + ··`${JSON.stringify(manifest,·null,·2)}\n`,
+    26 26 │   );
+    27 27 │   await writeFile(
+  
+
+packages/application/scripts/master-ui-checks.mjs:83:5 lint/style/useTemplate  FIXABLE  ━━━━━━━━━━━━
+
+  i Template literals are preferred over string concatenation.
+  
+    81 │   );
+    82 │   const csv = (rows) =>
+  > 83 │     rows
+       │     ^^^^
+  > 84 │       .map((row) =>
+        ...
+  > 88 │       )
+  > 89 │       .join("\r\n") + "\r\n";
+       │       ^^^^^^^^^^^^^^^^^^^^^^
+    90 │   const customerRow = [
+    91 │     "ui_contact",
+  
+  i Template literals are easier to read than a chain of + operators and quotes, and they avoid mistakes with spaces and escaped quotes.
+  
+  i Unsafe fix: Use a template literal.
+  
+     81  81 │     );
+     82  82 │     const csv = (rows) =>
+     83     │ - ····rows
+         83 │ + ····`${rows
+     84  84 │         .map((row) =>
+     85  85 │           row
+    ······· │ 
+     87  87 │             .join(","),
+     88  88 │         )
+     89     │ - ······.join("\r\n")·+·"\r\n";
+         89 │ + ······.join("\r\n")}\r\n`;
+     90  90 │     const customerRow = [
+     91  91 │       "ui_contact",
+  
+
+packages/application/scripts/master-ui-checks.mjs:86:27 lint/style/useTemplate  FIXABLE  ━━━━━━━━━━━
+
+  i Template literals are preferred over string concatenation.
+  
+    84 │       .map((row) =>
+    85 │         row
+  > 86 │           .map((value) => '"' + String(value).replaceAll('"', '""') + '"')
+       │                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    87 │           .join(","),
+    88 │       )
+  
+  i Template literals are easier to read than a chain of + operators and quotes, and they avoid mistakes with spaces and escaped quotes.
+  
+  i Unsafe fix: Use a template literal.
+  
+     84  84 │         .map((row) =>
+     85  85 │           row
+     86     │ - ··········.map((value)·=>·'"'·+·String(value).replaceAll('"',·'""')·+·'"')
+         86 │ + ··········.map((value)·=>·`"${String(value).replaceAll('"',·'""')}"`)
+     87  87 │             .join(","),
+     88  88 │         )
+  
+
+The number of diagnostics exceeds the limit allowed. Use --max-diagnostics to increase it.
+Diagnostics not shown: 17.
+Checked 326 files in 942ms. No fixes applied.
+Found 37 infos.
+$ turbo run typecheck
+
+   • turbo 2.11.10
+   • Packages in scope: @fitloom/application, @fitloom/db, @fitloom/web, @fitloom/worker
+   • Running typecheck in 4 packages
+   • Remote caching disabled
+
+@fitloom/db:typecheck: cache miss, executing e12c5d13709ccfc7
+@fitloom/db:build: cache miss, executing a0a323169f2f21c3
+@fitloom/db:build: $ tsc
+@fitloom/db:typecheck: $ tsc --noEmit
+@fitloom/application:build: cache miss, executing bcfb1e4499aab265
+@fitloom/application:typecheck: cache miss, executing ff0b3981dfb8b438
+@fitloom/application:build: $ tsc
+@fitloom/application:typecheck: $ tsc --noEmit
+@fitloom/worker:typecheck: cache miss, executing 38fe4fbd0014af28
+@fitloom/web:typecheck: cache miss, executing f9a7cce52da117af
+@fitloom/web:typecheck: $ next typegen && tsc --noEmit
+@fitloom/worker:typecheck: $ tsc --noEmit
+@fitloom/web:typecheck: Generating route types...
+@fitloom/web:typecheck: ✓ Types generated successfully
+
+ Tasks:    6 successful, 6 total
+Cached:    0 cached, 6 total
+  Time:    24.708s 
+
+$ turbo run build
+
+   • turbo 2.11.10
+   • Packages in scope: @fitloom/application, @fitloom/db, @fitloom/web, @fitloom/worker
+   • Running build in 4 packages
+   • Remote caching disabled
+
+@fitloom/db:build: cache hit, replaying logs a0a323169f2f21c3
+@fitloom/db:build: $ tsc
+@fitloom/application:build: cache hit, replaying logs bcfb1e4499aab265
+@fitloom/application:build: $ tsc
+@fitloom/web:build: cache miss, executing 563cabd8e5df33d3
+@fitloom/worker:build: cache miss, executing fd9eb315526ff326
+@fitloom/worker:build: $ tsc
+@fitloom/web:build: $ next build
+@fitloom/web:build: ▲ Next.js 16.4.3 (Turbopack)
+@fitloom/web:build: ✓ Running next.config.ts took 96ms
+@fitloom/web:build: 
+@fitloom/web:build:   Creating an optimized production build ...
+@fitloom/web:build: ✓ Compiled successfully in 27.8s
+@fitloom/web:build:   Running TypeScript ...
+@fitloom/web:build: ✓ Finished writing to filesystem cache in 11.4s
+@fitloom/web:build:   Finished TypeScript in 16.2s ...
+@fitloom/web:build:   Collecting page data using 4 workers ...
+@fitloom/web:build:   Generating static pages using 4 workers (0/12) ...
+@fitloom/web:build:   Generating static pages using 4 workers (3/12) 
+@fitloom/web:build:   Generating static pages using 4 workers (6/12) 
+@fitloom/web:build:   Generating static pages using 4 workers (9/12) 
+@fitloom/web:build: ✓ Generating static pages using 4 workers (12/12) in 363ms
+@fitloom/web:build:   Finalizing page optimization ...
+@fitloom/web:build: 
+@fitloom/web:build: Route (app)
+@fitloom/web:build: ┌ ○ /
+@fitloom/web:build: ├ ○ /_not-found
+@fitloom/web:build: ├ ƒ /account
+@fitloom/web:build: ├ ƒ /account/reset
+@fitloom/web:build: ├ ƒ /api/auth/[...all]
+@fitloom/web:build: ├ ƒ /api/invitations/[id]
+@fitloom/web:build: ├ ƒ /api/measurement-cards/[id]/[[...path]]
+@fitloom/web:build: ├ ƒ /api/operator/commands
+@fitloom/web:build: ├ ƒ /api/operator/jobs
+@fitloom/web:build: ├ ƒ /api/operator/session
+@fitloom/web:build: ├ ƒ /api/operator/status
+@fitloom/web:build: ├ ƒ /api/operator/tenants
+@fitloom/web:build: ├ ƒ /api/preferences
+@fitloom/web:build: ├ ƒ /api/providers/fixture-v1
+@fitloom/web:build: ├ ƒ /api/session
+@fitloom/web:build: ├ ƒ /api/setup
+@fitloom/web:build: ├ ƒ /api/setup/begin
+@fitloom/web:build: ├ ƒ /api/setup/provision
+@fitloom/web:build: ├ ƒ /api/workspaces
+@fitloom/web:build: ├ ƒ /api/workspaces/[tenant]/[location]
+@fitloom/web:build: ├ ƒ /api/workspaces/[tenant]/[location]/actions/[action]
+@fitloom/web:build: ├ ƒ /api/workspaces/[tenant]/[location]/customers/[[...path]]
+@fitloom/web:build: ├ ƒ /api/workspaces/[tenant]/[location]/customers/photos/[[...photoPath]]
+@fitloom/web:build: ├ ƒ /api/workspaces/[tenant]/[location]/files
+@fitloom/web:build: ├ ƒ /api/workspaces/[tenant]/[location]/files/[id]
+@fitloom/web:build: ├ ƒ /api/workspaces/[tenant]/[location]/imports/[[...path]]
+@fitloom/web:build: ├ ƒ /api/workspaces/[tenant]/[location]/jobs
+@fitloom/web:build: ├ ƒ /api/workspaces/[tenant]/[location]/masters/[[...path]]
+@fitloom/web:build: ├ ƒ /api/workspaces/[tenant]/[location]/measurements/[[...path]]
+@fitloom/web:build: ├ ƒ /api/workspaces/[tenant]/[location]/team
+@fitloom/web:build: ├ ƒ /api/workspaces/switch
+@fitloom/web:build: ├ ƒ /invitations/[id]
+@fitloom/web:build: ├ ƒ /measurement-cards/[id]
+@fitloom/web:build: ├ ƒ /setup
+@fitloom/web:build: ├ ƒ /workspaces
+@fitloom/web:build: ├ ƒ /workspaces/[tenant]/[location]
+@fitloom/web:build: ├ ƒ /workspaces/[tenant]/[location]/customers
+@fitloom/web:build: ├ ƒ /workspaces/[tenant]/[location]/customers/[customerId]
+@fitloom/web:build: ├ ƒ /workspaces/[tenant]/[location]/customers/[customerId]/edit
+@fitloom/web:build: ├ ƒ /workspaces/[tenant]/[location]/customers/[customerId]/wearers/[wearerId]/measurements
+@fitloom/web:build: ├ ƒ /workspaces/[tenant]/[location]/customers/[customerId]/wearers/[wearerId]/measurements/[profileId]
+@fitloom/web:build: ├ ƒ /workspaces/[tenant]/[location]/customers/[customerId]/wearers/[wearerId]/measurements/[profileId]/edit
+@fitloom/web:build: ├ ƒ /workspaces/[tenant]/[location]/customers/[customerId]/wearers/[wearerId]/measurements/[profileId]/versions/[versionId]
+@fitloom/web:build: ├ ƒ /workspaces/[tenant]/[location]/customers/[customerId]/wearers/[wearerId]/measurements/[profileId]/versions/[versionId]/copy
+@fitloom/web:build: ├ ƒ /workspaces/[tenant]/[location]/customers/[customerId]/wearers/[wearerId]/measurements/compare
+@fitloom/web:build: ├ ƒ /workspaces/[tenant]/[location]/customers/[customerId]/wearers/[wearerId]/measurements/new
+@fitloom/web:build: ├ ƒ /workspaces/[tenant]/[location]/customers/import
+@fitloom/web:build: ├ ƒ /workspaces/[tenant]/[location]/customers/new
+@fitloom/web:build: ├ ƒ /workspaces/[tenant]/[location]/files
+@fitloom/web:build: ├ ƒ /workspaces/[tenant]/[location]/measurements/import
+@fitloom/web:build: ├ ƒ /workspaces/[tenant]/[location]/settings
+@fitloom/web:build: ├ ƒ /workspaces/[tenant]/[location]/settings/access
+@fitloom/web:build: ├ ƒ /workspaces/[tenant]/[location]/settings/garments
+@fitloom/web:build: └ ƒ /workspaces/[tenant]/[location]/settings/shop
+@fitloom/web:build: 
+@fitloom/web:build: 
+@fitloom/web:build: ○  (Static)   prerendered as static content
+@fitloom/web:build: ƒ  (Dynamic)  server-rendered on demand
+@fitloom/web:build: 
+
+ Tasks:    4 successful, 4 total
+Cached:    2 cached, 4 total
+  Time:    50.775s 
+
+$ node --env-file-if-exists=../db/.env scripts/web-smoke.mjs && node --env-file-if-exists=../db/.env scripts/master-transport-check.mjs
+../db/.env not found. Continuing without it.
+Worker receipt recovered 2440 ms after restart.
+Customer directory/navigation HTTP passed: >500 rows, bounded page/count, literal wildcards, AND tags, current target permissions and switch allowlist.
+Customer HTTP protocol passed: maximal Unicode save (47737 bytes), replay, typed duplicate review, private POST search, 400/401/413.
+Master HTTP checks passed: scoped registers, starter replay, immutable archived history, lifecycle/catalog tokens, conflicts, revoked write dependencies, price-free current/exact/history projections, and request bounds.
+Measurement photo HTTP passed: reserved upload, normalized private bytes, atomic replay, distinct purpose, restricted DTO/SSR, media-free analysis/capture and archived privacy revocation.
+Measurement card HTTP passed: actual PNG decode/resolution, fixed one-field projection, current reader/issuer scope, allowlisted sign-in return, uniform unavailable responses, private 429/Retry-After headers and archive/restore non-reactivation.
+Measurement HTTP passed: explicit wearer, price-free measuring-only intake, 52 profiles/versions with continuation, exact history, strict origin/query/body ownership, current permissions and archived entry denial.
+Supported import HTTP passed: full 200-row private preview above the interactive body limit, no business dry-run writes, typed decisions, atomic groups, canonical source maps, current format-specific permissions, read-only recovery after expiry/quota/lease, private downloads and 400/401/403/404/413/429 bounds.
+Worker drain observed: 47 ms; stopped telemetry became stale and recovered 2671 ms after restart.
+HTTP smoke passed: account SSR → registration → mail worker → Mailpit → verify → sign in → protected projection → resumable setup → shop provisioning → workspace SSR → direct-route authorization → logout. Operator default access denied. Signed provider receipts survive a real worker restart with one local effect; protected job projections pass. Private SeaweedFS upload/attach/download, current-authority denial, retirement, workspace UI, and operator-route denial pass. Actual TOTP operator routes pass lookup, replay, suspend/restore, recovery, job retry, and session revocation. Protected telemetry, stale-worker recovery, bounded pages, database failure, and storage failure return truthful outcomes.
+../db/.env not found. Continuing without it.
+Master/import body limits return stable 413 responses and slow streams return 408

@@ -8,8 +8,10 @@ import sharp from "sharp";
 import { signFixture } from "../dist/index.js";
 import { totp } from "../test/auth-helpers.mjs";
 import { customerHttpChecks } from "./customer-http-checks.mjs";
+import { domainImportHttpChecks } from "./domain-import-http-checks.mjs";
 import { masterHttpChecks } from "./master-http-checks.mjs";
 import { masterUiChecks } from "./master-ui-checks.mjs";
+import { measurementHttpChecks } from "./measurement-http-checks.mjs";
 import { workspaceHomeHttpChecks } from "./workspace-home-http-checks.mjs";
 
 const root = new URL("../../../", import.meta.url),
@@ -88,6 +90,55 @@ const startWorker = () =>
     },
   );
 let worker = startWorker();
+// Inspect only the safe observer envelope; never retain or print raw server output.
+const observedAdapters = new Set();
+let observationBuffer = "";
+web.stdout.on("data", (chunk) => {
+  observationBuffer += chunk.toString();
+  const lines = observationBuffer.split("\n");
+  observationBuffer = lines.pop() ?? "";
+  for (const line of lines) {
+    let event;
+    try {
+      event = JSON.parse(line);
+    } catch {
+      continue;
+    }
+    if (
+      ["command_finished", "command_failed"].includes(event.event) &&
+      [
+        "fitloom-customer-photos",
+        "fitloom-measurement-photos",
+        "fitloom-measurement-cards",
+      ].includes(event.name)
+    ) {
+      const allowed = new Set([
+        "level",
+        "time",
+        "pid",
+        "hostname",
+        "name",
+        "msg",
+        "event",
+        "correlationId",
+        "operationId",
+        "jobId",
+        "tenantId",
+        "locationId",
+        "kind",
+        "attempt",
+        "elapsedMs",
+        "outcome",
+        "errorCategory",
+      ]);
+      assert.ok(
+        Object.keys(event).every((key) => allowed.has(key)),
+        "Command observer emitted private or unexpected fields",
+      );
+      observedAdapters.add(event.name);
+    }
+  }
+});
 // Keep server output private: these checks report statuses without request/token details.
 for (const child of [web, worker]) {
   child.stdout.resume();
@@ -380,6 +431,14 @@ try {
     admin,
   });
   await masterHttpChecks({ base, workspacePath, api, cookie, admin, tenant });
+  const measurements = await measurementHttpChecks({
+    base,
+    workspacePath,
+    api,
+    cookie,
+    admin,
+    tenant,
+  });
   await workspaceHomeHttpChecks({ base, workspacePath, cookie });
   if (process.env.MASTER_UI_CHECKS === "1")
     await masterUiChecks({
@@ -391,7 +450,10 @@ try {
       tenant,
       location: choice.locationId,
       customers,
+      measurements,
+      account: { email, password },
     });
+  await domainImportHttpChecks({ base, workspacePath, cookie, admin, tenant });
   const settingsPage = await fetch(
     `${base}/workspaces/${tenant}/${choice.locationId}/settings/garments`,
     { headers: { cookie } },
@@ -872,6 +934,20 @@ try {
     (await fetch(`${base}/api/session`, { headers: { cookie } })).status,
     401,
   );
+  for (const name of [
+    "fitloom-measurement-photos",
+    "fitloom-measurement-cards",
+    ...(process.env.MASTER_UI_CHECKS === "1" &&
+    process.env.MEASUREMENT_UI_ONLY !== "1" &&
+    process.env.IMPORT_UI_ONLY !== "1"
+      ? ["fitloom-customer-photos"]
+      : []),
+  ]) {
+    assert.ok(
+      observedAdapters.has(name),
+      `Missing safe command diagnostics from ${name}`,
+    );
+  }
   console.log(
     "HTTP smoke passed: account SSR → registration → mail worker → Mailpit → verify → sign in → protected projection → resumable setup → shop provisioning → workspace SSR → direct-route authorization → logout. Operator default access denied. Signed provider receipts survive a real worker restart with one local effect; protected job projections pass. Private SeaweedFS upload/attach/download, current-authority denial, retirement, workspace UI, and operator-route denial pass. Actual TOTP operator routes pass lookup, replay, suspend/restore, recovery, job retry, and session revocation. Protected telemetry, stale-worker recovery, bounded pages, database failure, and storage failure return truthful outcomes.",
   );

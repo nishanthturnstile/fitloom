@@ -57,6 +57,7 @@ function tailnet() {
 }
 function prepare() {
   mkdirSync(directory, { recursive: true, mode: 0o700 });
+  chmodSync(directory, 0o700);
   const savedPath = resolve(root, "packages/db/.env");
   const saved = existsSync(savedPath)
     ? parseEnv(readFileSync(savedPath, "utf8"))
@@ -177,6 +178,9 @@ function prepare() {
       ],
     }),
   );
+  // Linux file-backed secrets retain host permissions after SeaweedFS drops UID.
+  // The private parent directory prevents other host users from reading this file.
+  chmodSync(resolve(directory, "seaweed-s3.json"), 0o644);
   envFile("storage-init.env", {
     STORAGE_ENDPOINT: "http://seaweedfs:24453",
     STORAGE_ACCESS_KEY: saved.STORAGE_ADMIN_ACCESS_KEY,

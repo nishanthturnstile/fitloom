@@ -13,6 +13,7 @@ import {
 } from "./commands.js";
 import * as c from "./customer-contracts.js";
 import { canonicalCustomerPhone } from "./customer-phone.js";
+import { databaseValue as value } from "./database-value.js";
 import { CommandError, sqlState } from "./errors.js";
 import type { Observe } from "./operations.js";
 import { workspaceTarget } from "./workspace-contracts.js";
@@ -151,16 +152,6 @@ export function customerDatabaseError(error: unknown): CustomerError {
       error.message,
     );
   return new CustomerError("temporary", "Customers unavailable. Try again.");
-}
-async function value<T extends z.ZodType>(
-  db: TransactionDatabase,
-  query: ReturnType<typeof sql>,
-  schema: T,
-): Promise<z.infer<T>> {
-  const result = z
-    .object({ rows: z.array(z.object({ value: z.unknown() })).length(1) })
-    .parse(await db.execute(query));
-  return schema.parse(result.rows[0]?.value);
 }
 function definition(
   name: z.infer<typeof c.customerCommandName>,

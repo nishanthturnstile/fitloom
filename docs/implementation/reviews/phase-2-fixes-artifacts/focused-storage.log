@@ -1,0 +1,16 @@
+▶ phase two review transactional corrections
+  ✔ retained mapped provenance is a no-op until content changes (515.296423ms)
+  ✔ one-connection preview, replay and admission limits remain usable (319.511814ms)
+  ✔ outcome export returns every group and matching counts in one stable statement (207.251153ms)
+  ✔ imported provenance can be retained without allowing forged imports (565.707626ms)
+  ✔ SQL preserves canonical bounds and explicit select omission (44.070859ms)
+  ✔ hidden standard garments are excluded from fresh selection but retained in history filters (490.707581ms)
+✔ phase two review transactional corrections (2550.776629ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 7
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 5489.360116

@@ -57,6 +57,7 @@ try {
       if (Date.now() >= customerMaintenanceAt) {
         customerMaintenanceAt = Date.now() + 60000;
         await pool.query("SELECT app.customer_maintenance()");
+        await pool.query("SELECT app.domain_import_maintenance()");
       }
       const results = await Promise.allSettled([
         deliverAuthMail({

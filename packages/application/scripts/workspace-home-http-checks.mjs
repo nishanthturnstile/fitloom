@@ -28,6 +28,8 @@ export async function workspaceHomeHttpChecks({ base, workspacePath, cookie }) {
       new RegExp(`tabular-nums[^>]*>${total}<`),
     );
   }
-  assert.match(html, /Next build/);
+  assert.match(html, /Measurements for each named wearer/);
+  assert.match(html, /Find a wearer[^<]*measurements/);
+  assert.doesNotMatch(html, /Next build/);
   assert.doesNotMatch(html, /Recently edited|saved-revision aggregate/);
 }

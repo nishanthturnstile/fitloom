@@ -123,7 +123,40 @@ await test("PostgreSQL roles, migrations, and tenant isolation", async (t) => {
             "INSERT INTO app.permission_grants VALUES($1,$2,'workspace.manage'),($1,$3,'workspace.read')",
             [legacyTenant, ownerRole, managerRole],
           );
+          const throughCustomers = {
+            ...journal,
+            entries: journal.entries.slice(0, 40),
+          };
+          for (const entry of throughCustomers.entries)
+            await copyFile(
+              new URL(`../migrations/${entry.tag}.sql`, import.meta.url),
+              join(folder, `${entry.tag}.sql`),
+            );
+          await writeFile(
+            join(folder, "meta", "_journal.json"),
+            JSON.stringify(throughCustomers),
+          );
+          await migrate(drizzle(migration), { migrationsFolder: folder });
+          const unchangedRole = randomUUID(),
+            staffRole = randomUUID();
+          await migration.query(
+            "INSERT INTO app.roles(id,tenant_id,name,preset) VALUES($1,$3,'Custom',NULL),($2,$3,'Staff','staff')",
+            [unchangedRole, staffRole, legacyTenant],
+          );
+          await migration.query(
+            "INSERT INTO app.permission_grants VALUES($1,$2,'workspace.read'),($1,$3,'workspace.read')",
+            [legacyTenant, unchangedRole, staffRole],
+          );
           await migrateDatabase(url);
+          assert.deepEqual(
+            (
+              await migration.query(
+                "SELECT role_id,permission FROM app.permission_grants WHERE role_id=ANY($1::uuid[]) ORDER BY role_id",
+                [[unchangedRole, staffRole]],
+              )
+            ).rows.map((r) => r.permission),
+            ["workspace.read", "workspace.read"],
+          );
           const upgraded = (
             await migration.query(
               "SELECT permission FROM app.permission_grants WHERE role_id=$1 ORDER BY permission",
@@ -132,6 +165,7 @@ await test("PostgreSQL roles, migrations, and tenant isolation", async (t) => {
           ).rows.map((r) => r.permission);
           assert.deepEqual(upgraded, [
             "customers.archive",
+            "customers.import",
             "customers.manage",
             "customers.photos.manage",
             "customers.photos.read",
@@ -139,7 +173,15 @@ await test("PostgreSQL roles, migrations, and tenant isolation", async (t) => {
             "masters.manage",
             "masters.rates.read",
             "masters.read",
+            "measurements.archive",
+            "measurements.cards.manage",
+            "measurements.import",
+            "measurements.manage",
+            "measurements.photos.manage",
+            "measurements.photos.read",
+            "measurements.read",
             "workspace.manage",
+            "workspace.read",
           ]);
           assert.equal(
             (

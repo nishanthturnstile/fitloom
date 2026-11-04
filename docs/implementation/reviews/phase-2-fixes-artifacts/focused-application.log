@@ -1,0 +1,12 @@
+✔ master mutations preserve transient SQL states for the executor retry loop (9.317716ms)
+✔ standard garment bounds use centimetres while custom bounds retain display units (19.339875ms)
+✔ an explicitly omitted select mapping cannot fall back to the same source choice (2.055754ms)
+✔ only revisions can retain server-owned provenance (7.633945ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1685.946694

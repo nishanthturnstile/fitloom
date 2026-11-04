@@ -678,6 +678,22 @@ export function createIdentityService(dependencies: {
     }
   }
   return {
+    async admitMeasurementCardRequest(headers: Headers) {
+      const forwarded = config.proxyHeader
+        ? headers.get(config.proxyHeader)
+        : null;
+      const address = forwarded && isIP(forwarded) ? forwarded : "127.0.0.1";
+      const bucket = createHmac("sha256", config.secret)
+        .update(`network:/measurement-cards/:id:${address}`)
+        .digest("hex");
+      return (
+        boolRow.parse(
+          await database.execute(
+            sql`SELECT app.auth_admit(${bucket},60,60) AS allowed`,
+          ),
+        ).rows[0]?.allowed === true
+      );
+    },
     async handle(request: Request): Promise<Response> {
       try {
         return await handle(request);

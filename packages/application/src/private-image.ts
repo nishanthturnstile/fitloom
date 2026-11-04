@@ -8,9 +8,15 @@ import {
 import { BodyReadError, readBoundedBody } from "./body.js";
 import { CommandError } from "./errors.js";
 
+import {
+  PRIVATE_IMAGE_MAX_BYTES,
+  PRIVATE_IMAGE_MAX_PIXELS,
+  PRIVATE_IMAGE_MAX_UPLOADS,
+} from "./private-image-limits.js";
+
 let uploads = 0;
 export function claimImageUpload() {
-  if (uploads >= 2)
+  if (uploads >= PRIVATE_IMAGE_MAX_UPLOADS)
     throw new CommandError("temporary", "Uploads are busy; try again");
   uploads++;
   return () => {
@@ -23,11 +29,11 @@ export async function normalizePrivateImage(request: Request) {
     throw new CommandError("validation", "Upload a JPEG or PNG image");
   try {
     const raw = await readBoundedBody(request, {
-      maxBytes: 5 * 1024 * 1024,
+      maxBytes: PRIVATE_IMAGE_MAX_BYTES,
       timeoutMs: 15000,
     });
     const image = sharp(raw, {
-      limitInputPixels: 12_000_000,
+      limitInputPixels: PRIVATE_IMAGE_MAX_PIXELS,
       failOn: "warning",
       animated: false,
     });
@@ -43,7 +49,7 @@ export async function normalizePrivateImage(request: Request) {
       ? rotated.png()
       : rotated.jpeg({ quality: 90 })
     ).toBuffer();
-    if (!bytes.length || bytes.length > 5 * 1024 * 1024) throw Error();
+    if (!bytes.length || bytes.length > PRIVATE_IMAGE_MAX_BYTES) throw Error();
     return {
       bytes,
       mediaType: declared,

@@ -281,6 +281,76 @@
       "when": 1793682399735,
       "tag": "0039_customer_photo_stage_expiry",
       "breakpoints": true
+    },
+    {
+      "idx": 40,
+      "version": "7",
+      "when": 1793697389488,
+      "tag": "0040_measurement_storage",
+      "breakpoints": true
+    },
+    {
+      "idx": 41,
+      "version": "7",
+      "when": 1793697584217,
+      "tag": "0041_measurement_authority",
+      "breakpoints": true
+    },
+    {
+      "idx": 42,
+      "version": "7",
+      "when": 1793699452944,
+      "tag": "0042_measurement_intake_reads",
+      "breakpoints": true
+    },
+    {
+      "idx": 43,
+      "version": "7",
+      "when": 1793702408716,
+      "tag": "0043_measurement_rebase_read",
+      "breakpoints": true
+    },
+    {
+      "idx": 44,
+      "version": "7",
+      "when": 1793706192677,
+      "tag": "0044_measurement_reuse_analysis",
+      "breakpoints": true
+    },
+    {
+      "idx": 45,
+      "version": "7",
+      "when": 1793711091196,
+      "tag": "0045_measurement_private_photos",
+      "breakpoints": true
+    },
+    {
+      "idx": 46,
+      "version": "7",
+      "when": 1793714656285,
+      "tag": "0046_measurement_staff_cards",
+      "breakpoints": true
+    },
+    {
+      "idx": 47,
+      "version": "7",
+      "when": 1793718952604,
+      "tag": "0047_supported_domain_imports",
+      "breakpoints": true
+    },
+    {
+      "idx": 48,
+      "version": "7",
+      "when": 1793725712496,
+      "tag": "0048_measurement_capture_handoff",
+      "breakpoints": true
+    },
+    {
+      "idx": 49,
+      "version": "7",
+      "when": 1793759778651,
+      "tag": "0049_phase_two_review_corrections",
+      "breakpoints": true
     }
   ]
 }

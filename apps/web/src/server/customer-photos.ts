@@ -4,12 +4,19 @@ import {
   CustomerError,
   createCustomerPhotoService,
 } from "@fitloom/application";
+import { pino } from "pino";
 import { privateStore } from "./files";
 import { identityService } from "./identity";
 import { workspacePool } from "./workspaces";
+
+const logger = pino({
+  name: "fitloom-customer-photos",
+  level: process.env.LOG_LEVEL ?? "info",
+});
 export function customerPhotoService(headers: Headers) {
   return createCustomerPhotoService({
     pool: workspacePool(),
+    observe: (event) => logger.info(event, "Command observation"),
     store: privateStore(),
     resolveIdentity: async () => {
       try {

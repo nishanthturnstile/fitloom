@@ -1,0 +1,170 @@
+{
+  "date": "2026-11-03",
+  "status": "complete",
+  "baseline": "9317c14ee1fbab1c0bc027c7669e3f290c4e9d1e",
+  "head": "ed3304539481f35497b68b4c00706d5b151b1c22",
+  "sourceFiles": 255,
+  "sourceManifestSha256": "43d9d4d772964b96cfc698f7d6721cf0f1cdbe8bf7d3b77da16bd6cbadc328f7",
+  "sourceChangedDuringLocalReview": false,
+  "implementationFixesApplied": true,
+  "validation": {
+    "command": "pnpm validate",
+    "exitCode": 0,
+    "databaseTestsPassed": 12,
+    "applicationTestsPassed": 252,
+    "lintTypesBuildHttpTransportPassed": true,
+    "optionalFullChromeRerun": false,
+    "matchedRestoreRerun": false
+  },
+  "guardedDatabase": "fitloom_test",
+  "developmentDatabaseResetOrSeeded": false,
+  "reproductions": [
+    {
+      "check": "provenance",
+      "preservedOriginChanged": false,
+      "uiOriginChanged": true,
+      "sequence": 2,
+      "beforeOrigin": "mapped",
+      "afterOrigin": "manual",
+      "otherDocumentFieldsEqual": true
+    },
+    {
+      "check": "preview-pool",
+      "max": 1,
+      "result": "temporary",
+      "elapsedMs": 3057
+    },
+    {
+      "check": "outcome-pagination",
+      "exportedCounts": {
+        "pending": 30,
+        "in-progress": 0,
+        "created": 0,
+        "reused": 0,
+        "already-imported": 0,
+        "skipped": 0,
+        "needs-review": 0,
+        "failed": 0,
+        "cancelled": 0
+      },
+      "actualCounts": {
+        "pending": 29,
+        "in-progress": 0,
+        "created": 0,
+        "reused": 0,
+        "already-imported": 0,
+        "skipped": 1,
+        "needs-review": 0,
+        "failed": 0,
+        "cancelled": 0
+      }
+    }
+  ],
+  "requestHelperProbe": {
+    "state": "pending",
+    "defaultAbortSignals": [false, false]
+  },
+  "remoteArtifact": {
+    "sourceArchiveSha256": "44dbdbbb00ba5960c4de9bf0f43179667c06ad118d8346697455fd535bf3bbdd",
+    "metadataArchiveSha256": "387c2351bf953e2d8a77b38bcb47f6da090ab9edf27e92972338cb97cf00f39a",
+    "metadataBytes": 11851558,
+    "reconstructedGitPhase2PathsMatchManifest": true,
+    "deliveredAndVerified": true
+  },
+  "providerBackedOcr": {
+    "exitCode": 1,
+    "reviewedFiles": 0,
+    "error": "resolve LLM endpoint: no valid LLM endpoint configured"
+  },
+  "ocrDelegationPreflight": {
+    "previewExitCode": 0,
+    "sampleRuleExitCode": 0,
+    "sourceHashesMatched": 255,
+    "trackedPaths": 157,
+    "untrackedPaths": 98,
+    "previewTotal": 326,
+    "previewReviewable": 258,
+    "previewExcluded": 68,
+    "manifestReviewable": 247,
+    "manifestUnsupported": 8,
+    "reviewedFiles": 0
+  },
+  "completedDate": "2026-11-04",
+  "ocrDelegationAudit": {
+    "totalFiles": 255,
+    "reviewedFiles": 255,
+    "skippedFiles": 0,
+    "coverageRate": 1.0,
+    "allPreviewEntries": 326,
+    "outsideScopeSkipped": 71,
+    "manualUnsupportedFiles": 8,
+    "successfulRuleBatches": 7,
+    "mediumFindings": 7,
+    "lowFindings": 3,
+    "sourceHashMismatches": 0,
+    "mode": "Alibaba OCR Codex delegation; OCR selection/rules with Codex host review",
+    "generatedSnapshotReview": "parsed structural and cross-file review; not line-by-line manual review",
+    "browserTestsRerun": false,
+    "applicationTestsRerunOnLinux": false,
+    "artifactExportSha256": "c00a66acd762d3f3c2dd9e76eeeac9ceae47d416872a3e25e9874d84e3578462"
+  },
+  "additionalApplicationFunctionProbes": [
+    {
+      "check": "master-retry-error",
+      "originalSqlState": "40001",
+      "convertedSqlState": null,
+      "convertedCategory": "temporary"
+    },
+    {
+      "check": "master-retry-error",
+      "originalSqlState": "40P01",
+      "convertedSqlState": null,
+      "convertedCategory": "temporary"
+    },
+    {
+      "check": "master-bound-units",
+      "editorSaysUnit": "cm",
+      "savedDisplayUnit": "in",
+      "maximum": "100",
+      "inputCm": "150",
+      "maximumIssueCount": 0,
+      "minimum": "50",
+      "minimumInputCm": "100",
+      "minimumIssueCount": 1
+    },
+    {
+      "check": "leave-missing-select",
+      "explicitEmptyChoiceEncodedAs": [],
+      "returnedMissing": false,
+      "sourceSelectionRetained": true
+    }
+  ],
+  "additionalDatabaseProbes": [
+    {
+      "check": "hidden-standard-garments",
+      "masterAvailableTotal": 0,
+      "measurementSelectableTotal": 3
+    },
+    {
+      "check": "exact-item-prefix-page",
+      "total": 51,
+      "firstPageLength": 50,
+      "exactHeaderInFirstPage": false,
+      "exactHeaderInLaterPage": true
+    }
+  ],
+  "combinedFindings": {
+    "actionable": 17,
+    "P2_medium": 12,
+    "P3_low": 5,
+    "criticalHighValidated": 0,
+    "optionalRefactors": 1
+  },
+  "remediation": {
+    "date": "2026-11-04",
+    "actionableFindingsResolved": 17,
+    "advisoryRefactorsCompleted": ["S3"],
+    "verification": "phase-2-review-fixes-verification.json",
+    "evidence": "../evidence/phase-2-review-fixes.md"
+  }
+}

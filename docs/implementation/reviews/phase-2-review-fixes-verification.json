@@ -1,0 +1,301 @@
+{
+  "date": "2026-11-04",
+  "status": "complete",
+  "actionableFindingsResolved": 17,
+  "advisoryRefactorsCompleted": ["S3"],
+  "findings": [
+    {
+      "id": "S1",
+      "status": "resolved"
+    },
+    {
+      "id": "S2",
+      "status": "resolved"
+    },
+    {
+      "id": "F1",
+      "status": "resolved"
+    },
+    {
+      "id": "F2",
+      "status": "resolved"
+    },
+    {
+      "id": "F3",
+      "status": "resolved"
+    },
+    {
+      "id": "C1",
+      "status": "resolved"
+    },
+    {
+      "id": "C2",
+      "status": "resolved"
+    },
+    {
+      "id": "R01",
+      "status": "resolved"
+    },
+    {
+      "id": "R02",
+      "status": "resolved"
+    },
+    {
+      "id": "R03",
+      "status": "resolved"
+    },
+    {
+      "id": "R04",
+      "status": "resolved"
+    },
+    {
+      "id": "R05",
+      "status": "resolved"
+    },
+    {
+      "id": "R06",
+      "status": "resolved"
+    },
+    {
+      "id": "R07",
+      "status": "resolved"
+    },
+    {
+      "id": "R08",
+      "status": "resolved"
+    },
+    {
+      "id": "R09",
+      "status": "resolved"
+    },
+    {
+      "id": "R10",
+      "status": "resolved"
+    }
+  ],
+  "originalReview": "phase-2-complete-code-review.md",
+  "evidence": "../evidence/phase-2-review-fixes.md",
+  "sourceFiles": [
+    {
+      "path": "apps/web/src/app/api/workspaces/[tenant]/[location]/imports/[[...path]]/route.ts",
+      "sha256": "30d9c5e197ef0befbe1516378b0a898ccce83508121a35e3626dc56520761713"
+    },
+    {
+      "path": "apps/web/src/app/api/workspaces/[tenant]/[location]/measurements/[[...path]]/route.ts",
+      "sha256": "a80e3aa7a28e0a8e0a0d3f3c72817b9814145e92a754ff2676f60d3fa6a6c884"
+    },
+    {
+      "path": "apps/web/src/app/workspaces/[tenant]/[location]/customers/[customerId]/customer-profile-panel.tsx",
+      "sha256": "2936f416af594c9b64c3a7f516eca155c12bd963f07c65abd3732fc5381b54b3"
+    },
+    {
+      "path": "apps/web/src/app/workspaces/[tenant]/[location]/page.tsx",
+      "sha256": "a5abb5ffbedf9f63c9ed1e517e1cb2181ab42d1d4439d3621ae121ecda2216f1"
+    },
+    {
+      "path": "apps/web/src/app/workspaces/[tenant]/[location]/settings/garments/garment-settings.tsx",
+      "sha256": "f98da6e092af9f400b44e84187339b2506df28f219310ec2ebd11b059f86c8d9"
+    },
+    {
+      "path": "apps/web/src/components/imports/domain-import-panel.tsx",
+      "sha256": "8d260f75002a4faf0a664bb5bc75989b95c015efe7839176e06d0208db1556a4"
+    },
+    {
+      "path": "apps/web/src/components/imports/import-client.ts",
+      "sha256": "66d115c461078e21897cbfa25c6052dd961fccd8f87d8e22cd5160e9e3b3d6bc"
+    },
+    {
+      "path": "apps/web/src/components/measurements/measurement-book.tsx",
+      "sha256": "287ca84bf8356fdd3b4035cf13b46d257fcf57d04cd1d57ef14d830c3f166762"
+    },
+    {
+      "path": "apps/web/src/components/measurements/measurement-comparison.tsx",
+      "sha256": "9ebc8acd3ff2378346a65fddfcb1da7241a3a0ca5d71729a7d6401a5223139c6"
+    },
+    {
+      "path": "apps/web/src/components/measurements/measurement-entry.tsx",
+      "sha256": "19f439fb2aceaef30a7162c2b646ad6c09e9bee43f9d172a8b504bdd84d13929"
+    },
+    {
+      "path": "apps/web/src/components/measurements/measurement-lifecycle.tsx",
+      "sha256": "8151138a549b6d158a48cab1fdb157387aab791a3d6e7ce3f61910f5c80e8d3d"
+    },
+    {
+      "path": "apps/web/src/components/measurements/measurement-photos.tsx",
+      "sha256": "0f4fa70d87847e170de29831c438ff8b7de1f580288b77ea03ae714186ed8759"
+    },
+    {
+      "path": "apps/web/src/components/measurements/measurement-reuse.tsx",
+      "sha256": "4c776e18fa95db3818088394bca9ee9afebdb573e145141907bb984e3ea2ff00"
+    },
+    {
+      "path": "apps/web/src/components/workspace/navigation-guard.tsx",
+      "sha256": "8bbc27e8bb6b9d263a6254b89768d1d13e20988eb747131cbacf73e91268092a"
+    },
+    {
+      "path": "apps/web/src/server/customer-photos.ts",
+      "sha256": "1fee095c73617143c42d82f7c476d56221396253c1cbe68cfeb420078fd1d52b"
+    },
+    {
+      "path": "apps/web/src/server/measurement-cards.ts",
+      "sha256": "dc6d073611dd3642568fd31a400985188330a6e9927d3bce92f0e3a29bff39c2"
+    },
+    {
+      "path": "apps/web/src/server/measurement-photos.ts",
+      "sha256": "f8dbd51b263d08f847d6ee73c20b9b259611eba4c8ad18c95cf3aba94de8b3ef"
+    },
+    {
+      "path": "packages/application/scripts/domain-import-ui-checks.mjs",
+      "sha256": "41a399117d6415e7c231274bb166e9bcc7a4b3b95fa4499de62a89616024b0be"
+    },
+    {
+      "path": "packages/application/scripts/master-catalog-ui-checks.mjs",
+      "sha256": "71284ac3f9726a061d63236de7989c705fd218ad675cf1a617611f09f2953e39"
+    },
+    {
+      "path": "packages/application/scripts/measurement-comparison-ui-checks.mjs",
+      "sha256": "b49ba366a8ca038de73ee9b2f6e6634bd3c214e9f85914b6f14f0f040c8f5a95"
+    },
+    {
+      "path": "packages/application/scripts/measurement-photo-ui-checks.mjs",
+      "sha256": "29e3700f357efb33f32b8096779efbbc64f9fe421fe95a9a3a178a6cee9709ac"
+    },
+    {
+      "path": "packages/application/scripts/measurement-reuse-ui-checks.mjs",
+      "sha256": "c41e34a1acfbcee0d4176fff06285a20bea6d40ecbb8164f87e48b6bd4744bdb"
+    },
+    {
+      "path": "packages/application/scripts/measurement-ui-checks.mjs",
+      "sha256": "d29fe930ca0280922f98e892e629919e67c34f990561ae33ec3189d2030c8e47"
+    },
+    {
+      "path": "packages/application/scripts/web-smoke.mjs",
+      "sha256": "b4a9f2a15a1e0582205cd5a57bf904abaf06b9dcf24b587b83ae27414c66d03e"
+    },
+    {
+      "path": "packages/application/scripts/workspace-home-http-checks.mjs",
+      "sha256": "0d7ea713313788d8082b473edf2ef6d3ff100c9507e08bad28ebba7e3d93dd79"
+    },
+    {
+      "path": "packages/application/src/customers.ts",
+      "sha256": "9b2105e4bc9fceda9609c48b241fcffa80e5a428112f9cdafbd3c785bc567375"
+    },
+    {
+      "path": "packages/application/src/database-value.ts",
+      "sha256": "10184cec8f83e4302c4db35c7b4a8ec52b745ace9c41b40d612aa366e5668a68"
+    },
+    {
+      "path": "packages/application/src/domain-imports.ts",
+      "sha256": "23a843a2b8609407e96cc985cf98b7700648875f273dcbdf81324d082b7c06d5"
+    },
+    {
+      "path": "packages/application/src/import-contracts.ts",
+      "sha256": "febf7ce186b4476b80d34e26ad47b1ccc34cabcb5b07d5ac5cbd8e8f5258f5d2"
+    },
+    {
+      "path": "packages/application/src/import-formats.ts",
+      "sha256": "ef32fc2cb66009c20aae3e78fd3fe0ba540dd1bdf10b3bd76a9d10aca5a527ab"
+    },
+    {
+      "path": "packages/application/src/masters.ts",
+      "sha256": "694aeae743a7fd923b47eb9d4e29c9dc2eef5222ac6678e373eea7e92abf9253"
+    },
+    {
+      "path": "packages/application/src/measurement-cards.ts",
+      "sha256": "c1029c63dee75681f00e339b1ad6975cdd6ced846464c7c8d0d03e8d1b7f4ef7"
+    },
+    {
+      "path": "packages/application/src/measurement-contracts.ts",
+      "sha256": "8cb60fd75d8720dc722e80d3cbd77d1d1d14f47ee76f4035726336f534439dea"
+    },
+    {
+      "path": "packages/application/src/measurement-photos.ts",
+      "sha256": "e699974b38b4fbb3c5db29eb615cb140fcdd19c6892470c4bf9dfe00a6200b27"
+    },
+    {
+      "path": "packages/application/src/measurement-reuse.ts",
+      "sha256": "9586913e115941190955ba9ae46e927d42a6b10b9dd11083db869b9b03d5a045"
+    },
+    {
+      "path": "packages/application/src/measurement-values.ts",
+      "sha256": "02a6e06b7a53d01d249514eac6fb215b610a5e3fa1bcc01aab31f9ca45022a21"
+    },
+    {
+      "path": "packages/application/src/measurements.ts",
+      "sha256": "de6d01994af8411b70c3da0042f90173c63e1f5e8fbf33268281b444f4e95063"
+    },
+    {
+      "path": "packages/application/test/import-client.test.mjs",
+      "sha256": "05f71aec873514501537bde1dcb05de1a5fe28692a3b1eaa6418aefa97975a45"
+    },
+    {
+      "path": "packages/application/test/measurement-storage.test.mjs",
+      "sha256": "3e290c8bb4744fe7e5496dc29d026c2d026d54e4c3526a40b2045041ac7f6208"
+    },
+    {
+      "path": "packages/application/test/phase-two-review-storage.test.mjs",
+      "sha256": "12ffe00ff5223e42e72356b70543263a2e7402dd15db839f81a289b473034124"
+    },
+    {
+      "path": "packages/application/test/phase-two-review.test.mjs",
+      "sha256": "f994b85672a714080dc83c8425f08c5e540bb9c37b24bf783b0358f5c2147581"
+    },
+    {
+      "path": "packages/db/migrations/0049_phase_two_review_corrections.sql",
+      "sha256": "2ee769fbadb2e4c1658dacdc88711e79b2734964c52574c63c02ab1374d35618"
+    },
+    {
+      "path": "packages/db/migrations/meta/_journal.json",
+      "sha256": "4659b5f7155773af691859d09c391ee7ae997f3cbc73805cc796eb7866868eb6"
+    }
+  ],
+  "sourceManifestSha256": "9096e3453eda1563d9c2c7ddef7d6609f62097fffcf7d4b54fb6d3889f6bc30b",
+  "sourceManifestFormat": "sha256sum lines, sorted by path, final LF",
+  "validation": {
+    "aggregate": {
+      "command": "pnpm validate",
+      "exitCode": 0,
+      "databaseTestsPassed": 12,
+      "applicationTestsPassed": 264,
+      "lintTypesBuildHttpTransportPassed": true,
+      "biomeInformationalSuggestions": 37
+    },
+    "browser": {
+      "command": "MASTER_UI_CHECKS=1 FITLOOM_UI_ARTIFACTS=fitloom-phase2-review-fixes pnpm --filter @fitloom/application test:http",
+      "uiPassed": true,
+      "exitCode": 0,
+      "widths": [320, 390, 1024, 1440]
+    },
+    "finalHostProductionBuild": {
+      "command": "pnpm --filter @fitloom/web build",
+      "exitCode": 0
+    },
+    "schemaDrift": false,
+    "originalOcrArtifactHashesPreserved": true
+  },
+  "database": {
+    "migration": "0049_phase_two_review_corrections",
+    "appliedMigrations": 50,
+    "allAppliedChecksumsMatch": true,
+    "businessCountsBefore": {
+      "garments": 6,
+      "garment_versions": 6,
+      "customers": 0,
+      "wearers": 0,
+      "measurement_profiles": 0,
+      "measurement_versions": 0,
+      "import_batches": 0
+    },
+    "businessCountsAfter": {
+      "garments": 6,
+      "garment_versions": 6,
+      "customers": 0,
+      "wearers": 0,
+      "measurement_profiles": 0,
+      "measurement_versions": 0,
+      "import_batches": 0
+    },
+    "developmentResetOrSeeded": false
+  },
+  "committedOrPushedAtVerification": false
+}

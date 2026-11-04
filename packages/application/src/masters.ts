@@ -11,6 +11,7 @@ import {
   createCommandExecutor,
   type Identity,
 } from "./commands.js";
+import { databaseValue as value } from "./database-value.js";
 import { CommandError, sqlState } from "./errors.js";
 import * as c from "./master-contracts.js";
 import { createStarterBundle } from "./master-starters.js";
@@ -84,16 +85,6 @@ function masterError(error: unknown, correlationId?: string): never {
     );
   throw new MasterError("temporary", "Masters unavailable", [], correlationId);
 }
-async function value<T extends z.ZodType>(
-  db: TransactionDatabase,
-  query: ReturnType<typeof sql>,
-  schema: T,
-): Promise<z.infer<T>> {
-  const rows = z
-    .object({ rows: z.array(z.object({ value: z.unknown() })).length(1) })
-    .parse(await db.execute(query));
-  return schema.parse(rows.rows[0]?.value);
-}
 async function management(db: TransactionDatabase) {
   const allowed = await value(
     db,
@@ -137,6 +128,7 @@ function command<P, R>(options: {
           jobs: [],
         };
       } catch (error) {
+        if (["40001", "40P01"].includes(sqlState(error) ?? "")) throw error;
         masterError(error);
       }
     },
@@ -291,6 +283,7 @@ function catalogCommand<
           jobs: [],
         };
       } catch (error) {
+        if (["40001", "40P01"].includes(sqlState(error) ?? "")) throw error;
         masterError(error);
       }
     },

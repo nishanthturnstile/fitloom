@@ -97,8 +97,9 @@ export function WorkspaceNavigation({
                 const url = new URL(item.href, "https://fitloom.invalid");
                 const active =
                   (item.label === "Customers"
-                    ? workspaceRoute(base, pathname, query).destination.kind ===
-                      "customers"
+                    ? ["customers", "imports"].includes(
+                        workspaceRoute(base, pathname, query).destination.kind,
+                      )
                     : pathname === url.pathname) &&
                   (pathname.endsWith("/garments")
                     ? (query.get("kind") ?? "garment") ===

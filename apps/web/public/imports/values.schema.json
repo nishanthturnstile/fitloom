@@ -1,0 +1,108 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "minItems": 1,
+  "maxItems": 80,
+  "type": "array",
+  "items": {
+    "oneOf": [
+      {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "const": "length"
+          },
+          "fieldKey": {
+            "type": "string",
+            "pattern": "^(?:f(?:00[1-9]|0[1-7][0-9]|080)|custom\\.[a-z0-9_]{1,60})$"
+          },
+          "decimal": {
+            "type": "string",
+            "pattern": "^(?:0|[1-9]\\d{0,17})(?:\\.\\d{1,6})?$"
+          },
+          "unit": {
+            "type": "string",
+            "enum": ["in", "cm"]
+          }
+        },
+        "required": ["kind", "fieldKey", "decimal", "unit"],
+        "additionalProperties": false
+      },
+      {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "const": "number"
+          },
+          "fieldKey": {
+            "type": "string",
+            "pattern": "^(?:f(?:00[1-9]|0[1-7][0-9]|080)|custom\\.[a-z0-9_]{1,60})$"
+          },
+          "decimal": {
+            "type": "string",
+            "pattern": "^(?!-0(?:\\.0{1,6})?$)-?(?:0|[1-9]\\d{0,17})(?:\\.\\d{1,6})?$"
+          }
+        },
+        "required": ["kind", "fieldKey", "decimal"],
+        "additionalProperties": false
+      },
+      {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "const": "text"
+          },
+          "fieldKey": {
+            "type": "string",
+            "pattern": "^(?:f(?:00[1-9]|0[1-7][0-9]|080)|custom\\.[a-z0-9_]{1,60})$"
+          },
+          "text": {
+            "type": "string",
+            "pattern": "^[^\\p{Cc}\\p{Cs}]{0,500}$"
+          }
+        },
+        "required": ["kind", "fieldKey", "text"],
+        "additionalProperties": false
+      },
+      {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "const": "boolean"
+          },
+          "fieldKey": {
+            "type": "string",
+            "pattern": "^(?:f(?:00[1-9]|0[1-7][0-9]|080)|custom\\.[a-z0-9_]{1,60})$"
+          },
+          "value": {
+            "type": "boolean"
+          }
+        },
+        "required": ["kind", "fieldKey", "value"],
+        "additionalProperties": false
+      },
+      {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "const": "select"
+          },
+          "fieldKey": {
+            "type": "string",
+            "pattern": "^(?:f(?:00[1-9]|0[1-7][0-9]|080)|custom\\.[a-z0-9_]{1,60})$"
+          },
+          "choiceKey": {
+            "type": "string",
+            "pattern": "^[a-z0-9_]{1,40}$"
+          }
+        },
+        "required": ["kind", "fieldKey", "choiceKey"],
+        "additionalProperties": false
+      }
+    ]
+  }
+}

@@ -5,6 +5,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useId,
   useMemo,
   useRef,
   useState,
@@ -18,7 +19,7 @@ type Protection = {
 };
 type Reason = "page" | "switch";
 const NavigationContext = createContext<{
-  register: (protection: Protection | null) => void;
+  register: (key: string, protection: Protection | null) => void;
   confirmLeave: (reason?: Reason) => boolean;
   commitNavigation: (href: string) => void;
   commitReload: () => void;
@@ -27,7 +28,27 @@ const NavigationContext = createContext<{
 } | null>(null);
 
 export function NavigationGuard({ children }: { children: ReactNode }) {
-  const [protection, register] = useState<Protection | null>(null);
+  const [protections, setProtections] = useState<
+    ReadonlyMap<string, Protection>
+  >(new Map());
+  const register = useCallback((key: string, next: Protection | null) => {
+    setProtections((previous) => {
+      const updated = new Map(previous);
+      if (next) updated.set(key, next);
+      else updated.delete(key);
+      return updated;
+    });
+  }, []);
+  const protection = useMemo(() => {
+    const active = [...protections.values()].filter((item) => item.active);
+    return {
+      active: active.length > 0,
+      uncertain: active.some((item) => item.uncertain),
+      locked: active.some((item) => item.locked),
+      noun:
+        active.length === 1 ? (active[0]?.noun ?? "workspace") : "workspace",
+    };
+  }, [protections]);
   const allowed = useRef(false);
   const confirmLeave = useCallback(
     (reason: Reason = "page") => {
@@ -124,6 +145,7 @@ export function NavigationGuard({ children }: { children: ReactNode }) {
       commitReload,
       navigate,
       protection?.locked,
+      register,
     ],
   );
   return <NavigationContext value={value}>{children}</NavigationContext>;
@@ -140,8 +162,9 @@ export function useLeaveProtection({
   locked,
 }: Protection) {
   const { register } = useNavigationGuard();
+  const key = useId();
   useEffect(() => {
-    register({ active, uncertain, noun, locked });
-    return () => register(null);
-  }, [register, active, uncertain, noun, locked]);
+    register(key, { active, uncertain, noun, locked });
+    return () => register(key, null);
+  }, [register, key, active, uncertain, noun, locked]);
 }

@@ -832,19 +832,32 @@ export function GarmentSettings({
       setBusy(false);
     }
   }
+  async function exactItemHeader(
+    entity: "service" | "addon",
+    id: string,
+    label: string,
+  ) {
+    let offset = 0;
+    for (;;) {
+      const headers = await response(
+        fetch(
+          `${base}/${resource(entity)}?${new URLSearchParams({ search: label, active: "all", visibility: "all", offset: String(offset) })}`,
+          { cache: "no-store" },
+        ),
+        pageSchema(entity),
+      );
+      const header = headers.items.find((item) => item.id === id);
+      if (header) return header;
+      if (headers.nextOffset === null) throw new ApiError(409, {});
+      offset = headers.nextOffset;
+    }
+  }
   async function fetchItem(row: Row, entity: "service" | "addon") {
     const item = await response(
       fetch(`${base}/${resource(entity)}/${row.id}`, { cache: "no-store" }),
       catalogItemSchema(entity),
     );
-    const headers = await response(
-      fetch(
-        `${base}/${resource(entity)}?${new URLSearchParams({ search: item.label, active: "all", visibility: "all" })}`,
-        { cache: "no-store" },
-      ),
-      pageSchema(entity),
-    );
-    const header = headers.items.find((h) => h.id === row.id);
+    const header = await exactItemHeader(entity, row.id, item.label);
     if (!header || header.currentVersionId !== item.id)
       throw new ApiError(409, {});
     return { item, header };
@@ -957,14 +970,7 @@ export function GarmentSettings({
         fetch(`${base}/${resource(d.entity)}/${id}`, { cache: "no-store" }),
         catalogItemSchema(d.entity),
       );
-      const headers = await response(
-        fetch(
-          `${base}/${resource(d.entity)}?${new URLSearchParams({ search: item.label, active: "all", visibility: "all" })}`,
-          { cache: "no-store" },
-        ),
-        pageSchema(d.entity),
-      );
-      const row = headers.items.find((h) => h.id === id);
+      const row = await exactItemHeader(d.entity, id, item.label);
       if (!row || row.currentVersionId !== item.id) throw new ApiError(409, {});
       const versions = await response(
         fetch(`${base}/${resource(d.entity)}/${id}/versions`, {

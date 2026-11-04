@@ -284,7 +284,7 @@ test("GSTIN and maximal Unicode create payload stay within the profile transport
 });
 
 test("CRM role dependencies are shared by browser choices and server validation", () => {
-  assert.equal(workspacePermission.options.length, 18);
+  assert.equal(workspacePermission.options.length, 26);
   for (const permission of [
     "customers.manage",
     "customers.archive",
@@ -327,7 +327,7 @@ test("customer browser subpaths remain free of transitive server and database im
       if (specifier.startsWith(".")) await walk(new URL(specifier, file));
       else
         assert.ok(
-          ["zod", "libphonenumber-js/max"].includes(specifier),
+          ["zod", "libphonenumber-js/max", "decimal.js"].includes(specifier),
           specifier,
         );
     }
@@ -335,6 +335,7 @@ test("customer browser subpaths remain free of transitive server and database im
   await walk(new URL("../dist/customer-contracts.js", import.meta.url));
   await walk(new URL("../dist/customer-phone.js", import.meta.url));
   await walk(new URL("../dist/customer-photo-contracts.js", import.meta.url));
+  await walk(new URL("../dist/import-contracts.js", import.meta.url));
 });
 
 test("workspace route families and switches use current target permissions", async () => {
@@ -362,6 +363,30 @@ test("workspace route families and switches use current target permissions", asy
       .destination.kind,
     "home",
   );
+  for (const family of ["customers", "measurements"]) {
+    const path = `${base}/${family}/import`;
+    assert.deepEqual(
+      workspaceRoute(base, path, new URLSearchParams()).destination,
+      { kind: "imports", family },
+    );
+    assert.equal(
+      resolveWorkspaceDestination(
+        {
+          ...target,
+          permissions: ["workspace.read", "customers.read", `${family}.import`],
+        },
+        { kind: "imports", family },
+      ),
+      path,
+    );
+    assert.equal(
+      resolveWorkspaceDestination(
+        { ...target, permissions: ["workspace.read", "customers.read"] },
+        { kind: "imports", family },
+      ),
+      `${base}/customers`,
+    );
+  }
   const crm = { ...target, permissions: ["workspace.read", "customers.read"] };
   assert.equal(
     resolveWorkspaceDestination(crm, { kind: "customers" }),

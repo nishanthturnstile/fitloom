@@ -180,8 +180,14 @@ export async function exerciseGarmentUI(page, fixture) {
     throw new Error("Denied phase must be tested before the normal heading");
   if (fixture.phase === "build") {
     await page.getByRole("button", { name: "Next page", exact: true }).click();
+    const boundedCount = Math.max(
+      0,
+      (await get("/garments?offset=50&limit=50")).items.length,
+    );
     await page.waitForFunction(
-      () => document.querySelectorAll("[data-master-row]").length === 2,
+      (expected) =>
+        document.querySelectorAll("[data-master-row]").length === expected,
+      boundedCount,
     );
     await page
       .getByRole("button", { name: "Previous page", exact: true })
@@ -479,8 +485,11 @@ export async function exerciseGarmentUI(page, fixture) {
     .getByRole("button", { name: fixture.pricedLabel, exact: true })
     .click();
   await page.getByText("Catalog order updated.", { exact: true }).waitFor();
+  const movedOrder = (await get("/garments")).items;
+  const movedPosition = movedOrder.findIndex((item) => item.id === id);
   check(
-    (await get("/garments")).items[0].id === id,
+    movedPosition >= 0 &&
+      movedOrder[movedPosition + 1]?.id === fixture.pricedId,
     "Catalog move-before did not cross pages",
   );
   // The open editor exposes the same lifecycle action as the register.

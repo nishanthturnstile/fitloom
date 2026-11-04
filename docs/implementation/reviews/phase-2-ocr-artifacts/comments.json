@@ -1,0 +1,82 @@
+[
+  {
+    "path": "apps/web/src/app/workspaces/[tenant]/[location]/settings/garments/editor-controls.tsx",
+    "start_line": 535,
+    "end_line": 535,
+    "category": "bug",
+    "severity": "medium",
+    "content": "Reconcile the displayed bound unit with the measurement validator. This editor always labels length bounds \u201c(cm)\u201d and persists the raw strings, while measurement intake projects them unchanged and measurement-values.ts:135 plus SQL0041:81 interpret them in field.displayUnit. For an inch-display garment field configured with \u201cMaximum(cm)=100\u201d, 80in is accepted as below100in even though it exceeds100cm; \u201cMinimum(cm)=50\u201d rejects40cm as below50in. BuildOne \u00a75 specifies canonicalcm bounds while BuildThree \u00a76 describes display-unit bounds; the implementation must resolve that contract difference and preserve saved schema meaning. Do not change custom-field semantics incidentally, because their editor explicitly uses displayUnit."
+  },
+  {
+    "path": "apps/web/src/app/workspaces/[tenant]/[location]/settings/garments/garment-settings.tsx",
+    "start_line": 840,
+    "end_line": 849,
+    "category": "bug",
+    "severity": "medium",
+    "content": "Do not recover an exact service/add-on header from only the first prefix-search page. If 50 records named \u201cHem ...\u201d precede the record named \u201cHem\u201d in catalog order, opening \u201cHem\u201d from a later register page fetches its exact version successfully, but this unpaginated prefix search returns only the first 50 matches (masterPageQuery default), excludes its header and throws a false409. saveItem repeats the same lookup after committing, so a valid save/rename can also be presented as a conflict. Fetch an exact header or follow all required pages instead of assuming the exact name is on page1. Spec: BuildOne \u00a77 bounded complete queries / \u00a78 service and addon editors; NFR-QUERY."
+  },
+  {
+    "path": "apps/web/src/components/imports/domain-import-panel.tsx",
+    "start_line": 350,
+    "end_line": 360,
+    "category": "bug",
+    "severity": "medium",
+    "content": "Invalidate a pending status read when starting a new dry-run. Resume import starts load() asynchronously, while locked remains false. If the user clicks New dry-run before that read completes, this reset neither aborts controller nor advances readId. The old response still passes load() line141 and restores the prior batch over the new form, hiding new CSV/namespace input and offering actions for the prior import. Cancel/invalidate the read as part of this reset (and prevent stale loads overwriting a newly completed preview). Spec: Build Three \u00a711 reviewed import workflow and \u00a714 M22; OCR React effect/async race handling."
+  },
+  {
+    "path": "apps/web/src/components/measurements/measurement-comparison.tsx",
+    "start_line": 145,
+    "end_line": 148,
+    "category": "bug",
+    "severity": "medium",
+    "content": "Reset trendBusy when invalidating a pending trend for an anchor change. Start \u201cLoad trend\u201d, then select a different \u201cTrend anchor version\u201d before the response returns. This effect increments trendRequest, so the old loadTrend finally block skips setTrendBusy(false); loading the new anchor never resets it either. \u201cLoad trend\u201d stays disabled after the new anchor loads until the user changes another field/date/unit or reloads. Reset busy alongside invalidation (as the other filter handlers do), or disable anchor changes during a pending request. Spec: phase-2-build-3-measurements.md \u00a77 Comparison and trends / M15; development web standards require usable stale-read recovery."
+  },
+  {
+    "path": "apps/web/src/components/measurements/measurement-reuse.tsx",
+    "start_line": 142,
+    "end_line": 147,
+    "category": "bug",
+    "severity": "medium",
+    "content": "Honor an explicit \u201cLeave missing\u201d choice when copying a select field. For a same-schema copy whose source has an active selected option, selecting \u201cLeave missing\u201d stores an empty target in row.choices, but this filter removes it. mappedMeasurementValue then sees no mapping and falls back to the original choice ID (packages/application/src/measurement-reuse.ts:103), so Preview and Apply silently retain the value the user chose to omit. Distinguish an explicit omission from an unspecified identity mapping and omit the value/decision accordingly. Spec: phase-2-build-3-measurements.md \u00a77 Mapping and REQ-MEASURE (reviewed mapping, missing distinct from recorded values)."
+  },
+  {
+    "path": "packages/application/src/masters.ts",
+    "content": "Preserve retryable SQLSTATEs until the shared executor handles them. A serialization failure (40001) or deadlock (40P01) raised by a master publication is caught here and translated by masterError into a fresh temporary MasterError without its cause. createCommandExecutor therefore cannot detect the SQLSTATE and never runs its bounded retry for these master mutations, returning 503 on the first transient failure instead. Move the domain mapping after shared retry handling (as the customer commands already do), or retain the original cause. This violates the Build One plan \u00a72 shared-command retry contract and docs/development/application.md command execution rules. Trigger: a transient serialization/deadlock failure inside app.master_garment_publish/master_service_publish or another master mutation.",
+    "start_line": 139,
+    "end_line": 140,
+    "category": "bug",
+    "severity": "medium"
+  },
+  {
+    "path": "packages/db/migrations/0042_measurement_intake_reads.sql",
+    "start_line": 21,
+    "end_line": 21,
+    "category": "bug",
+    "severity": "medium",
+    "content": "Honor hidden standard garments in measurement discovery. After the owner enables Hide standard garments, this query still returns every active standard garment because it does not consult master_catalog_state.hide_standard_garments. MeasurementEntry uses this list to start new profiles and measurement_intake also accepts them, so hidden templates remain offered for new selection. Apply the standard-visibility predicate to fresh discovery/admission while preserving historical reads. Spec: Build One \u00a74 invariant 11 (plan line129); REQ-MASTER."
+  },
+  {
+    "path": "apps/web/src/app/workspaces/[tenant]/[location]/customers/[customerId]/customer-profile-panel.tsx",
+    "content": "Restore the Measurements tab from its saved URL hash too. selectSection writes #measurements when the user selects that tab, but this initialization accepts only #wearers and #activity. Selecting Measurements and reloading, or opening a copied #measurements link, therefore shows Overview while leaving the Measurements hash in the address bar. Include the permitted measurements tab in the restoration allowlist. This is inconsistent with the profile-tab routing behavior and Build Three \u00a78 navigation/direct-link workflow.",
+    "start_line": 230,
+    "end_line": 231,
+    "category": "bug",
+    "severity": "low"
+  },
+  {
+    "path": "apps/web/src/app/workspaces/[tenant]/[location]/page.tsx",
+    "start_line": 110,
+    "end_line": 115,
+    "category": "bug",
+    "severity": "low",
+    "content": "Replace the obsolete Measurements next-build notice. This production Home card says wearer measurements will be available in a later build even though this patch implements the measurement book and links to it through customer profiles. Users arriving at Home are told the shipped feature is unavailable. Link authorized users to the customer/wearer measurement flow and reserve future wording for orders/production. Spec: REQ-MEASURE and Build Three \u00a78 screen/navigation behavior."
+  },
+  {
+    "path": "apps/web/src/components/measurements/measurement-photos.tsx",
+    "start_line": 518,
+    "end_line": 526,
+    "category": "bug",
+    "severity": "low",
+    "content": "Restore the parent availability state after a successful image retry. A transient failed image request calls onUnavailable and permanently sets SavedPhoto.unavailable=true. \u201cRetry reference photo\u201d only clears MeasurementPhotoImage.failed; when the retry succeeds, the image returns but its note and \u201cRevoke photo access\u201d controls remain hidden because unavailable is never reset. Add a successful-load callback/reset so recovery restores the authorized actions without a page reload. Spec: phase-2-build-3-measurements.md \u00a79 (readable fallback and privacy revocation) and \u00a78 distinct recoverable unavailable states."
+  }
+]

@@ -83,7 +83,9 @@ export function AccountPanel({
     } | null>(null);
   const verificationCallback = destination.startsWith("/invitations/")
     ? `/account?verified=1&invite=${destination.split("/").at(-1)}`
-    : "/account?verified=1";
+    : destination.startsWith("/measurement-cards/")
+      ? `/account?verified=1&card=${destination.split("/").at(-1)}`
+      : "/account?verified=1";
   async function refresh() {
     const response = await fetch("/api/session", { cache: "no-store" });
     const data: unknown = await response.json();
@@ -187,7 +189,17 @@ export function AccountPanel({
       {user ? (
         <>
           <p className="account-eyebrow">YOUR ACCOUNT</p>
-          <a href="/workspaces">Your workspaces →</a>
+          <a
+            href={
+              destination.startsWith("/measurement-cards/")
+                ? destination
+                : "/workspaces"
+            }
+          >
+            {destination.startsWith("/measurement-cards/")
+              ? "Continue to measurement card →"
+              : "Your workspaces →"}
+          </a>
           <h2>{user.name}</h2>
           <p className="account-muted">{user.email}</p>
           <div className="account-rule" />

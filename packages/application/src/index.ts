@@ -44,6 +44,11 @@ export {
   sumMoney,
   unitPriceInput,
 } from "./decimals.js";
+export {
+  createDomainImportService,
+  ImportError,
+  importDatabaseError,
+} from "./domain-imports.js";
 export { CommandError } from "./errors.js";
 export {
   attachFile,
@@ -51,6 +56,13 @@ export {
   createFileService,
   retireFile,
 } from "./files.js";
+export {
+  canonicalImportGroup,
+  createImportManifest,
+  ImportFileError,
+  importTemplate,
+  parseImportFile,
+} from "./import-formats.js";
 export { fixtureInbox, signFixture } from "./inbox.js";
 export {
   cancelJob,
@@ -73,6 +85,13 @@ export {
   saveMasterAddon,
   saveMasterService,
 } from "./masters.js";
+export {
+  measurementCardPNG,
+  measurementCardURL,
+} from "./measurement-card-qr.js";
+export { createMeasurementCardService } from "./measurement-cards.js";
+export { createMeasurementPhotoService } from "./measurement-photos.js";
+export { createMeasurementService, MeasurementError } from "./measurements.js";
 export {
   type DiagnosticEvent,
   foundationStatus,

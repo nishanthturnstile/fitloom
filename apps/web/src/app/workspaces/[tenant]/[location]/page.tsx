@@ -107,13 +107,22 @@ export default async function Workspace({
           <CardTitle>
             <h2>Measurements</h2>
           </CardTitle>
-          <CardDescription>Next build</CardDescription>
+          <CardDescription>Measurements for each named wearer</CardDescription>
         </CardHeader>
         <CardContent>
           <p className="text-sm text-muted-foreground">
-            Wearer measurements, orders and production will be available here as
-            those tools are added.
+            Open a customer and choose a wearer to view their measurement book.
+            Orders and production are planned for later builds.
           </p>
+          {context.workspace.permissions.includes("customers.read") &&
+          context.workspace.permissions.includes("measurements.read") ? (
+            <a
+              href={`${base}/customers?focus=search`}
+              className="mt-3 inline-block text-sm font-medium text-primary underline underline-offset-4"
+            >
+              Find a wearer’s measurements
+            </a>
+          ) : null}
         </CardContent>
       </Card>
       <a

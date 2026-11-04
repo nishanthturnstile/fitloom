@@ -1,0 +1,3269 @@
+[
+  {
+    "path": "apps/web/components.json",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff plus source context; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-000.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "modified"
+  },
+  {
+    "path": "apps/web/package.json",
+    "status": "modified",
+    "reviewmethod": "entire HEAD diff plus source context; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-001.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "modified"
+  },
+  {
+    "path": "apps/web/public/illustrations/garments/blouse.svg",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff plus source context; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-003.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "modified"
+  },
+  {
+    "path": "apps/web/public/illustrations/garments/construction.svg",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff plus source context; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-004.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "modified"
+  },
+  {
+    "path": "apps/web/public/illustrations/garments/dimension.svg",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff plus source context; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-005.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "modified"
+  },
+  {
+    "path": "apps/web/public/illustrations/garments/shirt.svg",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff plus source context; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-006.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "modified"
+  },
+  {
+    "path": "apps/web/public/illustrations/garments/trouser.svg",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff plus source context; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-007.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "modified"
+  },
+  {
+    "path": "apps/web/public/imports/body-core-v1.manifest.json",
+    "status": "added",
+    "reviewmethod": "full untracked file; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-008.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "untracked"
+  },
+  {
+    "path": "apps/web/public/imports/customFields.schema.json",
+    "status": "added",
+    "reviewmethod": "full untracked file; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-009.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "untracked"
+  },
+  {
+    "path": "apps/web/public/imports/fitloom-customers-v1.csv",
+    "status": "added",
+    "reviewmethod": "full untracked file; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-010.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "untracked"
+  },
+  {
+    "path": "apps/web/public/imports/fitloom-measurements-v1.csv",
+    "status": "added",
+    "reviewmethod": "full untracked file; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-011.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "untracked"
+  },
+  {
+    "path": "apps/web/public/imports/manifest.schema.json",
+    "status": "added",
+    "reviewmethod": "full untracked file; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-012.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "untracked"
+  },
+  {
+    "path": "apps/web/public/imports/values.schema.json",
+    "status": "added",
+    "reviewmethod": "full untracked file; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-013.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "untracked"
+  },
+  {
+    "path": "apps/web/src/app/account/account-panel.tsx",
+    "status": "modified",
+    "reviewmethod": "entire HEAD diff plus source context; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-014.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "modified"
+  },
+  {
+    "path": "apps/web/src/app/account/page.tsx",
+    "status": "modified",
+    "reviewmethod": "entire HEAD diff plus source context; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-015.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "modified"
+  },
+  {
+    "path": "apps/web/src/app/api/measurement-cards/[id]/[[...path]]/route.ts",
+    "status": "added",
+    "reviewmethod": "full untracked file; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-016.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "untracked"
+  },
+  {
+    "path": "apps/web/src/app/api/workspaces/[tenant]/[location]/customers/[[...path]]/route.ts",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff plus source context; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-017.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "modified"
+  },
+  {
+    "path": "apps/web/src/app/api/workspaces/[tenant]/[location]/customers/photos/[[...photoPath]]/route.ts",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff plus source context; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-018.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "modified"
+  },
+  {
+    "path": "apps/web/src/app/api/workspaces/[tenant]/[location]/imports/[[...path]]/route.ts",
+    "status": "added",
+    "reviewmethod": "full untracked file; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-019.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "untracked"
+  },
+  {
+    "path": "apps/web/src/app/api/workspaces/[tenant]/[location]/masters/[[...path]]/route.ts",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff plus source context; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-020.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "modified"
+  },
+  {
+    "path": "apps/web/src/app/api/workspaces/[tenant]/[location]/measurements/[[...path]]/route.ts",
+    "status": "added",
+    "reviewmethod": "full untracked file; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-021.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "untracked"
+  },
+  {
+    "path": "apps/web/src/app/api/workspaces/switch/route.ts",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff plus source context; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-022.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "modified"
+  },
+  {
+    "path": "apps/web/src/app/layout.tsx",
+    "status": "modified",
+    "reviewmethod": "entire HEAD diff plus source context; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-024.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "modified"
+  },
+  {
+    "path": "apps/web/src/app/measurement-cards/[id]/route.ts",
+    "status": "added",
+    "reviewmethod": "full untracked file; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-025.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "untracked"
+  },
+  {
+    "path": "apps/web/src/app/workspaces/[tenant]/[location]/customers/[customerId]/wearers/[wearerId]/measurements/[profileId]/edit/page.tsx",
+    "status": "added",
+    "reviewmethod": "full untracked file; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-030.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "untracked"
+  },
+  {
+    "path": "apps/web/src/app/workspaces/[tenant]/[location]/customers/[customerId]/wearers/[wearerId]/measurements/[profileId]/page.tsx",
+    "status": "added",
+    "reviewmethod": "full untracked file; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-031.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "untracked"
+  },
+  {
+    "path": "apps/web/src/app/workspaces/[tenant]/[location]/customers/[customerId]/wearers/[wearerId]/measurements/[profileId]/versions/[versionId]/copy/page.tsx",
+    "status": "added",
+    "reviewmethod": "full untracked file; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-032.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "untracked"
+  },
+  {
+    "path": "apps/web/src/app/workspaces/[tenant]/[location]/customers/[customerId]/wearers/[wearerId]/measurements/[profileId]/versions/[versionId]/page.tsx",
+    "status": "added",
+    "reviewmethod": "full untracked file; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-033.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "untracked"
+  },
+  {
+    "path": "apps/web/src/app/workspaces/[tenant]/[location]/customers/[customerId]/wearers/[wearerId]/measurements/compare/page.tsx",
+    "status": "added",
+    "reviewmethod": "full untracked file; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-034.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "untracked"
+  },
+  {
+    "path": "apps/web/src/app/workspaces/[tenant]/[location]/customers/[customerId]/wearers/[wearerId]/measurements/loading.tsx",
+    "status": "added",
+    "reviewmethod": "full untracked file; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-035.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "untracked"
+  },
+  {
+    "path": "apps/web/src/app/workspaces/[tenant]/[location]/customers/[customerId]/wearers/[wearerId]/measurements/new/page.tsx",
+    "status": "added",
+    "reviewmethod": "full untracked file; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-036.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "untracked"
+  },
+  {
+    "path": "apps/web/src/app/workspaces/[tenant]/[location]/customers/[customerId]/wearers/[wearerId]/measurements/page.tsx",
+    "status": "added",
+    "reviewmethod": "full untracked file; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-037.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "untracked"
+  },
+  {
+    "path": "apps/web/src/app/workspaces/[tenant]/[location]/customers/import/page.tsx",
+    "status": "added",
+    "reviewmethod": "full untracked file; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-040.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "untracked"
+  },
+  {
+    "path": "apps/web/src/app/workspaces/[tenant]/[location]/customers/new/page.tsx",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff plus source context; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-041.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "modified"
+  },
+  {
+    "path": "apps/web/src/app/workspaces/[tenant]/[location]/customers/page.tsx",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff plus source context; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-042.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "modified"
+  },
+  {
+    "path": "apps/web/src/app/workspaces/[tenant]/[location]/files/page.tsx",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff plus source context; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-043.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "modified"
+  },
+  {
+    "path": "apps/web/src/app/workspaces/[tenant]/[location]/layout.tsx",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff plus source context; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-044.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "modified"
+  },
+  {
+    "path": "apps/web/src/app/workspaces/[tenant]/[location]/measurements/import/page.tsx",
+    "status": "added",
+    "reviewmethod": "full untracked file; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-045.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "untracked"
+  },
+  {
+    "path": "apps/web/src/app/workspaces/[tenant]/[location]/page.tsx",
+    "status": "modified",
+    "reviewmethod": "entire HEAD diff plus source context; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-046.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "modified"
+  },
+  {
+    "path": "apps/web/src/app/workspaces/[tenant]/[location]/settings/access/page.tsx",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff plus source context; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-047.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "modified"
+  },
+  {
+    "path": "apps/web/src/components/imports/domain-import-panel.tsx",
+    "status": "added",
+    "reviewmethod": "full untracked file; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-068.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "untracked"
+  },
+  {
+    "path": "apps/web/src/components/imports/import-button.tsx",
+    "status": "added",
+    "reviewmethod": "full untracked file; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-069.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "untracked"
+  },
+  {
+    "path": "apps/web/src/components/imports/import-client.ts",
+    "status": "added",
+    "reviewmethod": "full untracked file; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-070.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "untracked"
+  },
+  {
+    "path": "apps/web/src/components/imports/import-owner-picker.tsx",
+    "status": "added",
+    "reviewmethod": "full untracked file; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-071.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "untracked"
+  },
+  {
+    "path": "apps/web/src/components/imports/import-record-editor.tsx",
+    "status": "added",
+    "reviewmethod": "full untracked file; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-072.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "untracked"
+  },
+  {
+    "path": "apps/web/src/components/imports/import-schema-editor.tsx",
+    "status": "added",
+    "reviewmethod": "full untracked file; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-073.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "untracked"
+  },
+  {
+    "path": "apps/web/src/components/measurements/measurement-book.tsx",
+    "status": "added",
+    "reviewmethod": "full untracked file; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-074.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "untracked"
+  },
+  {
+    "path": "apps/web/src/components/measurements/measurement-client.ts",
+    "status": "added",
+    "reviewmethod": "full untracked file; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-076.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "untracked"
+  },
+  {
+    "path": "apps/web/src/components/measurements/measurement-entry.tsx",
+    "status": "added",
+    "reviewmethod": "full untracked file; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-080.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "untracked"
+  },
+  {
+    "path": "apps/web/src/components/measurements/measurement-lifecycle.tsx",
+    "status": "added",
+    "reviewmethod": "full untracked file; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-081.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "untracked"
+  },
+  {
+    "path": "apps/web/src/components/measurements/measurement-options.tsx",
+    "status": "added",
+    "reviewmethod": "full untracked file; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-082.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "untracked"
+  },
+  {
+    "path": "apps/web/src/components/measurements/measurement-return.ts",
+    "status": "added",
+    "reviewmethod": "full untracked file; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-084.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "untracked"
+  },
+  {
+    "path": "apps/web/src/components/ui/alert.tsx",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff plus source context; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-086.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "modified"
+  },
+  {
+    "path": "apps/web/src/components/ui/badge.tsx",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff plus source context; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-087.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "modified"
+  },
+  {
+    "path": "apps/web/src/components/ui/button.tsx",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff plus source context; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-088.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "modified"
+  },
+  {
+    "path": "apps/web/src/components/ui/card.tsx",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff plus source context; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-089.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "modified"
+  },
+  {
+    "path": "apps/web/src/components/ui/checkbox.tsx",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff plus source context; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-090.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "modified"
+  },
+  {
+    "path": "apps/web/src/components/ui/dialog.tsx",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff plus source context; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-091.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "modified"
+  },
+  {
+    "path": "apps/web/src/components/ui/empty.tsx",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff plus source context; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-092.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "modified"
+  },
+  {
+    "path": "apps/web/src/components/ui/field.tsx",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff plus source context; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-093.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "modified"
+  },
+  {
+    "path": "apps/web/src/components/ui/input.tsx",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff plus source context; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-094.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "modified"
+  },
+  {
+    "path": "apps/web/src/components/ui/label.tsx",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff plus source context; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-095.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "modified"
+  },
+  {
+    "path": "apps/web/src/components/ui/select.tsx",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff plus source context; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-096.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "modified"
+  },
+  {
+    "path": "apps/web/src/components/ui/separator.tsx",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff plus source context; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-097.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "modified"
+  },
+  {
+    "path": "apps/web/src/components/ui/sheet.tsx",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff plus source context; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-098.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "modified"
+  },
+  {
+    "path": "apps/web/src/components/ui/skeleton.tsx",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff plus source context; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-099.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "modified"
+  },
+  {
+    "path": "apps/web/src/components/ui/switch.tsx",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff plus source context; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-100.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "modified"
+  },
+  {
+    "path": "apps/web/src/components/ui/table.tsx",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff plus source context; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-101.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "modified"
+  },
+  {
+    "path": "apps/web/src/components/ui/tabs.tsx",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff plus source context; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-102.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "modified"
+  },
+  {
+    "path": "apps/web/src/components/ui/textarea.tsx",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff plus source context; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-103.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "modified"
+  },
+  {
+    "path": "apps/web/src/components/ui/toggle-group.tsx",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff plus source context; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-104.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "modified"
+  },
+  {
+    "path": "apps/web/src/components/ui/toggle.tsx",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff plus source context; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-105.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "modified"
+  },
+  {
+    "path": "apps/web/src/components/workspace/customer-return-session.ts",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff plus source context; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-106.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "modified"
+  },
+  {
+    "path": "apps/web/src/components/workspace/customer-return-state.ts",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff plus source context; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-107.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "modified"
+  },
+  {
+    "path": "apps/web/src/components/workspace/navigation-guard.tsx",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff plus source context; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-108.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "modified"
+  },
+  {
+    "path": "apps/web/src/components/workspace/page-header.tsx",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff plus source context; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-109.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "modified"
+  },
+  {
+    "path": "apps/web/src/components/workspace/page-unavailable.tsx",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff plus source context; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-110.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "modified"
+  },
+  {
+    "path": "apps/web/src/components/workspace/workspace-destinations.tsx",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff plus source context; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-111.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "modified"
+  },
+  {
+    "path": "apps/web/src/components/workspace/workspace-home.tsx",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff plus source context; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-112.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "modified"
+  },
+  {
+    "path": "apps/web/src/components/workspace/workspace-navigation.tsx",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff plus source context; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-113.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "modified"
+  },
+  {
+    "path": "apps/web/src/components/workspace/workspace-route-policy.ts",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff plus source context; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-114.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "modified"
+  },
+  {
+    "path": "apps/web/src/components/workspace/workspace-shell.tsx",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff plus source context; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-115.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "modified"
+  },
+  {
+    "path": "apps/web/src/components/workspace/workspace-switcher.tsx",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff plus source context; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-116.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "modified"
+  },
+  {
+    "path": "apps/web/src/components/workspace/workspace-topbar.tsx",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff plus source context; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-117.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "modified"
+  },
+  {
+    "path": "apps/web/src/lib/utils.ts",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff plus source context; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-118.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "modified"
+  },
+  {
+    "path": "apps/web/src/server/customer-photos.ts",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff plus source context; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-119.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "modified"
+  },
+  {
+    "path": "apps/web/src/server/customers.ts",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff plus source context; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-120.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "modified"
+  },
+  {
+    "path": "apps/web/src/server/domain-imports.ts",
+    "status": "added",
+    "reviewmethod": "full untracked file; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-121.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "untracked"
+  },
+  {
+    "path": "apps/web/src/server/import-page.tsx",
+    "status": "added",
+    "reviewmethod": "full untracked file; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-122.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "untracked"
+  },
+  {
+    "path": "apps/web/src/server/masters.ts",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff plus source context; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-123.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "modified"
+  },
+  {
+    "path": "apps/web/src/server/measurement-card-page.ts",
+    "status": "added",
+    "reviewmethod": "full untracked file; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-124.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "untracked"
+  },
+  {
+    "path": "apps/web/src/server/measurement-cards.ts",
+    "status": "added",
+    "reviewmethod": "full untracked file; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-125.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "untracked"
+  },
+  {
+    "path": "apps/web/src/server/measurement-page-context.ts",
+    "status": "added",
+    "reviewmethod": "full untracked file; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-126.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "untracked"
+  },
+  {
+    "path": "apps/web/src/server/measurement-photos.ts",
+    "status": "added",
+    "reviewmethod": "full untracked file; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-127.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "untracked"
+  },
+  {
+    "path": "apps/web/src/server/measurements.ts",
+    "status": "added",
+    "reviewmethod": "full untracked file; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-128.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "untracked"
+  },
+  {
+    "path": "apps/web/src/server/workspace-page-context.ts",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff plus source context; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-129.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "modified"
+  },
+  {
+    "path": "apps/web/src/server/workspaces.ts",
+    "status": "modified",
+    "reviewmethod": "entire HEAD diff plus source context; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-130.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "modified"
+  },
+  {
+    "path": "packages/db/migrations/0040_measurement_storage.sql",
+    "status": "added",
+    "reviewmethod": "full untracked file; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-131.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "untracked"
+  },
+  {
+    "path": "packages/db/migrations/0041_measurement_authority.sql",
+    "status": "added",
+    "reviewmethod": "full untracked file; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-132.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "untracked"
+  },
+  {
+    "path": "packages/db/migrations/0042_measurement_intake_reads.sql",
+    "status": "added",
+    "reviewmethod": "full untracked file; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-133.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "untracked"
+  },
+  {
+    "path": "packages/db/migrations/0043_measurement_rebase_read.sql",
+    "status": "added",
+    "reviewmethod": "full untracked file; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-134.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "untracked"
+  },
+  {
+    "path": "packages/db/migrations/0044_measurement_reuse_analysis.sql",
+    "status": "added",
+    "reviewmethod": "full untracked file; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-135.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "untracked"
+  },
+  {
+    "path": "packages/db/migrations/0045_measurement_private_photos.sql",
+    "status": "added",
+    "reviewmethod": "full untracked file; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-136.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "untracked"
+  },
+  {
+    "path": "packages/db/migrations/0046_measurement_staff_cards.sql",
+    "status": "added",
+    "reviewmethod": "full untracked file; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-137.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "untracked"
+  },
+  {
+    "path": "packages/db/migrations/0048_measurement_capture_handoff.sql",
+    "status": "added",
+    "reviewmethod": "full untracked file; manual source review with matching OCR rules; cross-file authority/state/spec context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-138.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "parent",
+    "source_status": "untracked"
+  },
+  {
+    "path": "packages/application/package.json",
+    "status": "modified",
+    "reviewmethod": "entire HEAD diff/source, cross-file static review",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "diff_exit_code": 0,
+    "reviewer_partition": "masters_customers",
+    "source_status": "modified"
+  },
+  {
+    "path": "packages/application/scripts/customer-http-checks.mjs",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff/source, cross-file static review",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "diff_exit_code": 0,
+    "reviewer_partition": "masters_customers",
+    "source_status": "added"
+  },
+  {
+    "path": "packages/application/scripts/customer-photo-ui-checks.mjs",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff/source, cross-file static review",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "diff_exit_code": 0,
+    "reviewer_partition": "masters_customers",
+    "source_status": "added"
+  },
+  {
+    "path": "packages/application/scripts/customer-register-ui-checks.mjs",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff/source, cross-file static review",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "diff_exit_code": 0,
+    "reviewer_partition": "masters_customers",
+    "source_status": "added"
+  },
+  {
+    "path": "packages/application/scripts/customer-wearers-ui-checks.mjs",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff/source, cross-file static review",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "diff_exit_code": 0,
+    "reviewer_partition": "masters_customers",
+    "source_status": "added"
+  },
+  {
+    "path": "packages/application/scripts/garment-editor-frame-ui-checks.mjs",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff/source, cross-file static review",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "diff_exit_code": 0,
+    "reviewer_partition": "masters_customers",
+    "source_status": "added"
+  },
+  {
+    "path": "packages/application/scripts/master-authority-ui-checks.mjs",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff/source, cross-file static review",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "diff_exit_code": 0,
+    "reviewer_partition": "masters_customers",
+    "source_status": "added"
+  },
+  {
+    "path": "packages/application/scripts/master-catalog-ui-checks.mjs",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff/source, cross-file static review",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "diff_exit_code": 0,
+    "reviewer_partition": "masters_customers",
+    "source_status": "added"
+  },
+  {
+    "path": "packages/application/scripts/master-http-checks.mjs",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff/source, cross-file static review",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "diff_exit_code": 0,
+    "reviewer_partition": "masters_customers",
+    "source_status": "added"
+  },
+  {
+    "path": "packages/application/scripts/master-register-ui-checks.mjs",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff/source, cross-file static review",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "diff_exit_code": 0,
+    "reviewer_partition": "masters_customers",
+    "source_status": "added"
+  },
+  {
+    "path": "packages/application/scripts/master-transport-check.mjs",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff/source, cross-file static review",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "diff_exit_code": 0,
+    "reviewer_partition": "masters_customers",
+    "source_status": "added"
+  },
+  {
+    "path": "packages/application/scripts/master-ui-browser-checks.mjs",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff/source, cross-file static review",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "diff_exit_code": 0,
+    "reviewer_partition": "masters_customers",
+    "source_status": "added"
+  },
+  {
+    "path": "packages/application/scripts/master-ui-checks.mjs",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff/source, cross-file static review",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "diff_exit_code": 0,
+    "reviewer_partition": "masters_customers",
+    "source_status": "added"
+  },
+  {
+    "path": "packages/application/scripts/recovery-check.mjs",
+    "status": "modified",
+    "reviewmethod": "entire HEAD diff/source, cross-file static review",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "diff_exit_code": 0,
+    "reviewer_partition": "masters_customers",
+    "source_status": "modified"
+  },
+  {
+    "path": "packages/application/scripts/web-smoke.mjs",
+    "status": "modified",
+    "reviewmethod": "entire HEAD diff/source, cross-file static review",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "diff_exit_code": 0,
+    "reviewer_partition": "masters_customers",
+    "source_status": "modified"
+  },
+  {
+    "path": "packages/application/scripts/workspace-home-http-checks.mjs",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff/source, cross-file static review",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "diff_exit_code": 0,
+    "reviewer_partition": "masters_customers",
+    "source_status": "added"
+  },
+  {
+    "path": "packages/application/scripts/workspace-shell-ui-checks.mjs",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff/source, cross-file static review",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "diff_exit_code": 0,
+    "reviewer_partition": "masters_customers",
+    "source_status": "added"
+  },
+  {
+    "path": "packages/application/src/auth.ts",
+    "status": "modified",
+    "reviewmethod": "entire HEAD diff/source, cross-file static review",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "diff_exit_code": 0,
+    "reviewer_partition": "masters_customers",
+    "source_status": "modified"
+  },
+  {
+    "path": "packages/application/src/commands.ts",
+    "status": "modified",
+    "reviewmethod": "entire HEAD diff/source, cross-file static review",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "diff_exit_code": 0,
+    "reviewer_partition": "masters_customers",
+    "source_status": "modified"
+  },
+  {
+    "path": "packages/application/src/customer-contracts.ts",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff/source, cross-file static review",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "diff_exit_code": 0,
+    "reviewer_partition": "masters_customers",
+    "source_status": "added"
+  },
+  {
+    "path": "packages/application/src/customer-phone.ts",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff/source, cross-file static review",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "diff_exit_code": 0,
+    "reviewer_partition": "masters_customers",
+    "source_status": "added"
+  },
+  {
+    "path": "packages/application/src/customer-photo-contracts.ts",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff/source, cross-file static review",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "diff_exit_code": 0,
+    "reviewer_partition": "masters_customers",
+    "source_status": "added"
+  },
+  {
+    "path": "packages/application/src/customer-photos.ts",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff/source, cross-file static review",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "diff_exit_code": 0,
+    "reviewer_partition": "masters_customers",
+    "source_status": "added"
+  },
+  {
+    "path": "packages/application/src/customers.ts",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff/source, cross-file static review",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "diff_exit_code": 0,
+    "reviewer_partition": "masters_customers",
+    "source_status": "added"
+  },
+  {
+    "path": "packages/application/src/garment-definition.ts",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff/source, cross-file static review",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "diff_exit_code": 0,
+    "reviewer_partition": "masters_customers",
+    "source_status": "added"
+  },
+  {
+    "path": "packages/application/src/index.ts",
+    "status": "modified",
+    "reviewmethod": "entire HEAD diff/source, cross-file static review",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "diff_exit_code": 0,
+    "reviewer_partition": "masters_customers",
+    "source_status": "modified"
+  },
+  {
+    "path": "packages/application/src/master-contracts.ts",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff/source, cross-file static review",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "diff_exit_code": 0,
+    "reviewer_partition": "masters_customers",
+    "source_status": "added"
+  },
+  {
+    "path": "packages/application/src/master-manifest.ts",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff/source, cross-file static review",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "diff_exit_code": 0,
+    "reviewer_partition": "masters_customers",
+    "source_status": "added"
+  },
+  {
+    "path": "packages/application/src/master-starters.ts",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff/source, cross-file static review",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "diff_exit_code": 0,
+    "reviewer_partition": "masters_customers",
+    "source_status": "added"
+  },
+  {
+    "path": "packages/application/src/masters.ts",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff/source, cross-file static review",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "diff_exit_code": 0,
+    "reviewer_partition": "masters_customers",
+    "source_status": "added"
+  },
+  {
+    "path": "packages/application/src/workspace-contracts.ts",
+    "status": "modified",
+    "reviewmethod": "entire HEAD diff/source, cross-file static review",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "diff_exit_code": 0,
+    "reviewer_partition": "masters_customers",
+    "source_status": "modified"
+  },
+  {
+    "path": "packages/application/src/workspaces.ts",
+    "status": "modified",
+    "reviewmethod": "entire HEAD diff/source, cross-file static review",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "diff_exit_code": 0,
+    "reviewer_partition": "masters_customers",
+    "source_status": "modified"
+  },
+  {
+    "path": "packages/application/test/customer-contracts.test.mjs",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff/source, cross-file static review",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "diff_exit_code": 0,
+    "reviewer_partition": "masters_customers",
+    "source_status": "added"
+  },
+  {
+    "path": "packages/application/test/customer-storage.test.mjs",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff/source, cross-file static review",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "diff_exit_code": 0,
+    "reviewer_partition": "masters_customers",
+    "source_status": "added"
+  },
+  {
+    "path": "packages/application/test/files.test.mjs",
+    "status": "modified",
+    "reviewmethod": "entire HEAD diff/source, cross-file static review",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "diff_exit_code": 0,
+    "reviewer_partition": "masters_customers",
+    "source_status": "modified"
+  },
+  {
+    "path": "packages/application/test/identity.test.mjs",
+    "status": "modified",
+    "reviewmethod": "entire HEAD diff/source, cross-file static review",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "diff_exit_code": 0,
+    "reviewer_partition": "masters_customers",
+    "source_status": "modified"
+  },
+  {
+    "path": "packages/application/test/master-contracts.test.mjs",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff/source, cross-file static review",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "diff_exit_code": 0,
+    "reviewer_partition": "masters_customers",
+    "source_status": "added"
+  },
+  {
+    "path": "packages/application/test/master-storage.test.mjs",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff/source, cross-file static review",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "diff_exit_code": 0,
+    "reviewer_partition": "masters_customers",
+    "source_status": "added"
+  },
+  {
+    "path": "packages/application/test/masters.test.mjs",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff/source, cross-file static review",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "diff_exit_code": 0,
+    "reviewer_partition": "masters_customers",
+    "source_status": "added"
+  },
+  {
+    "path": "packages/db/README.md",
+    "status": "modified",
+    "reviewmethod": "entire HEAD diff/source, cross-file static review",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "diff_exit_code": 0,
+    "reviewer_partition": "masters_customers",
+    "source_status": "modified"
+  },
+  {
+    "path": "packages/db/migrations/0023_garment_master_storage.sql",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff/source, cross-file static review",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "diff_exit_code": 0,
+    "reviewer_partition": "masters_customers",
+    "source_status": "added"
+  },
+  {
+    "path": "packages/db/migrations/0024_master_validation.sql",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff/source, cross-file static review",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "diff_exit_code": 0,
+    "reviewer_partition": "masters_customers",
+    "source_status": "added"
+  },
+  {
+    "path": "packages/db/migrations/0025_master_persistence.sql",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff/source, cross-file static review",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "diff_exit_code": 0,
+    "reviewer_partition": "masters_customers",
+    "source_status": "added"
+  },
+  {
+    "path": "packages/db/migrations/0026_master_projections.sql",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff/source, cross-file static review",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "diff_exit_code": 0,
+    "reviewer_partition": "masters_customers",
+    "source_status": "added"
+  },
+  {
+    "path": "packages/db/migrations/0027_master_validation_paths.sql",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff/source, cross-file static review",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "diff_exit_code": 0,
+    "reviewer_partition": "masters_customers",
+    "source_status": "added"
+  },
+  {
+    "path": "packages/db/migrations/0028_master_name_whitespace.sql",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff/source, cross-file static review",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "diff_exit_code": 0,
+    "reviewer_partition": "masters_customers",
+    "source_status": "added"
+  },
+  {
+    "path": "packages/db/migrations/0029_master_uuid_contract.sql",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff/source, cross-file static review",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "diff_exit_code": 0,
+    "reviewer_partition": "masters_customers",
+    "source_status": "added"
+  },
+  {
+    "path": "packages/db/migrations/0030_master_catalog_commands.sql",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff/source, cross-file static review",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "diff_exit_code": 0,
+    "reviewer_partition": "masters_customers",
+    "source_status": "added"
+  },
+  {
+    "path": "packages/db/migrations/0031_master_registers.sql",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff/source, cross-file static review",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "diff_exit_code": 0,
+    "reviewer_partition": "masters_customers",
+    "source_status": "added"
+  },
+  {
+    "path": "packages/db/migrations/0032_master_empty_bindings.sql",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff/source, cross-file static review",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "diff_exit_code": 0,
+    "reviewer_partition": "masters_customers",
+    "source_status": "added"
+  },
+  {
+    "path": "packages/db/migrations/0033_master_page_bounds.sql",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff/source, cross-file static review",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "diff_exit_code": 0,
+    "reviewer_partition": "masters_customers",
+    "source_status": "added"
+  },
+  {
+    "path": "packages/db/migrations/0034_customer_foundation.sql",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff/source, cross-file static review",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "diff_exit_code": 0,
+    "reviewer_partition": "masters_customers",
+    "source_status": "added"
+  },
+  {
+    "path": "packages/db/migrations/0035_customer_authority.sql",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff/source, cross-file static review",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "diff_exit_code": 0,
+    "reviewer_partition": "masters_customers",
+    "source_status": "added"
+  },
+  {
+    "path": "packages/db/migrations/0036_customer_review_consistency.sql",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff/source, cross-file static review",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "diff_exit_code": 0,
+    "reviewer_partition": "masters_customers",
+    "source_status": "added"
+  },
+  {
+    "path": "packages/db/migrations/0037_customer_private_photos.sql",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff/source, cross-file static review",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "diff_exit_code": 0,
+    "reviewer_partition": "masters_customers",
+    "source_status": "added"
+  },
+  {
+    "path": "packages/db/migrations/0038_customer_photo_owner_keys.sql",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff/source, cross-file static review",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "diff_exit_code": 0,
+    "reviewer_partition": "masters_customers",
+    "source_status": "added"
+  },
+  {
+    "path": "packages/db/migrations/0039_customer_photo_stage_expiry.sql",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff/source, cross-file static review",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "diff_exit_code": 0,
+    "reviewer_partition": "masters_customers",
+    "source_status": "added"
+  },
+  {
+    "path": "packages/db/migrations/0047_supported_domain_imports.sql",
+    "status": "added",
+    "reviewmethod": "full untracked source, cross-file static review",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "diff_exit_code": 0,
+    "reviewer_partition": "masters_customers",
+    "source_status": "untracked"
+  },
+  {
+    "path": "packages/db/migrations/meta/0033_snapshot.json",
+    "status": "added",
+    "reviewmethod": "manual structural review of generated snapshot: parsed full JSON; chain, table additions/changes, column/check/index/FK shapes compared with schema and SQL; not line-by-line manual coverage",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "diff_exit_code": 0,
+    "reviewer_partition": "masters_customers",
+    "source_status": "added"
+  },
+  {
+    "path": "packages/db/migrations/meta/0034_snapshot.json",
+    "status": "added",
+    "reviewmethod": "manual structural review of generated snapshot: parsed full JSON; chain, table additions/changes, column/check/index/FK shapes compared with schema and SQL; not line-by-line manual coverage",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "diff_exit_code": 0,
+    "reviewer_partition": "masters_customers",
+    "source_status": "added"
+  },
+  {
+    "path": "packages/db/migrations/meta/0035_snapshot.json",
+    "status": "added",
+    "reviewmethod": "manual structural review of generated snapshot: parsed full JSON; chain, table additions/changes, column/check/index/FK shapes compared with schema and SQL; not line-by-line manual coverage",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "diff_exit_code": 0,
+    "reviewer_partition": "masters_customers",
+    "source_status": "added"
+  },
+  {
+    "path": "packages/db/migrations/meta/0036_snapshot.json",
+    "status": "added",
+    "reviewmethod": "manual structural review of generated snapshot: parsed full JSON; chain, table additions/changes, column/check/index/FK shapes compared with schema and SQL; not line-by-line manual coverage",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "diff_exit_code": 0,
+    "reviewer_partition": "masters_customers",
+    "source_status": "added"
+  },
+  {
+    "path": "packages/db/migrations/meta/0037_snapshot.json",
+    "status": "added",
+    "reviewmethod": "manual structural review of generated snapshot: parsed full JSON; chain, table additions/changes, column/check/index/FK shapes compared with schema and SQL; not line-by-line manual coverage",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "diff_exit_code": 0,
+    "reviewer_partition": "masters_customers",
+    "source_status": "added"
+  },
+  {
+    "path": "packages/db/migrations/meta/0038_snapshot.json",
+    "status": "added",
+    "reviewmethod": "manual structural review of generated snapshot: parsed full JSON; chain, table additions/changes, column/check/index/FK shapes compared with schema and SQL; not line-by-line manual coverage",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "diff_exit_code": 0,
+    "reviewer_partition": "masters_customers",
+    "source_status": "added"
+  },
+  {
+    "path": "packages/db/migrations/meta/0039_snapshot.json",
+    "status": "added",
+    "reviewmethod": "manual structural review of generated snapshot: parsed full JSON; chain, table additions/changes, column/check/index/FK shapes compared with schema and SQL; not line-by-line manual coverage",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "diff_exit_code": 0,
+    "reviewer_partition": "masters_customers",
+    "source_status": "added"
+  },
+  {
+    "path": "packages/db/migrations/meta/0040_snapshot.json",
+    "status": "added",
+    "reviewmethod": "manual structural review of generated snapshot: parsed full JSON; chain, table additions/changes, column/check/index/FK shapes compared with schema and SQL; not line-by-line manual coverage",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "diff_exit_code": 0,
+    "reviewer_partition": "masters_customers",
+    "source_status": "untracked"
+  },
+  {
+    "path": "packages/db/migrations/meta/0045_snapshot.json",
+    "status": "added",
+    "reviewmethod": "manual structural review of generated snapshot: parsed full JSON; chain, table additions/changes, column/check/index/FK shapes compared with schema and SQL; not line-by-line manual coverage",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "diff_exit_code": 0,
+    "reviewer_partition": "masters_customers",
+    "source_status": "untracked"
+  },
+  {
+    "path": "packages/db/migrations/meta/0046_snapshot.json",
+    "status": "added",
+    "reviewmethod": "manual structural review of generated snapshot: parsed full JSON; chain, table additions/changes, column/check/index/FK shapes compared with schema and SQL; not line-by-line manual coverage",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "diff_exit_code": 0,
+    "reviewer_partition": "masters_customers",
+    "source_status": "untracked"
+  },
+  {
+    "path": "packages/db/migrations/meta/0047_snapshot.json",
+    "status": "added",
+    "reviewmethod": "manual structural review of generated snapshot: parsed full JSON; chain, table additions/changes, column/check/index/FK shapes compared with schema and SQL; not line-by-line manual coverage",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "diff_exit_code": 0,
+    "reviewer_partition": "masters_customers",
+    "source_status": "untracked"
+  },
+  {
+    "path": "packages/db/migrations/meta/0048_snapshot.json",
+    "status": "added",
+    "reviewmethod": "manual structural review of generated snapshot: parsed full JSON; chain, table additions/changes, column/check/index/FK shapes compared with schema and SQL; not line-by-line manual coverage",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "diff_exit_code": 0,
+    "reviewer_partition": "masters_customers",
+    "source_status": "untracked"
+  },
+  {
+    "path": "packages/db/migrations/meta/_journal.json",
+    "status": "modified",
+    "reviewmethod": "entire HEAD diff/source, cross-file static review",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "diff_exit_code": 0,
+    "reviewer_partition": "masters_customers",
+    "source_status": "modified"
+  },
+  {
+    "path": "packages/db/src/schema.ts",
+    "status": "modified",
+    "reviewmethod": "entire HEAD diff/source, cross-file static review",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "diff_exit_code": 0,
+    "reviewer_partition": "masters_customers",
+    "source_status": "modified"
+  },
+  {
+    "path": "packages/db/test/isolation.test.mjs",
+    "status": "modified",
+    "reviewmethod": "entire HEAD diff/source, cross-file static review",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "diff_exit_code": 0,
+    "reviewer_partition": "masters_customers",
+    "source_status": "modified"
+  },
+  {
+    "path": "apps/web/public/design/ui-foundation-v3.html",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff/full source static review, resolved OCR rules, cross-file context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-002.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "masters_customers-supplemental",
+    "source_status": "added"
+  },
+  {
+    "path": "apps/web/src/app/globals.css",
+    "status": "modified",
+    "reviewmethod": "entire HEAD diff/full source static review, resolved OCR rules, cross-file context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-023.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "masters_customers-supplemental",
+    "source_status": "modified"
+  },
+  {
+    "path": "apps/web/src/app/workspaces/[tenant]/[location]/customers/[customerId]/customer-photo-editor.tsx",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff/full source static review, resolved OCR rules, cross-file context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-026.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "masters_customers-supplemental",
+    "source_status": "added"
+  },
+  {
+    "path": "apps/web/src/app/workspaces/[tenant]/[location]/customers/[customerId]/customer-profile-panel.tsx",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff/full source static review, resolved OCR rules, cross-file context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-027.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "masters_customers-supplemental",
+    "source_status": "added"
+  },
+  {
+    "path": "apps/web/src/app/workspaces/[tenant]/[location]/customers/[customerId]/edit/page.tsx",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff/full source static review, resolved OCR rules, cross-file context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-028.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "masters_customers-supplemental",
+    "source_status": "added"
+  },
+  {
+    "path": "apps/web/src/app/workspaces/[tenant]/[location]/customers/[customerId]/page.tsx",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff/full source static review, resolved OCR rules, cross-file context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-029.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "masters_customers-supplemental",
+    "source_status": "added"
+  },
+  {
+    "path": "apps/web/src/app/workspaces/[tenant]/[location]/customers/customer-form.tsx",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff/full source static review, resolved OCR rules, cross-file context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-038.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "masters_customers-supplemental",
+    "source_status": "added"
+  },
+  {
+    "path": "apps/web/src/app/workspaces/[tenant]/[location]/customers/customer-register.tsx",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff/full source static review, resolved OCR rules, cross-file context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-039.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "masters_customers-supplemental",
+    "source_status": "added"
+  },
+  {
+    "path": "apps/web/src/app/workspaces/[tenant]/[location]/settings/garments/catalog-editor.tsx",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff/full source static review, resolved OCR rules, cross-file context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-048.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "masters_customers-supplemental",
+    "source_status": "added"
+  },
+  {
+    "path": "apps/web/src/app/workspaces/[tenant]/[location]/settings/garments/editor-controls.tsx",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff/full source static review, resolved OCR rules, cross-file context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-049.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "masters_customers-supplemental",
+    "source_status": "added"
+  },
+  {
+    "path": "apps/web/src/app/workspaces/[tenant]/[location]/settings/garments/editor-save-bar.tsx",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff/full source static review, resolved OCR rules, cross-file context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-050.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "masters_customers-supplemental",
+    "source_status": "added"
+  },
+  {
+    "path": "apps/web/src/app/workspaces/[tenant]/[location]/settings/garments/editor-steps/construction.tsx",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff/full source static review, resolved OCR rules, cross-file context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-051.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "masters_customers-supplemental",
+    "source_status": "added"
+  },
+  {
+    "path": "apps/web/src/app/workspaces/[tenant]/[location]/settings/garments/editor-steps/identity.tsx",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff/full source static review, resolved OCR rules, cross-file context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-052.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "masters_customers-supplemental",
+    "source_status": "added"
+  },
+  {
+    "path": "apps/web/src/app/workspaces/[tenant]/[location]/settings/garments/editor-steps/measurements.tsx",
+    "status": "added",
+    "reviewmethod": "entire HEAD diff/full source static review, resolved OCR rules, cross-file context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-053.txt",
+    "diff_exit_code": 0,
+    "reviewer_partition": "masters_customers-supplemental",
+    "source_status": "added"
+  },
+  {
+    "path": "apps/worker/src/index.ts",
+    "status": "modified",
+    "reviewmethod": "manual complete HEAD diff; cross-file contracts and call flow inspection",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "rule_groups": [
+      {
+        "file": "rules-2.json",
+        "group_id": 1
+      }
+    ],
+    "reviewer_partition": "measurements_backend",
+    "source_status": "modified"
+  },
+  {
+    "path": "packages/application/scripts/domain-import-http-checks.mjs",
+    "status": "added",
+    "reviewmethod": "manual complete untracked source; static fixture/assertion review, no execution",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "rule_groups": [
+      {
+        "file": "rules-5.json",
+        "group_id": 1
+      }
+    ],
+    "reviewer_partition": "measurements_backend",
+    "source_status": "added"
+  },
+  {
+    "path": "packages/application/scripts/domain-import-ui-checks.mjs",
+    "status": "added",
+    "reviewmethod": "manual complete untracked source; static fixture/assertion review, no execution",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "rule_groups": [
+      {
+        "file": "rules-5.json",
+        "group_id": 1
+      }
+    ],
+    "reviewer_partition": "measurements_backend",
+    "source_status": "added"
+  },
+  {
+    "path": "packages/application/scripts/generate-import-artifacts.mjs",
+    "status": "added",
+    "reviewmethod": "manual complete untracked source; static fixture/assertion review, no execution",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "rule_groups": [
+      {
+        "file": "rules-5.json",
+        "group_id": 1
+      }
+    ],
+    "reviewer_partition": "measurements_backend",
+    "source_status": "added"
+  },
+  {
+    "path": "packages/application/scripts/measurement-card-http-checks.mjs",
+    "status": "added",
+    "reviewmethod": "manual complete untracked source; static fixture/assertion review, no execution",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "rule_groups": [
+      {
+        "file": "rules-5.json",
+        "group_id": 1
+      }
+    ],
+    "reviewer_partition": "measurements_backend",
+    "source_status": "added"
+  },
+  {
+    "path": "packages/application/scripts/measurement-card-ui-checks.mjs",
+    "status": "added",
+    "reviewmethod": "manual complete untracked source; static fixture/assertion review, no execution",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "rule_groups": [
+      {
+        "file": "rules-5.json",
+        "group_id": 1
+      }
+    ],
+    "reviewer_partition": "measurements_backend",
+    "source_status": "added"
+  },
+  {
+    "path": "packages/application/scripts/measurement-comparison-ui-checks.mjs",
+    "status": "added",
+    "reviewmethod": "manual complete untracked source; static fixture/assertion review, no execution",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "rule_groups": [
+      {
+        "file": "rules-5.json",
+        "group_id": 1
+      }
+    ],
+    "reviewer_partition": "measurements_backend",
+    "source_status": "added"
+  },
+  {
+    "path": "packages/application/scripts/measurement-custom-ui-checks.mjs",
+    "status": "added",
+    "reviewmethod": "manual complete untracked source; static fixture/assertion review, no execution",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "rule_groups": [
+      {
+        "file": "rules-5.json",
+        "group_id": 1
+      }
+    ],
+    "reviewer_partition": "measurements_backend",
+    "source_status": "added"
+  },
+  {
+    "path": "packages/application/scripts/measurement-http-checks.mjs",
+    "status": "added",
+    "reviewmethod": "manual complete untracked source; static fixture/assertion review, no execution",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "rule_groups": [
+      {
+        "file": "rules-5.json",
+        "group_id": 1
+      }
+    ],
+    "reviewer_partition": "measurements_backend",
+    "source_status": "added"
+  },
+  {
+    "path": "packages/application/scripts/measurement-photo-http-checks.mjs",
+    "status": "added",
+    "reviewmethod": "manual complete untracked source; static fixture/assertion review, no execution",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "rule_groups": [
+      {
+        "file": "rules-5.json",
+        "group_id": 1
+      }
+    ],
+    "reviewer_partition": "measurements_backend",
+    "source_status": "added"
+  },
+  {
+    "path": "packages/application/scripts/measurement-photo-ui-checks.mjs",
+    "status": "added",
+    "reviewmethod": "manual complete untracked source; static fixture/assertion review, no execution",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "rule_groups": [
+      {
+        "file": "rules-5.json",
+        "group_id": 1
+      }
+    ],
+    "reviewer_partition": "measurements_backend",
+    "source_status": "added"
+  },
+  {
+    "path": "packages/application/scripts/measurement-reuse-ui-checks.mjs",
+    "status": "added",
+    "reviewmethod": "manual complete untracked source; static fixture/assertion review, no execution",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "rule_groups": [
+      {
+        "file": "rules-5.json",
+        "group_id": 1
+      }
+    ],
+    "reviewer_partition": "measurements_backend",
+    "source_status": "added"
+  },
+  {
+    "path": "packages/application/scripts/measurement-revision-ui-checks.mjs",
+    "status": "added",
+    "reviewmethod": "manual complete untracked source; static fixture/assertion review, no execution",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "rule_groups": [
+      {
+        "file": "rules-5.json",
+        "group_id": 1
+      }
+    ],
+    "reviewer_partition": "measurements_backend",
+    "source_status": "added"
+  },
+  {
+    "path": "packages/application/scripts/measurement-ui-checks.mjs",
+    "status": "added",
+    "reviewmethod": "manual complete untracked source; static fixture/assertion review, no execution",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "rule_groups": [
+      {
+        "file": "rules-5.json",
+        "group_id": 1
+      }
+    ],
+    "reviewer_partition": "measurements_backend",
+    "source_status": "added"
+  },
+  {
+    "path": "packages/application/src/decimals.ts",
+    "status": "modified",
+    "reviewmethod": "manual complete HEAD diff; cross-file contracts and call flow inspection",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "rule_groups": [
+      {
+        "file": "rules-2.json",
+        "group_id": 1
+      }
+    ],
+    "reviewer_partition": "measurements_backend",
+    "source_status": "modified"
+  },
+  {
+    "path": "packages/application/src/domain-imports.ts",
+    "status": "added",
+    "reviewmethod": "manual complete untracked source; cross-file contracts and call flow inspection",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "rule_groups": [
+      {
+        "file": "rules-5.json",
+        "group_id": 1
+      }
+    ],
+    "reviewer_partition": "measurements_backend",
+    "source_status": "added"
+  },
+  {
+    "path": "packages/application/src/files.ts",
+    "status": "modified",
+    "reviewmethod": "manual complete HEAD diff; cross-file contracts and call flow inspection",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "rule_groups": [
+      {
+        "file": "rules-2.json",
+        "group_id": 1
+      }
+    ],
+    "reviewer_partition": "measurements_backend",
+    "source_status": "modified"
+  },
+  {
+    "path": "packages/application/src/import-contracts.ts",
+    "status": "added",
+    "reviewmethod": "manual complete untracked source; cross-file contracts and call flow inspection",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "rule_groups": [
+      {
+        "file": "rules-5.json",
+        "group_id": 1
+      }
+    ],
+    "reviewer_partition": "measurements_backend",
+    "source_status": "added"
+  },
+  {
+    "path": "packages/application/src/import-formats.ts",
+    "status": "added",
+    "reviewmethod": "manual complete untracked source; cross-file contracts and call flow inspection",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "rule_groups": [
+      {
+        "file": "rules-5.json",
+        "group_id": 1
+      }
+    ],
+    "reviewer_partition": "measurements_backend",
+    "source_status": "added"
+  },
+  {
+    "path": "packages/application/src/measurement-body-schema.ts",
+    "status": "added",
+    "reviewmethod": "manual complete untracked source; cross-file contracts and call flow inspection",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "rule_groups": [
+      {
+        "file": "rules-5.json",
+        "group_id": 1
+      }
+    ],
+    "reviewer_partition": "measurements_backend",
+    "source_status": "added"
+  },
+  {
+    "path": "packages/application/src/measurement-card-contracts.ts",
+    "status": "added",
+    "reviewmethod": "manual complete untracked source; cross-file contracts and call flow inspection",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "rule_groups": [
+      {
+        "file": "rules-5.json",
+        "group_id": 1
+      }
+    ],
+    "reviewer_partition": "measurements_backend",
+    "source_status": "added"
+  },
+  {
+    "path": "packages/application/src/measurement-card-qr.ts",
+    "status": "added",
+    "reviewmethod": "manual complete untracked source; cross-file contracts and call flow inspection",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "rule_groups": [
+      {
+        "file": "rules-5.json",
+        "group_id": 1
+      }
+    ],
+    "reviewer_partition": "measurements_backend",
+    "source_status": "added"
+  },
+  {
+    "path": "packages/application/src/measurement-cards.ts",
+    "status": "added",
+    "reviewmethod": "manual complete untracked source; cross-file contracts and call flow inspection",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "rule_groups": [
+      {
+        "file": "rules-5.json",
+        "group_id": 1
+      }
+    ],
+    "reviewer_partition": "measurements_backend",
+    "source_status": "added"
+  },
+  {
+    "path": "packages/application/src/measurement-contracts.ts",
+    "status": "added",
+    "reviewmethod": "manual complete untracked source; cross-file contracts and call flow inspection",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "rule_groups": [
+      {
+        "file": "rules-5.json",
+        "group_id": 1
+      }
+    ],
+    "reviewer_partition": "measurements_backend",
+    "source_status": "added"
+  },
+  {
+    "path": "packages/application/src/measurement-draft.ts",
+    "status": "added",
+    "reviewmethod": "manual complete untracked source; cross-file contracts and call flow inspection",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "rule_groups": [
+      {
+        "file": "rules-5.json",
+        "group_id": 1
+      }
+    ],
+    "reviewer_partition": "measurements_backend",
+    "source_status": "added"
+  },
+  {
+    "path": "packages/application/src/measurement-photo-contracts.ts",
+    "status": "added",
+    "reviewmethod": "manual complete untracked source; cross-file contracts and call flow inspection",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "rule_groups": [
+      {
+        "file": "rules-5.json",
+        "group_id": 1
+      }
+    ],
+    "reviewer_partition": "measurements_backend",
+    "source_status": "added"
+  },
+  {
+    "path": "packages/application/src/measurement-photos.ts",
+    "status": "added",
+    "reviewmethod": "manual complete untracked source; cross-file contracts and call flow inspection",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "rule_groups": [
+      {
+        "file": "rules-5.json",
+        "group_id": 1
+      }
+    ],
+    "reviewer_partition": "measurements_backend",
+    "source_status": "added"
+  },
+  {
+    "path": "packages/application/src/measurement-reuse.ts",
+    "status": "added",
+    "reviewmethod": "manual complete untracked source; cross-file contracts and call flow inspection",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "rule_groups": [
+      {
+        "file": "rules-5.json",
+        "group_id": 1
+      }
+    ],
+    "reviewer_partition": "measurements_backend",
+    "source_status": "added"
+  },
+  {
+    "path": "packages/application/src/measurement-values.ts",
+    "status": "added",
+    "reviewmethod": "manual complete untracked source; cross-file contracts and call flow inspection",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "rule_groups": [
+      {
+        "file": "rules-5.json",
+        "group_id": 1
+      }
+    ],
+    "reviewer_partition": "measurements_backend",
+    "source_status": "added"
+  },
+  {
+    "path": "packages/application/src/measurements.ts",
+    "status": "added",
+    "reviewmethod": "manual complete untracked source; cross-file contracts and call flow inspection",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "rule_groups": [
+      {
+        "file": "rules-5.json",
+        "group_id": 1
+      }
+    ],
+    "reviewer_partition": "measurements_backend",
+    "source_status": "added"
+  },
+  {
+    "path": "packages/application/src/private-image-limits.ts",
+    "status": "added",
+    "reviewmethod": "manual complete untracked source; cross-file contracts and call flow inspection",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "rule_groups": [
+      {
+        "file": "rules-5.json",
+        "group_id": 1
+      }
+    ],
+    "reviewer_partition": "measurements_backend",
+    "source_status": "added"
+  },
+  {
+    "path": "packages/application/src/private-image.ts",
+    "status": "added",
+    "reviewmethod": "manual complete HEAD diff; cross-file contracts and call flow inspection",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "rule_groups": [
+      {
+        "file": "rules-2.json",
+        "group_id": 1
+      }
+    ],
+    "reviewer_partition": "measurements_backend",
+    "source_status": "added"
+  },
+  {
+    "path": "packages/application/test/domain-imports.test.mjs",
+    "status": "added",
+    "reviewmethod": "manual complete untracked source; static fixture/assertion review, no execution",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "rule_groups": [
+      {
+        "file": "rules-5.json",
+        "group_id": 1
+      }
+    ],
+    "reviewer_partition": "measurements_backend",
+    "source_status": "added"
+  },
+  {
+    "path": "packages/application/test/import-deadlines.test.mjs",
+    "status": "added",
+    "reviewmethod": "manual complete untracked source; static fixture/assertion review, no execution",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "rule_groups": [
+      {
+        "file": "rules-5.json",
+        "group_id": 1
+      }
+    ],
+    "reviewer_partition": "measurements_backend",
+    "source_status": "added"
+  },
+  {
+    "path": "packages/application/test/import-formats.test.mjs",
+    "status": "added",
+    "reviewmethod": "manual complete untracked source; static fixture/assertion review, no execution",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "rule_groups": [
+      {
+        "file": "rules-5.json",
+        "group_id": 1
+      }
+    ],
+    "reviewer_partition": "measurements_backend",
+    "source_status": "added"
+  },
+  {
+    "path": "packages/application/test/measurement-capture-checks.mjs",
+    "status": "added",
+    "reviewmethod": "manual complete untracked source; static fixture/assertion review, no execution",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "rule_groups": [
+      {
+        "file": "rules-5.json",
+        "group_id": 1
+      }
+    ],
+    "reviewer_partition": "measurements_backend",
+    "source_status": "added"
+  },
+  {
+    "path": "packages/application/test/measurement-card-checks.mjs",
+    "status": "added",
+    "reviewmethod": "manual complete untracked source; static fixture/assertion review, no execution",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "rule_groups": [
+      {
+        "file": "rules-5.json",
+        "group_id": 1
+      }
+    ],
+    "reviewer_partition": "measurements_backend",
+    "source_status": "added"
+  },
+  {
+    "path": "packages/application/test/measurement-cards.test.mjs",
+    "status": "added",
+    "reviewmethod": "manual complete untracked source; static fixture/assertion review, no execution",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "rule_groups": [
+      {
+        "file": "rules-5.json",
+        "group_id": 1
+      }
+    ],
+    "reviewer_partition": "measurements_backend",
+    "source_status": "added"
+  },
+  {
+    "path": "packages/application/test/measurement-contracts.test.mjs",
+    "status": "added",
+    "reviewmethod": "manual complete untracked source; static fixture/assertion review, no execution",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "rule_groups": [
+      {
+        "file": "rules-5.json",
+        "group_id": 1
+      }
+    ],
+    "reviewer_partition": "measurements_backend",
+    "source_status": "added"
+  },
+  {
+    "path": "packages/application/test/measurement-draft.test.mjs",
+    "status": "added",
+    "reviewmethod": "manual complete untracked source; static fixture/assertion review, no execution",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "rule_groups": [
+      {
+        "file": "rules-5.json",
+        "group_id": 1
+      }
+    ],
+    "reviewer_partition": "measurements_backend",
+    "source_status": "added"
+  },
+  {
+    "path": "packages/application/test/measurement-photo-checks.mjs",
+    "status": "added",
+    "reviewmethod": "manual complete untracked source; static fixture/assertion review, no execution",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "rule_groups": [
+      {
+        "file": "rules-5.json",
+        "group_id": 1
+      }
+    ],
+    "reviewer_partition": "measurements_backend",
+    "source_status": "added"
+  },
+  {
+    "path": "packages/application/test/measurement-reuse.test.mjs",
+    "status": "added",
+    "reviewmethod": "manual complete untracked source; static fixture/assertion review, no execution",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "rule_groups": [
+      {
+        "file": "rules-6.json",
+        "group_id": 1
+      }
+    ],
+    "reviewer_partition": "measurements_backend",
+    "source_status": "added"
+  },
+  {
+    "path": "packages/application/test/measurement-storage.test.mjs",
+    "status": "added",
+    "reviewmethod": "manual complete untracked source; static fixture/assertion review, no execution",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "rule_groups": [
+      {
+        "file": "rules-6.json",
+        "group_id": 1
+      }
+    ],
+    "reviewer_partition": "measurements_backend",
+    "source_status": "added"
+  },
+  {
+    "path": "apps/web/src/components/measurements/measurement-cards.tsx",
+    "status": "added",
+    "reviewmethod": "manual complete untracked source; cross-file contracts and call flow inspection",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "rule_groups": [
+      {
+        "file": "rules-4.json",
+        "group_id": 2
+      }
+    ],
+    "reviewer_partition": "measurements_ui",
+    "source_status": "added"
+  },
+  {
+    "path": "apps/web/src/components/measurements/measurement-comparison.tsx",
+    "status": "added",
+    "reviewmethod": "manual complete untracked source; cross-file contracts and call flow inspection",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "rule_groups": [
+      {
+        "file": "rules-4.json",
+        "group_id": 2
+      }
+    ],
+    "reviewer_partition": "measurements_ui",
+    "source_status": "added"
+  },
+  {
+    "path": "apps/web/src/components/measurements/measurement-custom-field.tsx",
+    "status": "added",
+    "reviewmethod": "manual complete untracked source; cross-file contracts and call flow inspection",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "rule_groups": [
+      {
+        "file": "rules-4.json",
+        "group_id": 2
+      }
+    ],
+    "reviewer_partition": "measurements_ui",
+    "source_status": "added"
+  },
+  {
+    "path": "apps/web/src/components/measurements/measurement-detail.tsx",
+    "status": "added",
+    "reviewmethod": "manual complete untracked source; cross-file contracts and call flow inspection",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "rule_groups": [
+      {
+        "file": "rules-4.json",
+        "group_id": 2
+      }
+    ],
+    "reviewer_partition": "measurements_ui",
+    "source_status": "added"
+  },
+  {
+    "path": "apps/web/src/components/measurements/measurement-photos.tsx",
+    "status": "added",
+    "reviewmethod": "manual complete untracked source; cross-file contracts and call flow inspection",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "rule_groups": [
+      {
+        "file": "rules-4.json",
+        "group_id": 2
+      }
+    ],
+    "reviewer_partition": "measurements_ui",
+    "source_status": "added"
+  },
+  {
+    "path": "apps/web/src/components/measurements/measurement-reuse.tsx",
+    "status": "added",
+    "reviewmethod": "manual complete untracked source; cross-file contracts and call flow inspection",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "rule_groups": [
+      {
+        "file": "rules-4.json",
+        "group_id": 2
+      }
+    ],
+    "reviewer_partition": "measurements_ui",
+    "source_status": "added"
+  },
+  {
+    "path": "apps/web/src/app/workspaces/[tenant]/[location]/settings/garments/eligibility-editor.tsx",
+    "status": "added",
+    "reviewmethod": "manual entire stored HEAD diff plus service/query/contracts cross-file context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-054.txt",
+    "diff_exit_code": 0,
+    "rule_groups": [
+      {
+        "file": "rules-0.json",
+        "group_id": 4
+      }
+    ],
+    "reviewer_partition": "measurements-master-ui",
+    "source_status": "added"
+  },
+  {
+    "path": "apps/web/src/app/workspaces/[tenant]/[location]/settings/garments/garment-editor.tsx",
+    "status": "added",
+    "reviewmethod": "manual entire stored HEAD diff plus service/query/contracts cross-file context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-055.txt",
+    "diff_exit_code": 0,
+    "rule_groups": [
+      {
+        "file": "rules-0.json",
+        "group_id": 4
+      }
+    ],
+    "reviewer_partition": "measurements-master-ui",
+    "source_status": "added"
+  },
+  {
+    "path": "apps/web/src/app/workspaces/[tenant]/[location]/settings/garments/garment-preview.tsx",
+    "status": "added",
+    "reviewmethod": "manual entire stored HEAD diff plus service/query/contracts cross-file context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-056.txt",
+    "diff_exit_code": 0,
+    "rule_groups": [
+      {
+        "file": "rules-0.json",
+        "group_id": 4
+      }
+    ],
+    "reviewer_partition": "measurements-master-ui",
+    "source_status": "added"
+  },
+  {
+    "path": "apps/web/src/app/workspaces/[tenant]/[location]/settings/garments/garment-settings.tsx",
+    "status": "added",
+    "reviewmethod": "manual entire stored HEAD diff plus service/query/contracts cross-file context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-057.txt",
+    "diff_exit_code": 0,
+    "rule_groups": [
+      {
+        "file": "rules-0.json",
+        "group_id": 4
+      }
+    ],
+    "reviewer_partition": "measurements-master-ui",
+    "source_status": "added"
+  },
+  {
+    "path": "apps/web/src/app/workspaces/[tenant]/[location]/settings/garments/master-client.ts",
+    "status": "added",
+    "reviewmethod": "manual entire stored HEAD diff plus service/query/contracts cross-file context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-058.txt",
+    "diff_exit_code": 0,
+    "rule_groups": [
+      {
+        "file": "rules-0.json",
+        "group_id": 4
+      }
+    ],
+    "reviewer_partition": "measurements-master-ui",
+    "source_status": "added"
+  },
+  {
+    "path": "apps/web/src/app/workspaces/[tenant]/[location]/settings/garments/master-history.tsx",
+    "status": "added",
+    "reviewmethod": "manual entire stored HEAD diff plus service/query/contracts cross-file context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-059.txt",
+    "diff_exit_code": 0,
+    "rule_groups": [
+      {
+        "file": "rules-0.json",
+        "group_id": 4
+      }
+    ],
+    "reviewer_partition": "measurements-master-ui",
+    "source_status": "added"
+  },
+  {
+    "path": "apps/web/src/app/workspaces/[tenant]/[location]/settings/garments/master-register.tsx",
+    "status": "added",
+    "reviewmethod": "manual entire stored HEAD diff plus service/query/contracts cross-file context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-060.txt",
+    "diff_exit_code": 0,
+    "rule_groups": [
+      {
+        "file": "rules-0.json",
+        "group_id": 4
+      }
+    ],
+    "reviewer_partition": "measurements-master-ui",
+    "source_status": "added"
+  },
+  {
+    "path": "apps/web/src/app/workspaces/[tenant]/[location]/settings/garments/move-before-dialog.tsx",
+    "status": "added",
+    "reviewmethod": "manual entire stored HEAD diff plus service/query/contracts cross-file context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-061.txt",
+    "diff_exit_code": 0,
+    "rule_groups": [
+      {
+        "file": "rules-0.json",
+        "group_id": 4
+      }
+    ],
+    "reviewer_partition": "measurements-master-ui",
+    "source_status": "added"
+  },
+  {
+    "path": "apps/web/src/app/workspaces/[tenant]/[location]/settings/garments/page.tsx",
+    "status": "added",
+    "reviewmethod": "manual entire stored HEAD diff plus service/query/contracts cross-file context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-062.txt",
+    "diff_exit_code": 0,
+    "rule_groups": [
+      {
+        "file": "rules-0.json",
+        "group_id": 4
+      }
+    ],
+    "reviewer_partition": "measurements-master-ui",
+    "source_status": "added"
+  },
+  {
+    "path": "apps/web/src/app/workspaces/[tenant]/[location]/settings/garments/starter-library.tsx",
+    "status": "added",
+    "reviewmethod": "manual entire stored HEAD diff plus service/query/contracts cross-file context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-063.txt",
+    "diff_exit_code": 0,
+    "rule_groups": [
+      {
+        "file": "rules-0.json",
+        "group_id": 4
+      }
+    ],
+    "reviewer_partition": "measurements-master-ui",
+    "source_status": "added"
+  },
+  {
+    "path": "apps/web/src/app/workspaces/[tenant]/[location]/settings/page.tsx",
+    "status": "added",
+    "reviewmethod": "manual entire stored HEAD diff plus service/query/contracts cross-file context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-064.txt",
+    "diff_exit_code": 0,
+    "rule_groups": [
+      {
+        "file": "rules-0.json",
+        "group_id": 4
+      }
+    ],
+    "reviewer_partition": "measurements-master-ui",
+    "source_status": "added"
+  },
+  {
+    "path": "apps/web/src/app/workspaces/[tenant]/[location]/settings/shop/page.tsx",
+    "status": "added",
+    "reviewmethod": "manual entire stored HEAD diff plus service/query/contracts cross-file context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-065.txt",
+    "diff_exit_code": 0,
+    "rule_groups": [
+      {
+        "file": "rules-1.json",
+        "group_id": 1
+      }
+    ],
+    "reviewer_partition": "measurements-master-ui",
+    "source_status": "added"
+  },
+  {
+    "path": "apps/web/src/app/workspaces/[tenant]/[location]/workspace-panel.tsx",
+    "status": "modified",
+    "reviewmethod": "manual entire stored HEAD diff plus service/query/contracts cross-file context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-066.txt",
+    "diff_exit_code": 0,
+    "rule_groups": [
+      {
+        "file": "rules-1.json",
+        "group_id": 1
+      }
+    ],
+    "reviewer_partition": "measurements-master-ui",
+    "source_status": "modified"
+  },
+  {
+    "path": "apps/web/src/app/workspaces/[tenant]/[location]/workspace-settings-page.tsx",
+    "status": "added",
+    "reviewmethod": "manual entire stored HEAD diff plus service/query/contracts cross-file context",
+    "reviewed": true,
+    "skipped": false,
+    "reason": null,
+    "material": "parent-067.txt",
+    "diff_exit_code": 0,
+    "rule_groups": [
+      {
+        "file": "rules-1.json",
+        "group_id": 1
+      }
+    ],
+    "reviewer_partition": "measurements-master-ui",
+    "source_status": "added"
+  }
+]

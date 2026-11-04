@@ -170,9 +170,11 @@ export function CustomerProfilePanel({
   data,
   today,
   children,
+  measurements,
 }: {
   base: string;
   data: Detail;
+  measurements: { read: boolean; manage: boolean };
   today: string;
   children: ReactNode;
 }) {
@@ -226,8 +228,13 @@ export function CustomerProfilePanel({
   useEffect(() => {
     setReady(true);
     const hash = location.hash.slice(1);
-    if (hash === "wearers" || hash === "activity") setSection(hash);
-  }, []);
+    if (
+      hash === "wearers" ||
+      hash === "activity" ||
+      (hash === "measurements" && measurements.read)
+    )
+      setSection(hash);
+  }, [measurements.read]);
   useEffect(() => {
     if (
       (wearers.state.kind === "error" && wearers.state.denied) ||
@@ -578,11 +585,104 @@ export function CustomerProfilePanel({
           <TabsTrigger value="wearers" disabled={!ready || !!editor}>
             Wearers
           </TabsTrigger>
+          {measurements.read ? (
+            <TabsTrigger value="measurements" disabled={!ready || !!editor}>
+              Measurements
+            </TabsTrigger>
+          ) : null}
           <TabsTrigger value="activity" disabled={!ready || !!editor}>
             Activity
           </TabsTrigger>
         </TabsList>
         <TabsContent value="overview">{children}</TabsContent>
+        {measurements.read ? (
+          <TabsContent value="measurements">
+            <Card>
+              <CardHeader>
+                <CardTitle>Measurements by wearer</CardTitle>
+                <CardDescription>
+                  Choose a named wearer to open their body and garment
+                  measurement book.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="flex flex-col gap-4">
+                {wearers.state.kind === "loading" ? (
+                  <p role="status">Loading wearers…</p>
+                ) : wearers.state.kind === "error" ? (
+                  <Alert>
+                    <AlertDescription>{wearers.state.message}</AlertDescription>
+                  </Alert>
+                ) : rows.length ? (
+                  <ul className="flex flex-col gap-4">
+                    {rows.map((w) => (
+                      <li
+                        key={w.id}
+                        className="flex min-w-0 flex-col gap-3 rounded-lg border border-border p-4"
+                      >
+                        <p className="break-words font-medium">
+                          {w.profile.name}
+                        </p>
+                        <div className="flex flex-wrap gap-3">
+                          <a
+                            className="text-primary underline"
+                            href={`${base}/customers/${data.id}/wearers/${w.id}/measurements`}
+                          >
+                            Open measurements
+                          </a>
+                          {measurements.manage &&
+                          !data.archivedAt &&
+                          !w.archivedAt &&
+                          !denied ? (
+                            <a
+                              className="text-primary underline"
+                              href={`${base}/customers/${data.id}/wearers/${w.id}/measurements/new`}
+                            >
+                              Add measurements
+                            </a>
+                          ) : null}
+                        </div>
+                        {w.archivedAt ? (
+                          <Badge variant="secondary">Archived wearer</Badge>
+                        ) : null}
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p>
+                    No named wearers saved. Add a wearer before recording
+                    measurements.
+                  </p>
+                )}
+                <div className="flex flex-wrap gap-2">
+                  <Button
+                    variant="outline"
+                    disabled={denied || wearers.offset === 0}
+                    onClick={() =>
+                      wearers.setOffset(Math.max(0, wearers.offset - 25))
+                    }
+                  >
+                    Previous wearers
+                  </Button>
+                  <Button
+                    variant="outline"
+                    disabled={
+                      denied ||
+                      wearers.state.kind !== "ready" ||
+                      wearers.state.page.nextOffset === null
+                    }
+                    onClick={() =>
+                      wearers.state.kind === "ready" &&
+                      wearers.state.page.nextOffset !== null &&
+                      wearers.setOffset(wearers.state.page.nextOffset)
+                    }
+                  >
+                    Next wearers
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        ) : null}
         <TabsContent value="wearers">
           <Card>
             <CardHeader>
@@ -676,6 +776,26 @@ export function CustomerProfilePanel({
                             ))}
                           </div>
                         )}
+                        {measurements.read && !denied ? (
+                          <div className="flex flex-wrap gap-3">
+                            <a
+                              className="text-primary underline"
+                              href={`${base}/customers/${data.id}/wearers/${w.id}/measurements`}
+                            >
+                              Open measurements
+                            </a>
+                            {measurements.manage &&
+                            !data.archivedAt &&
+                            !w.archivedAt ? (
+                              <a
+                                className="text-primary underline"
+                                href={`${base}/customers/${data.id}/wearers/${w.id}/measurements/new`}
+                              >
+                                Add measurements
+                              </a>
+                            ) : null}
+                          </div>
+                        ) : null}
                         {!data.archivedAt && !denied && (
                           <div className="flex flex-wrap gap-2">
                             {data.capabilities.manage && !w.archivedAt && (

@@ -8,6 +8,7 @@ import {
   MasterError,
   readBoundedBody,
 } from "@fitloom/application";
+import { IMPORT_REQUEST_BYTES } from "@fitloom/application/import-contracts";
 import { pino } from "pino";
 import { identityService } from "./identity";
 import { runtimePool } from "./runtime-pools";
@@ -117,7 +118,11 @@ export async function mutation(
   request: Request,
   run: (input: unknown) => Promise<Response>,
   options: {
-    bodyLimit?: "master-definition" | "customer-profile";
+    bodyLimit?:
+      | "master-definition"
+      | "customer-profile"
+      | "measurement"
+      | "import-preview";
     masterErrors?: boolean;
     errorAdapter?: (error: unknown) => Response;
   } = {},
@@ -134,7 +139,12 @@ export async function mutation(
       if (!request.headers.get("content-type")?.startsWith("application/json"))
         throw new CommandError("validation", "JSON required");
       const bytes = await readBoundedBody(request, {
-        maxBytes: options.bodyLimit ? 131072 : 16384,
+        maxBytes:
+          options.bodyLimit === "import-preview"
+            ? IMPORT_REQUEST_BYTES
+            : options.bodyLimit
+              ? 131072
+              : 16384,
         timeoutMs: 5000,
       });
       let input: unknown;

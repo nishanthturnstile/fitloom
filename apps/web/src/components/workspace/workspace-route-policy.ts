@@ -6,7 +6,14 @@ export function workspaceRoute(
 ): {
   destination: WorkspaceDestination;
   label: string;
-  customerPage: "register" | "new" | "profile" | "edit" | null;
+  customerPage:
+    | "register"
+    | "new"
+    | "profile"
+    | "edit"
+    | "measurements"
+    | "imports"
+    | null;
 } {
   const suffix =
     pathname === base
@@ -14,8 +21,37 @@ export function workspaceRoute(
       : pathname.startsWith(`${base}/`)
         ? pathname.slice(base.length)
         : null;
+  if (suffix === "/customers/import" || suffix === "/measurements/import")
+    return {
+      destination: {
+        kind: "imports",
+        family: suffix === "/customers/import" ? "customers" : "measurements",
+      },
+      label:
+        suffix === "/customers/import"
+          ? "Import customers"
+          : "Import measurements",
+      customerPage: "imports",
+    };
   if (suffix === "/customers" || suffix?.startsWith("/customers/")) {
     const part = suffix.split("/").filter(Boolean);
+    if (part[2] === "wearers" && part[4] === "measurements")
+      return {
+        destination: { kind: "customers" },
+        label:
+          part[5] === "compare"
+            ? "Compare measurements"
+            : part[8] === "copy"
+              ? "Copy measurements"
+              : part[5] === "new"
+                ? "Add measurements"
+                : part[6] === "edit"
+                  ? "Revise measurements"
+                  : part.length > 5
+                    ? "Measurement version"
+                    : "Measurements",
+        customerPage: "measurements",
+      };
     const page =
       part.length === 1
         ? "register"
@@ -74,6 +110,18 @@ export function workspaceSearch(
   permissions: string[],
 ) {
   const route = workspaceRoute(base, pathname, query);
+  const suffix = pathname.slice(base.length).split("/").filter(Boolean);
+  if (
+    route.customerPage === "measurements" &&
+    suffix.length === 5 &&
+    permissions.includes("measurements.read")
+  )
+    return {
+      label: "Search measurement profiles",
+      event: "fitloom:measurement-search",
+      path: pathname,
+      href: `${pathname}?focus=search`,
+    };
   const catalog =
     permissions.includes("masters.read") &&
     (route.destination.kind === "catalog" ||
