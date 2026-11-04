@@ -1,0 +1,3 @@
+# Keep the published CSV bytes and captured command output intact.
+apps/web/public/imports/*.csv -text whitespace=cr-at-eol
+docs/implementation/reviews/phase-2-fixes-artifacts/*.log -text whitespace=-blank-at-eol

@@ -88,6 +88,10 @@ The worker dispatches committed command intents, delivers mail, cleans registere
 
 ## Verify the running stack
 
+GitHub Actions runs the same Compose startup and aggregate validation on pull requests to `main` and pushes to `main`. The Ubuntu runner creates fresh local credentials and isolated database/storage volumes; repository secrets are not required. The job saves startup, validation and service-status logs for seven days and stops its containers even after failure. The full Chrome suite remains a separately verified local check because it uses the retained Mac browser driver.
+
+The workflow pins its actions to commit SHAs and grants read-only repository access, following [GitHub's workflow security guidance](https://docs.github.com/en/actions/reference/security/secure-use).
+
 Run `pnpm validate` for the complete container-based check. Tests reset only `fitloom_test` and synthetic objects in `fitloom-test`; development data remains separate. Test Mailpit and credentials are independent of the development inbox.
 
 Run `node scripts/verify-hot-reload.mjs` on the Mac to check actual hot reload. The script temporarily changes web text, a shared application response, and worker source. It checks live HTTP responses and heartbeat process IDs, restores every file, and verifies that source synchronization did not recreate containers. Do not edit those files concurrently with this check. Successful image builds alone do not establish that live services loaded new code.

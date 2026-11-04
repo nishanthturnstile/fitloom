@@ -20,6 +20,7 @@ import {
   normalizePrivateImage,
   privateImageResponse,
 } from "./private-image.js";
+import { PRIVATE_IMAGE_MAX_BYTES } from "./private-image-limits.js";
 import {
   pageOffset,
   privateFileList,
@@ -30,10 +31,7 @@ import {
 const fileResult = z.strictObject({ id: uuid, version: z.int().nonnegative() });
 const metadata = z.strictObject({
   id: blobKey,
-  size: z
-    .int()
-    .positive()
-    .max(5 * 1024 * 1024),
+  size: z.int().positive().max(PRIVATE_IMAGE_MAX_BYTES),
   mediaType: z.enum(["image/png", "image/jpeg"]),
   sha256: z.string().regex(/^[a-f0-9]{64}$/),
   version: z.int().nonnegative(),

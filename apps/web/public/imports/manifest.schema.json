@@ -1,0 +1,684 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "formatVersion": {
+      "type": "number",
+      "const": 1
+    },
+    "schemaKey": {
+      "type": "string"
+    },
+    "schemaRef": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "body"
+            },
+            "bundleVersion": {
+              "type": "string",
+              "pattern": "^body-core-v[1-9]\\d{0,5}$"
+            }
+          },
+          "required": ["kind", "bundleVersion"],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "garment"
+            },
+            "garmentId": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            },
+            "versionId": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            }
+          },
+          "required": ["kind", "garmentId", "versionId"],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "schemaHash": {
+      "type": "string",
+      "pattern": "^v1:[0-9a-f]{64}$"
+    },
+    "schema": {
+      "type": "object",
+      "properties": {
+        "formatVersion": {
+          "type": "number",
+          "const": 1
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "guidance": {
+          "type": "string",
+          "maxLength": 500
+        },
+        "sections": {
+          "maxItems": 10,
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+              },
+              "label": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100
+              }
+            },
+            "required": ["id", "label"],
+            "additionalProperties": false
+          }
+        },
+        "fields": {
+          "maxItems": 60,
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                  },
+                  "label": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 100
+                  },
+                  "sectionId": {
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                  },
+                  "required": {
+                    "type": "boolean"
+                  },
+                  "semanticId": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "enum": [
+                          "body.chest.circumference",
+                          "body.bust.circumference",
+                          "body.waist.circumference",
+                          "body.hip.circumference",
+                          "body.shoulder.width",
+                          "garment.chest.circumference",
+                          "garment.sleeve.length",
+                          "garment.body.length",
+                          "garment.inseam.length",
+                          "garment.outseam.length"
+                        ]
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "help": {
+                    "type": "string",
+                    "maxLength": 500
+                  },
+                  "illustrationId": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "enum": [
+                          "shirt",
+                          "blouse",
+                          "trouser",
+                          "dimension",
+                          "construction"
+                        ]
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "kind": {
+                    "type": "string",
+                    "const": "length"
+                  },
+                  "basis": {
+                    "type": "string",
+                    "enum": ["body", "garment"]
+                  },
+                  "displayUnit": {
+                    "type": "string",
+                    "enum": ["in", "cm"]
+                  },
+                  "displayPrecision": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 6
+                  },
+                  "min": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "pattern": "^-?(0|[1-9]\\d{0,17})(\\.\\d{1,6})?$"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "max": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "pattern": "^-?(0|[1-9]\\d{0,17})(\\.\\d{1,6})?$"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "id",
+                  "label",
+                  "sectionId",
+                  "required",
+                  "semanticId",
+                  "help",
+                  "illustrationId",
+                  "kind",
+                  "basis",
+                  "displayUnit",
+                  "displayPrecision",
+                  "min",
+                  "max"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                  },
+                  "label": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 100
+                  },
+                  "sectionId": {
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                  },
+                  "required": {
+                    "type": "boolean"
+                  },
+                  "semanticId": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "enum": [
+                          "body.chest.circumference",
+                          "body.bust.circumference",
+                          "body.waist.circumference",
+                          "body.hip.circumference",
+                          "body.shoulder.width",
+                          "garment.chest.circumference",
+                          "garment.sleeve.length",
+                          "garment.body.length",
+                          "garment.inseam.length",
+                          "garment.outseam.length"
+                        ]
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "help": {
+                    "type": "string",
+                    "maxLength": 500
+                  },
+                  "illustrationId": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "enum": [
+                          "shirt",
+                          "blouse",
+                          "trouser",
+                          "dimension",
+                          "construction"
+                        ]
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "kind": {
+                    "type": "string",
+                    "const": "number"
+                  },
+                  "unit": {
+                    "type": "string",
+                    "enum": ["count", "unitless"]
+                  },
+                  "decimalPlaces": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 6
+                  },
+                  "min": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "pattern": "^-?(0|[1-9]\\d{0,17})(\\.\\d{1,6})?$"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "max": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "pattern": "^-?(0|[1-9]\\d{0,17})(\\.\\d{1,6})?$"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "id",
+                  "label",
+                  "sectionId",
+                  "required",
+                  "semanticId",
+                  "help",
+                  "illustrationId",
+                  "kind",
+                  "unit",
+                  "decimalPlaces",
+                  "min",
+                  "max"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                  },
+                  "label": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 100
+                  },
+                  "sectionId": {
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                  },
+                  "required": {
+                    "type": "boolean"
+                  },
+                  "semanticId": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "enum": [
+                          "body.chest.circumference",
+                          "body.bust.circumference",
+                          "body.waist.circumference",
+                          "body.hip.circumference",
+                          "body.shoulder.width",
+                          "garment.chest.circumference",
+                          "garment.sleeve.length",
+                          "garment.body.length",
+                          "garment.inseam.length",
+                          "garment.outseam.length"
+                        ]
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "help": {
+                    "type": "string",
+                    "maxLength": 500
+                  },
+                  "illustrationId": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "enum": [
+                          "shirt",
+                          "blouse",
+                          "trouser",
+                          "dimension",
+                          "construction"
+                        ]
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "kind": {
+                    "type": "string",
+                    "const": "text"
+                  },
+                  "maxLength": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 500
+                  }
+                },
+                "required": [
+                  "id",
+                  "label",
+                  "sectionId",
+                  "required",
+                  "semanticId",
+                  "help",
+                  "illustrationId",
+                  "kind",
+                  "maxLength"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                  },
+                  "label": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 100
+                  },
+                  "sectionId": {
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                  },
+                  "required": {
+                    "type": "boolean"
+                  },
+                  "semanticId": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "enum": [
+                          "body.chest.circumference",
+                          "body.bust.circumference",
+                          "body.waist.circumference",
+                          "body.hip.circumference",
+                          "body.shoulder.width",
+                          "garment.chest.circumference",
+                          "garment.sleeve.length",
+                          "garment.body.length",
+                          "garment.inseam.length",
+                          "garment.outseam.length"
+                        ]
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "help": {
+                    "type": "string",
+                    "maxLength": 500
+                  },
+                  "illustrationId": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "enum": [
+                          "shirt",
+                          "blouse",
+                          "trouser",
+                          "dimension",
+                          "construction"
+                        ]
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "kind": {
+                    "type": "string",
+                    "const": "boolean"
+                  }
+                },
+                "required": [
+                  "id",
+                  "label",
+                  "sectionId",
+                  "required",
+                  "semanticId",
+                  "help",
+                  "illustrationId",
+                  "kind"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                  },
+                  "label": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 100
+                  },
+                  "sectionId": {
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                  },
+                  "required": {
+                    "type": "boolean"
+                  },
+                  "semanticId": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "enum": [
+                          "body.chest.circumference",
+                          "body.bust.circumference",
+                          "body.waist.circumference",
+                          "body.hip.circumference",
+                          "body.shoulder.width",
+                          "garment.chest.circumference",
+                          "garment.sleeve.length",
+                          "garment.body.length",
+                          "garment.inseam.length",
+                          "garment.outseam.length"
+                        ]
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "help": {
+                    "type": "string",
+                    "maxLength": 500
+                  },
+                  "illustrationId": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "enum": [
+                          "shirt",
+                          "blouse",
+                          "trouser",
+                          "dimension",
+                          "construction"
+                        ]
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "kind": {
+                    "type": "string",
+                    "const": "select"
+                  },
+                  "choices": {
+                    "minItems": 1,
+                    "maxItems": 30,
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        "label": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 100
+                        },
+                        "illustrationId": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "enum": [
+                                "shirt",
+                                "blouse",
+                                "trouser",
+                                "dimension",
+                                "construction"
+                              ]
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "active": {
+                          "type": "boolean"
+                        }
+                      },
+                      "required": ["id", "label", "illustrationId", "active"],
+                      "additionalProperties": false
+                    }
+                  }
+                },
+                "required": [
+                  "id",
+                  "label",
+                  "sectionId",
+                  "required",
+                  "semanticId",
+                  "help",
+                  "illustrationId",
+                  "kind",
+                  "choices"
+                ],
+                "additionalProperties": false
+              }
+            ]
+          }
+        }
+      },
+      "required": ["formatVersion", "label", "guidance", "sections", "fields"],
+      "additionalProperties": false
+    },
+    "aliases": {
+      "maxItems": 80,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string",
+            "pattern": "^f\\d{3}$"
+          },
+          "fieldId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "choices": {
+            "maxItems": 30,
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "key": {
+                  "type": "string",
+                  "pattern": "^c\\d{3}$"
+                },
+                "choiceId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                }
+              },
+              "required": ["key", "choiceId"],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": ["key", "fieldId", "choices"],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "formatVersion",
+    "schemaKey",
+    "schemaRef",
+    "schemaHash",
+    "schema",
+    "aliases"
+  ],
+  "additionalProperties": false
+}

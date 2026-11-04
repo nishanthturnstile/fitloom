@@ -1,0 +1,57 @@
+name: Validate
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: validate-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Database, application, build and HTTP
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      FITLOOM_APP_ORIGIN: http://localhost:24410
+      FITLOOM_MAIL_ORIGIN: http://localhost:24420
+    steps:
+      - name: Check out source
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+          fetch-depth: 2
+      - name: Check patch whitespace
+        run: git diff --check HEAD^ HEAD
+      - name: Set up Node
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version-file: .node-version
+      - name: Start isolated dependencies
+        run: |
+          mkdir -p .ci-logs
+          node scripts/compose.mjs up 2>&1 | tee .ci-logs/startup.log
+      - name: Validate application
+        run: node scripts/compose.mjs validate 2>&1 | tee .ci-logs/validate.log
+      - name: Record service status
+        if: always()
+        run: docker compose ps --all > .ci-logs/services.log
+      - name: Stop dependencies
+        if: always()
+        run: docker compose down --remove-orphans
+      - name: Save validation logs
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: validation-logs
+          path: .ci-logs/*.log
+          include-hidden-files: true
+          if-no-files-found: ignore
+          retention-days: 7

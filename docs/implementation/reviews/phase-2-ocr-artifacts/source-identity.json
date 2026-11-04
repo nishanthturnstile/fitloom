@@ -1,0 +1,14 @@
+{
+  "source": "/tmp/fitloom-review-artifacts.OTzlr7/fitloom",
+  "artifact_HEAD": "9317c14ee1fbab1c0bc027c7669e3f290c4e9d1e",
+  "original_index_from_preflight": "ed3304539481f35497b68b4c00706d5b151b1c22",
+  "manifest_declared_scope_digest": "43d9d4d772964b96cfc698f7d6721cf0f1cdbe8bf7d3b77da16bd6cbadc328f7",
+  "manifest_file_sha256": "04e59e8ec35a45976d6a324aafd250cbbd9c0cbaa830993f4e005f39540d871a",
+  "reused_preview_sha256": "58b81e8049e21ccc833010786bc6b7d1e33be486f89b7c7cb2147926f3332501",
+  "git_environment": {
+    "GIT_CONFIG_NOSYSTEM": "1",
+    "GIT_CONFIG_GLOBAL": "/dev/null",
+    "GIT_OPTIONAL_LOCKS": "0"
+  },
+  "preview_provenance": "Reused successful supplied deterministic preflight preview; not rerun"
+}

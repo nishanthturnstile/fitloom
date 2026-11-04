@@ -1,0 +1,124 @@
+{
+  "formatVersion": 1,
+  "schemaKey": "body_v1",
+  "schemaRef": {
+    "kind": "body",
+    "bundleVersion": "body-core-v1"
+  },
+  "schemaHash": "v1:db92cbb9d3e55f73c82a7720d3491945221a4eb8c396833b87b12d17da88dd9a",
+  "schema": {
+    "formatVersion": 1,
+    "label": "Body measurements",
+    "guidance": "Record body dimensions. Garment ease is entered separately.",
+    "sections": [
+      {
+        "id": "51c4b79e-9be7-4dd9-9c91-000000000000",
+        "label": "Body"
+      }
+    ],
+    "fields": [
+      {
+        "id": "51c4b79e-9be7-4dd9-9c91-000000000001",
+        "label": "Chest circumference",
+        "sectionId": "51c4b79e-9be7-4dd9-9c91-000000000000",
+        "required": false,
+        "semanticId": "body.chest.circumference",
+        "help": "Record the chest measurement using the shop's measuring practice.",
+        "illustrationId": "dimension",
+        "kind": "length",
+        "basis": "body",
+        "displayUnit": "in",
+        "displayPrecision": 2,
+        "min": "0",
+        "max": null
+      },
+      {
+        "id": "51c4b79e-9be7-4dd9-9c91-000000000002",
+        "label": "Bust circumference",
+        "sectionId": "51c4b79e-9be7-4dd9-9c91-000000000000",
+        "required": false,
+        "semanticId": "body.bust.circumference",
+        "help": "Record the bust measurement separately from chest.",
+        "illustrationId": "dimension",
+        "kind": "length",
+        "basis": "body",
+        "displayUnit": "in",
+        "displayPrecision": 2,
+        "min": "0",
+        "max": null
+      },
+      {
+        "id": "51c4b79e-9be7-4dd9-9c91-000000000003",
+        "label": "Waist circumference",
+        "sectionId": "51c4b79e-9be7-4dd9-9c91-000000000000",
+        "required": false,
+        "semanticId": "body.waist.circumference",
+        "help": "Record the waist position used by the shop.",
+        "illustrationId": "dimension",
+        "kind": "length",
+        "basis": "body",
+        "displayUnit": "in",
+        "displayPrecision": 2,
+        "min": "0",
+        "max": null
+      },
+      {
+        "id": "51c4b79e-9be7-4dd9-9c91-000000000004",
+        "label": "Hip circumference",
+        "sectionId": "51c4b79e-9be7-4dd9-9c91-000000000000",
+        "required": false,
+        "semanticId": "body.hip.circumference",
+        "help": "Record the hip measurement using the shop's measuring practice.",
+        "illustrationId": "dimension",
+        "kind": "length",
+        "basis": "body",
+        "displayUnit": "in",
+        "displayPrecision": 2,
+        "min": "0",
+        "max": null
+      },
+      {
+        "id": "51c4b79e-9be7-4dd9-9c91-000000000005",
+        "label": "Shoulder width",
+        "sectionId": "51c4b79e-9be7-4dd9-9c91-000000000000",
+        "required": false,
+        "semanticId": "body.shoulder.width",
+        "help": "Confirm the shoulder endpoints before recording width.",
+        "illustrationId": "dimension",
+        "kind": "length",
+        "basis": "body",
+        "displayUnit": "in",
+        "displayPrecision": 2,
+        "min": "0",
+        "max": null
+      }
+    ]
+  },
+  "aliases": [
+    {
+      "key": "f001",
+      "fieldId": "51c4b79e-9be7-4dd9-9c91-000000000001",
+      "choices": []
+    },
+    {
+      "key": "f002",
+      "fieldId": "51c4b79e-9be7-4dd9-9c91-000000000002",
+      "choices": []
+    },
+    {
+      "key": "f003",
+      "fieldId": "51c4b79e-9be7-4dd9-9c91-000000000003",
+      "choices": []
+    },
+    {
+      "key": "f004",
+      "fieldId": "51c4b79e-9be7-4dd9-9c91-000000000004",
+      "choices": []
+    },
+    {
+      "key": "f005",
+      "fieldId": "51c4b79e-9be7-4dd9-9c91-000000000005",
+      "choices": []
+    }
+  ]
+}

@@ -39,7 +39,9 @@ export function WorkspaceTopbar({
     window.addEventListener("keydown", shortcut);
     return () => window.removeEventListener("keydown", shortcut);
   }, [eventName, path, href, pathname, guard.navigate]);
-  const customer = route.destination.kind === "customers";
+  const customer =
+    route.destination.kind === "customers" ||
+    route.destination.kind === "imports";
   return (
     <div className="flex min-w-0 flex-1 items-center justify-between gap-3">
       <nav

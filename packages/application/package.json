@@ -31,6 +31,42 @@
     "./customer-photo-contracts": {
       "types": "./dist/customer-photo-contracts.d.ts",
       "default": "./dist/customer-photo-contracts.js"
+    },
+    "./measurement-contracts": {
+      "types": "./dist/measurement-contracts.d.ts",
+      "default": "./dist/measurement-contracts.js"
+    },
+    "./measurement-values": {
+      "types": "./dist/measurement-values.d.ts",
+      "default": "./dist/measurement-values.js"
+    },
+    "./measurement-body-schema": {
+      "types": "./dist/measurement-body-schema.d.ts",
+      "default": "./dist/measurement-body-schema.js"
+    },
+    "./measurement-draft": {
+      "types": "./dist/measurement-draft.d.ts",
+      "default": "./dist/measurement-draft.js"
+    },
+    "./measurement-reuse": {
+      "types": "./dist/measurement-reuse.d.ts",
+      "default": "./dist/measurement-reuse.js"
+    },
+    "./measurement-photo-contracts": {
+      "types": "./dist/measurement-photo-contracts.d.ts",
+      "default": "./dist/measurement-photo-contracts.js"
+    },
+    "./private-image-limits": {
+      "types": "./dist/private-image-limits.d.ts",
+      "default": "./dist/private-image-limits.js"
+    },
+    "./measurement-card-contracts": {
+      "types": "./dist/measurement-card-contracts.d.ts",
+      "default": "./dist/measurement-card-contracts.js"
+    },
+    "./import-contracts": {
+      "types": "./dist/import-contracts.d.ts",
+      "default": "./dist/import-contracts.js"
     }
   },
   "scripts": {
@@ -41,11 +77,13 @@
     "mail:local": "node ../../scripts/compose.mjs up",
     "mail:status": "node --env-file-if-exists=../db/.env scripts/mail-status.mjs",
     "test:http": "node --env-file-if-exists=../db/.env scripts/web-smoke.mjs && node --env-file-if-exists=../db/.env scripts/master-transport-check.mjs",
-    "test:storage-reset": "node --env-file-if-exists=../db/.env scripts/reset-test-storage.mjs"
+    "test:storage-reset": "node --env-file-if-exists=../db/.env scripts/reset-test-storage.mjs",
+    "generate:imports": "pnpm build && node scripts/generate-import-artifacts.mjs"
   },
   "devDependencies": {
     "@types/node": "26.6.6",
     "@types/nodemailer": "8.0.2",
+    "ajv": "8.20.0",
     "typescript": "7.0.2"
   },
   "dependencies": {
@@ -53,10 +91,12 @@
     "@better-auth/drizzle-adapter": "1.7.14",
     "@fitloom/db": "workspace:*",
     "better-auth": "1.7.14",
+    "csv-parse": "7.0.3",
     "decimal.js": "10.6.0",
     "drizzle-orm": "0.45.4",
     "libphonenumber-js": "1.13.15",
     "nodemailer": "10.3.1",
+    "qr": "0.7.2",
     "sharp": "0.35.5",
     "zod": "4.6.7"
   }

@@ -6,9 +6,14 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { promisify } from "node:util";
 import sharp from "sharp";
+import {
+  importCustomerColumns,
+  importMeasurementColumns,
+} from "../dist/import-contracts.js";
 import { exerciseCustomerPhotosUI } from "./customer-photo-ui-checks.mjs";
 import { exerciseCustomersUI } from "./customer-register-ui-checks.mjs";
 import { exerciseCustomerWearersUI } from "./customer-wearers-ui-checks.mjs";
+import { exerciseDomainImportsUI } from "./domain-import-ui-checks.mjs";
 import { exerciseGarmentEditorFrameUI } from "./garment-editor-frame-ui-checks.mjs";
 import { exerciseMasterAuthorityUI } from "./master-authority-ui-checks.mjs";
 import {
@@ -18,6 +23,17 @@ import {
 } from "./master-catalog-ui-checks.mjs";
 import { exerciseMasterRegistersUI } from "./master-register-ui-checks.mjs";
 import { exerciseGarmentUI } from "./master-ui-browser-checks.mjs";
+import { exerciseMeasurementCardsUI } from "./measurement-card-ui-checks.mjs";
+import { exerciseMeasurementComparisonUI } from "./measurement-comparison-ui-checks.mjs";
+import { exerciseMeasurementCustomUI } from "./measurement-custom-ui-checks.mjs";
+import { exerciseMeasurementPhotosUI } from "./measurement-photo-ui-checks.mjs";
+import { exerciseMeasurementReuseUI } from "./measurement-reuse-ui-checks.mjs";
+import {
+  exerciseMeasurementNavigationUI,
+  exerciseMeasurementRevisionUI,
+  exerciseMeasurementRevocationUI,
+} from "./measurement-revision-ui-checks.mjs";
+import { exerciseMeasurementsUI } from "./measurement-ui-checks.mjs";
 import {
   exerciseWorkspaceRoutesUI,
   exerciseWorkspaceShellUI,
@@ -33,6 +49,8 @@ export async function masterUiChecks({
   tenant,
   location,
   customers,
+  measurements,
+  account,
 }) {
   const directory = await realpath(
     await mkdtemp(join(tmpdir(), "fitloom-ui-")),
@@ -48,6 +66,78 @@ export async function masterUiChecks({
   })
     .png()
     .toFile(join(directory, "photo-fixture.png"));
+  await sharp({
+    create: { width: 640, height: 480, channels: 3, background: "#9b886e" },
+  })
+    .jpeg()
+    .toFile(join(directory, "measurement-photo-fixture.jpg"));
+  await writeFile(
+    join(directory, "invalid-utf8.csv"),
+    Buffer.from([0xc3, 0x28]),
+  );
+  await writeFile(
+    join(directory, "oversized.csv"),
+    Buffer.alloc(1024 * 1024 + 1, 120),
+  );
+  const csv = (rows) =>
+    rows
+      .map((row) =>
+        row
+          .map((value) => '"' + String(value).replaceAll('"', '""') + '"')
+          .join(","),
+      )
+      .join("\r\n") + "\r\n";
+  const customerRow = [
+    "ui_contact",
+    "UI imported customer",
+    "",
+    "",
+    "",
+    "ui_wearer",
+    "UI imported wearer",
+    "family",
+    "Private source notes. தமிழ் அளவீட்டு குறிப்புகள். " + "நீளம்".repeat(35),
+  ];
+  await writeFile(
+    join(directory, "customers.csv"),
+    csv([
+      importCustomerColumns,
+      customerRow,
+      customerRow,
+      ["ui_contact_only", "UI contact only", "", "", "", "", "", "", ""],
+    ]),
+  );
+  const values = (decimal) =>
+    JSON.stringify(
+      [1, 2, 3, 4, 5].map((i) => ({
+        kind: "length",
+        fieldKey: `f00${i}`,
+        decimal,
+        unit: "in",
+      })),
+    );
+  const measurementRow = (id, sequence, date, decimal) => [
+    "ui_profile",
+    id,
+    sequence,
+    "ui_contact",
+    "ui_wearer",
+    "UI imported body history",
+    "body_v1",
+    date,
+    values(decimal),
+    "[]",
+    "Private fitting notes",
+    "Unverified source tailor",
+  ];
+  await writeFile(
+    join(directory, "measurements.csv"),
+    csv([
+      importMeasurementColumns,
+      measurementRow("ui_newer", 10, "2020-01-01", "40.250000"),
+      measurementRow("ui_older", 2, "2020-02-01", "39.250000"),
+    ]),
+  );
   const run = async (...args) => {
     const result = await execute("playwright-cli", [`-s=${session}`, ...args], {
       cwd: directory,
@@ -55,6 +145,22 @@ export async function masterUiChecks({
       timeout: 180000,
       maxBuffer: 1024 * 1024,
     });
+    // Navigation commands wait until timeout while the native dialog is pending.
+    // Their error output can omit the modal, so inspect the actual browser state.
+    if (["reload", "go-back"].includes(args[0])) {
+      const state = await execute(
+        "playwright-cli",
+        [`-s=${session}`, "snapshot"],
+        {
+          cwd: directory,
+          env: { ...process.env, TMPDIR: "/tmp" },
+          timeout: 30000,
+          maxBuffer: 1024 * 1024,
+        },
+      );
+      if (state.stdout.includes("beforeunload"))
+        return result.stdout + state.stdout;
+    }
     if (result.stdout.includes("### Error")) {
       const diagnostic = await execute(
         "playwright-cli",
@@ -151,8 +257,15 @@ export async function masterUiChecks({
     pricedId,
     newLabel: `UI custom ${randomUUID().slice(0, 8)}`,
     artifacts,
-    customers,
+    customers: { ...customers, total: customers.total + 1 },
+    measurements,
+    account,
+    invalidImportFile: join(directory, "invalid-utf8.csv"),
+    oversizedImportFile: join(directory, "oversized.csv"),
+    importCustomerFile: join(directory, "customers.csv"),
+    importMeasurementFile: join(directory, "measurements.csv"),
     photoFile: join(directory, "photo-fixture.png"),
+    measurementPhotoFile: join(directory, "measurement-photo-fixture.jpg"),
   };
   try {
     const state = {
@@ -186,6 +299,221 @@ export async function masterUiChecks({
       );
       assert.ok(passed.test(result), result.slice(0, 1500));
     };
+    const photoJourney = async () => {
+      const photosResult = await run(
+        "run-code",
+        `async page=>{const exercise=${exerciseMeasurementPhotosUI.toString()};return exercise(page,${JSON.stringify(fixture)});}`,
+      );
+      assert.ok(
+        /"measurementPhotosUiPassed"\s*:\s*true/.test(photosResult),
+        photosResult.slice(-4500),
+      );
+      console.log(
+        "Measurement photos UI passed: lost begin/upload/save/revoke recovery, one immutable membership, guarded draft, failed replacement, historical removal, archived privacy fallback and responsive private images.",
+      );
+    };
+    const cardJourney = async () => {
+      const result = await run(
+        "run-code",
+        `async page=>{const exercise=${exerciseMeasurementCardsUI.toString()};return exercise(page,${JSON.stringify(fixture)});}`,
+      );
+      assert.ok(
+        /"measurementCardsUiPassed"\s*:\s*true/.test(result),
+        result.slice(-4500),
+      );
+      console.log(
+        "Measurement cards UI passed: fixed preview, exact issue/revoke recovery, protected PNG and print, responsive widths, no external resources, sign-in return and revoked read denial.",
+      );
+    };
+    const measurementJourney = async () => {
+      if (process.env.MEASUREMENT_CARDS_UI_ONLY === "1") {
+        await cardJourney();
+        return;
+      }
+      if (process.env.MEASUREMENT_PHOTOS_UI_ONLY === "1") {
+        await photoJourney();
+        return;
+      }
+      const measurementResult = await run(
+        "run-code",
+        `async page=>{const exercise=${exerciseMeasurementsUI.toString()};return exercise(page,${JSON.stringify(fixture)});}`,
+      );
+      assert.ok(
+        /"measurementsUiPassed"\s*:\s*true/.test(measurementResult),
+        measurementResult.slice(-4500),
+      );
+      console.log(
+        "Measurement UI passed: wearer book, exact history, private return/search, body entry, unit display, dirty exit, committed-response-loss retry and empty-garment custom entry at desktop/narrow widths.",
+      );
+      const revisionResult = await run(
+        "run-code",
+        `async page=>{const exercise=${exerciseMeasurementRevisionUI.toString()};return exercise(page,${JSON.stringify(fixture)});}`,
+      );
+      assert.ok(
+        /"measurementRevisionPrepared"\s*:\s*true/.test(revisionResult),
+        revisionResult.slice(-4500),
+      );
+      const reloaded = await run("reload");
+      assert.ok(reloaded.includes("beforeunload"), reloaded.slice(-1200));
+      await run("dialog-dismiss");
+      const back = await run("go-back");
+      assert.ok(back.includes("beforeunload"), back.slice(-1200));
+      await run("dialog-dismiss");
+      const navigationResult = await run(
+        "run-code",
+        `async page=>{const exercise=${exerciseMeasurementNavigationUI.toString()};return exercise(page,${JSON.stringify(fixture)});}`,
+      );
+      assert.ok(
+        /"measurementRevisionUiPassed"\s*:\s*true/.test(navigationResult),
+        navigationResult.slice(-4500),
+      );
+      console.log(
+        "Measurement revision UI passed: no-op, original units/history, exact uncertain retry, saved projection recovery, concurrent conflict, real server-field focus, native reload/back and scope-switch guards.",
+      );
+      const customResult = await run(
+        "run-code",
+        `async page=>{const exercise=${exerciseMeasurementCustomUI.toString()};return exercise(page,${JSON.stringify(fixture)});}`,
+      );
+      assert.ok(
+        /"measurementCustomUiPassed"\s*:\s*true/.test(customResult),
+        customResult.slice(-4500),
+      );
+      console.log(
+        "Measurement custom/rebase UI passed: all five kinds, required false, zero, bounds, custom identity replacement, inactive choice carry-forward, reviewed current-schema draft, exact historical schema and parent archive race.",
+      );
+      const reuseResult = await run(
+        "run-code",
+        `async page=>{const exercise=${exerciseMeasurementReuseUI.toString()};return exercise(page,${JSON.stringify(fixture)});}`,
+      );
+      assert.ok(
+        /"measurementReuseUiPassed"\s*:\s*true/.test(reuseResult),
+        reuseResult.slice(0, 1800) + reuseResult.slice(-1800),
+      );
+      console.log(
+        "Measurement reuse UI passed: independent and historical copies, exact retry, source independence, lifecycle replay, explicit reviewed ease, unsaved preview, manual provenance and responsive mapping.",
+      );
+      const comparisonResult = await run(
+        "run-code",
+        `async page=>{const exercise=${exerciseMeasurementComparisonUI.toString()};return exercise(page,${JSON.stringify(fixture)});}`,
+      );
+      assert.ok(
+        /"measurementComparisonUiPassed"\s*:\s*true/.test(comparisonResult),
+        comparisonResult.slice(0, 1800) + comparisonResult.slice(-1800),
+      );
+      console.log(
+        "Measurement comparison UI passed: two/four exact versions, typed statuses, complete comparison table, 50+2 trend continuation, keyboard chart, actual gap path, scoped private state and desktop/narrow widths.",
+      );
+      await admin.query(
+        "DELETE FROM app.permission_grants WHERE tenant_id=$1 AND role_id=$2 AND permission='measurements.read'",
+        [tenant, role],
+      );
+      try {
+        const deniedComparison = await run(
+          "run-code",
+          `async page=>{const exercise=${exerciseMeasurementComparisonUI.toString()};return exercise(page,${JSON.stringify({ ...fixture, phase: "denied-comparison" })});}`,
+        );
+        assert.ok(
+          /"measurementComparisonDenied"\s*:\s*true/.test(deniedComparison),
+          deniedComparison.slice(-2000),
+        );
+      } finally {
+        await admin.query(
+          "INSERT INTO app.permission_grants VALUES($1,$2,'measurements.read') ON CONFLICT DO NOTHING",
+          [tenant, role],
+        );
+      }
+      await photoJourney();
+      await cardJourney();
+      const preparedRevocation = await run(
+        "run-code",
+        `async page=>{const exercise=${exerciseMeasurementRevocationUI.toString()};return exercise(page,${JSON.stringify({ ...fixture, phase: "prepare-revocation" })});}`,
+      );
+      assert.ok(
+        /"measurementRevocationPrepared"\s*:\s*true/.test(preparedRevocation),
+        preparedRevocation.slice(-2000),
+      );
+      await admin.query(
+        "DELETE FROM app.permission_grants WHERE tenant_id=$1 AND role_id=$2 AND permission='measurements.manage'",
+        [tenant, role],
+      );
+      try {
+        const revoked = await run(
+          "run-code",
+          `async page=>{const exercise=${exerciseMeasurementRevocationUI.toString()};return exercise(page,${JSON.stringify(fixture)});}`,
+        );
+        assert.ok(
+          /"measurementRevocationUiPassed"\s*:\s*true/.test(revoked),
+          revoked.slice(-2000),
+        );
+        console.log(
+          "Measurement revoked-write UI passed: current 403 removes private draft and releases leave protection.",
+        );
+      } finally {
+        await admin.query(
+          "INSERT INTO app.permission_grants VALUES($1,$2,'measurements.manage') ON CONFLICT DO NOTHING",
+          [tenant, role],
+        );
+      }
+      await admin.query(
+        "DELETE FROM app.permission_grants WHERE tenant_id=$1 AND role_id=$2 AND permission='measurements.read'",
+        [tenant, role],
+      );
+      try {
+        const deniedMeasurement = await run(
+          "run-code",
+          `async page=>{const exercise=${exerciseMeasurementsUI.toString()};return exercise(page,${JSON.stringify({ ...fixture, phase: "denied" })});}`,
+        );
+        assert.ok(
+          /"measurementDeniedPassed"\s*:\s*true/.test(deniedMeasurement),
+          deniedMeasurement.slice(-2000),
+        );
+      } finally {
+        await admin.query(
+          "INSERT INTO app.permission_grants VALUES($1,$2,'measurements.read') ON CONFLICT DO NOTHING",
+          [tenant, role],
+        );
+      }
+    };
+    const importJourney = async () => {
+      const result = await run(
+        "run-code",
+        `async page=>{const exercise=${exerciseDomainImportsUI.toString()};return exercise(page,${JSON.stringify(fixture)});}`,
+      );
+      assert.ok(
+        /"importsUiPassed"\s*:\s*true/.test(result),
+        result.slice(-4500),
+      );
+      await admin.query(
+        "DELETE FROM app.permission_grants WHERE tenant_id=$1 AND role_id=$2 AND permission='customers.import'",
+        [tenant, role],
+      );
+      try {
+        const denied = await run(
+          "run-code",
+          `async page=>{const exercise=${exerciseDomainImportsUI.toString()};return exercise(page,${JSON.stringify({ ...fixture, phase: "denied" })});}`,
+        );
+        assert.ok(
+          /"importDeniedPassed"\s*:\s*true/.test(denied),
+          denied.slice(-3000),
+        );
+      } finally {
+        await admin.query(
+          "INSERT INTO app.permission_grants VALUES($1,$2,'customers.import') ON CONFLICT DO NOTHING",
+          [tenant, role],
+        );
+      }
+      console.log(
+        "Import Chrome passed: exact lost preview retry, read-only lost chunk recovery, complete histories, explicit source owners, cancellation, revoked draft removal and 1440/1024/390/320 layouts.",
+      );
+    };
+    if (process.env.IMPORT_UI_ONLY === "1") {
+      await importJourney();
+      return;
+    }
+    if (process.env.MEASUREMENT_UI_ONLY === "1") {
+      await measurementJourney();
+      return;
+    }
     const customerResult = await run(
       "run-code",
       `async page => { const exercise=${exerciseCustomersUI.toString()};return exercise(page,${JSON.stringify(fixture)}); }`,
@@ -231,6 +559,8 @@ export async function masterUiChecks({
       );
       console.log(`Master register UI ${phase} passed.`);
     }
+    await measurementJourney();
+    await importJourney();
     await exercise("build");
     const editorFrame = await run(
       "run-code",

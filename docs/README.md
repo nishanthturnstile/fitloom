@@ -1,6 +1,6 @@
 # Fitloom documentation
 
-Start with the [implementation status](implementation/status.md), then read the [roadmap](product/roadmap.md). Phase 1B and phase 2 Build One garment masters and Build Two customers are complete locally. Next is Build Three measurements. Phase 3 adds orders and manually recorded shop payments. Subscriptions, platform billing, and payment-provider integrations are deferred until explicitly reopened.
+Phase 1B and phase 2 are complete locally. Start with the [implementation status](implementation/status.md), [final phase 2 acceptance](implementation/evidence/phase-2-build-3-increment-8.md), and [measurement capture/media handoff](architecture/measurements.md). The [roadmap](product/roadmap.md) continues with phase 3 orders, pricing, manually recorded payments and documents. External infrastructure remains user-owned, with its planning reminder after phase 3. Subscriptions, platform billing and payment-provider integrations remain deferred until explicitly reopened.
 
 The first phase 2 build is specified in the [garment masters implementation plan](implementation/plans/phase-2-build-1-garment-masters.md), with its [research evidence](implementation/research/build-one/technical-findings.md), [plan review record](implementation/reviews/phase-2-build-1-garment-masters-review.md), [implementation review record](implementation/reviews/phase-2-build-1-implementation-review.md), and [final acceptance evidence](implementation/evidence/phase-2-build-1-increment-6.md).
 
@@ -44,6 +44,19 @@ docs/
 | Document | Purpose |
 | --- | --- |
 | [Implementation status](implementation/status.md) | Work areas, completion evidence, current scope decisions, and next steps |
+| [Final phase 2 acceptance](implementation/evidence/phase-2-build-3-increment-8.md) | All 47 measurement scenarios, exact capture/media handoff, matched restore, final browser evidence and phase 3 ownership |
+| [Measurement capture and media reference](architecture/measurements.md) | Exact scalar snapshot, current eligibility, historical media/revocation and confirmation transaction boundary |
+| [Build Three measurement plan](implementation/plans/phase-2-build-3-measurements.md) | Complete remaining phase 2 scope, schemas, units, screens, media, QR cards, imports, increments and acceptance |
+| [Build Three supported imports](implementation/evidence/phase-2-build-3-increment-7.md) | Strict CSV templates, full dry-run, atomic customer/history groups, source maps, protected recovery, cancellation and browser acceptance |
+| [Build Three revocable staff QR cards](implementation/evidence/phase-2-build-3-increment-6.md) | Fixed field projections, current staff authority, irreversible revocation, local QR PNG, protected sign-in return and print acceptance |
+| [Build Three private measurement photos](implementation/evidence/phase-2-build-3-increment-5.md) | Reserved uploads, atomic immutable membership, distinct authority, historical retention, privacy revocation and browser/storage acceptance |
+| [Build Three reuse, comparison and lifecycle](implementation/evidence/phase-2-build-3-increment-4.md) | Independent copy, reviewed ease, exact comparison, paginated charts, capture and lifecycle acceptance |
+| [Build Three typed entry and revision](implementation/evidence/phase-2-build-3-increment-3.md) | Revision controller, reviewed schema rebase, custom fields, recovery and navigation evidence |
+| [Build Three import format reference](implementation/plans/phase-2-build-3-import-formats.md) | Implemented strict CSV columns, source identity, generated schemas/templates, manifests and conformance examples |
+| [Build Three research plan](implementation/research/build-three/research-plan.md) | Investigation questions, evidence sources, synthesis and review method |
+| [Build Three technical findings](implementation/research/build-three/technical-findings.md) | Traced current contracts, alternative designs, reference decisions and primary-source research |
+| [Build Three plan review](implementation/reviews/phase-2-build-3-measurements-review.md) | Requested external review and finding dispositions |
+| [Build Three original DeepSeek findings](implementation/reviews/phase-2-build-3-measurements-deepseek-findings.md) | Preserved independent report with six High, eight Medium and three Low findings against the original draft |
 | [Phase 1B implementation plan](implementation/plans/phase-1b-implementation-plan.md) | Retained seven-day foundation plan, acceptance checks, and completion criteria |
 | [UI foundation v3 implementation plan](implementation/plans/ui-foundation-v3-implementation-plan.md) | Planned redesign increments, route and component ownership, mockup data mapping, and acceptance checks |
 | [Phase 2 Build Two customer implementation plan](implementation/plans/phase-2-build-2-customers.md) | Customer and wearer scope, progressive screens, navigation repairs, storage/permission contracts, implementation increments, and full workflow validation |

@@ -940,7 +940,7 @@ export const customerActivity = app
       }),
       check(
         "customer_activity_kind",
-        sql`${t.kind} IN ('customer.create','customer.update','customer.archive','customer.restore','wearer.create','wearer.update','wearer.archive','wearer.restore','customer-photo.bind','customer-photo.remove')`,
+        sql`${t.kind} IN ('customer.create','customer.update','customer.archive','customer.restore','wearer.create','wearer.update','wearer.archive','wearer.restore','customer-photo.bind','customer-photo.remove','customer.import','wearer.import')`,
       ),
       check(
         "customer_activity_versions",
@@ -1113,6 +1113,866 @@ export const customerPhotos = app
         t.version,
       ),
       index("customer_photo_actor").on(t.actorId),
+      masterPolicy(),
+    ],
+  )
+  .enableRLS();
+
+// Measurement content is append-only. SQL owns mutation, forced RLS and deferred bootstrap.
+export const measurementBodySchemas = app
+  .table(
+    "measurement_body_schemas",
+    {
+      version: text("version").primaryKey(),
+      canonicalHash: text("canonical_hash").notNull(),
+      definition: jsonb("definition").notNull(),
+    },
+    (t): PgTableExtraConfigValue[] => [
+      check(
+        "measurement_body_hash",
+        sql`${t.canonicalHash} ~ '^[a-f0-9]{64}$'`,
+      ),
+      masterPolicy(),
+    ],
+  )
+  .enableRLS();
+export const measurementBodySchemaState = app
+  .table(
+    "measurement_body_schema_state",
+    {
+      singleton: boolean("singleton").primaryKey().default(true),
+      currentVersion: text("current_version")
+        .notNull()
+        .references(() => measurementBodySchemas.version),
+      revision: integer("revision").notNull(),
+    },
+    (t): PgTableExtraConfigValue[] => [
+      check(
+        "measurement_body_singleton",
+        sql`${t.singleton} AND ${t.revision}>0`,
+      ),
+      masterPolicy(),
+    ],
+  )
+  .enableRLS();
+const measurementOwner = () => ({
+  tenantId: uuid("tenant_id").notNull(),
+  locationId: uuid("location_id").notNull(),
+  customerId: uuid("customer_id").notNull(),
+  wearerId: uuid("wearer_id").notNull(),
+});
+export const measurementProfiles = app
+  .table(
+    "measurement_profiles",
+    {
+      id: id(),
+      ...measurementOwner(),
+      kind: text("kind").notNull(),
+      garmentId: uuid("garment_id"),
+      currentVersionId: uuid("current_version_id"),
+      revision: integer("revision").notNull(),
+      createdAt: createdAt(),
+      updatedAt: timestamp("updated_at", { withTimezone: true })
+        .defaultNow()
+        .notNull(),
+      createdBy: uuid("created_by")
+        .notNull()
+        .references(() => principals.id),
+      updatedBy: uuid("updated_by")
+        .notNull()
+        .references(() => principals.id),
+      archivedAt: timestamp("archived_at", { withTimezone: true }),
+      archivedBy: uuid("archived_by").references(() => principals.id),
+      creationOperationId: uuid("creation_operation_id").notNull(),
+    },
+    (t): PgTableExtraConfigValue[] => [
+      unique("measurement_profile_owner").on(
+        t.tenantId,
+        t.locationId,
+        t.customerId,
+        t.wearerId,
+        t.id,
+      ),
+      foreignKey({
+        name: "measurement_profile_wearer_fk",
+        columns: [t.tenantId, t.locationId, t.customerId, t.wearerId],
+        foreignColumns: [
+          customerWearers.tenantId,
+          customerWearers.locationId,
+          customerWearers.customerId,
+          customerWearers.id,
+        ],
+      }),
+      foreignKey({
+        name: "measurement_profile_garment_fk",
+        columns: [t.tenantId, t.garmentId],
+        foreignColumns: [garments.tenantId, garments.id],
+      }),
+      foreignKey({
+        name: "measurement_profile_current_fk",
+        columns: [
+          t.tenantId,
+          t.locationId,
+          t.customerId,
+          t.wearerId,
+          t.id,
+          t.currentVersionId,
+        ],
+        foreignColumns: [
+          measurementVersions.tenantId,
+          measurementVersions.locationId,
+          measurementVersions.customerId,
+          measurementVersions.wearerId,
+          measurementVersions.profileId,
+          measurementVersions.id,
+        ],
+      }),
+      check(
+        "measurement_profile_kind",
+        sql`(${t.kind}='body' AND ${t.garmentId} IS NULL) OR (${t.kind}='garment' AND ${t.garmentId} IS NOT NULL)`,
+      ),
+      check("measurement_profile_revision", sql`${t.revision}>0`),
+      check(
+        "measurement_profile_archive",
+        sql`(${t.archivedAt} IS NULL)=(${t.archivedBy} IS NULL)`,
+      ),
+      index("measurement_book").on(
+        t.tenantId,
+        t.locationId,
+        t.customerId,
+        t.wearerId,
+        t.kind,
+        t.garmentId,
+        t.archivedAt,
+        t.id,
+      ),
+      index("measurement_garment").on(t.tenantId, t.garmentId),
+      index("measurement_profile_created_by").on(t.createdBy),
+      index("measurement_profile_updated_by").on(t.updatedBy),
+      index("measurement_profile_archived_by").on(t.archivedBy),
+      index("measurement_profile_operation").on(t.creationOperationId),
+      masterPolicy(),
+    ],
+  )
+  .enableRLS();
+export const measurementVersions = app
+  .table(
+    "measurement_versions",
+    {
+      id: id(),
+      ...measurementOwner(),
+      profileId: uuid("profile_id").notNull(),
+      sequence: integer("sequence").notNull(),
+      garmentId: uuid("garment_id"),
+      garmentVersionId: uuid("garment_version_id"),
+      bodySchemaVersion: text("body_schema_version").references(
+        () => measurementBodySchemas.version,
+      ),
+      measuredOn: date("measured_on").notNull(),
+      recordedAt: timestamp("recorded_at", { withTimezone: true })
+        .defaultNow()
+        .notNull(),
+      recordedBy: uuid("recorded_by")
+        .notNull()
+        .references(() => principals.id),
+      operationId: uuid("operation_id").notNull(),
+      priorVersionId: uuid("prior_version_id"),
+      document: jsonb("document").notNull(),
+    },
+    (t): PgTableExtraConfigValue[] => [
+      unique("measurement_version_owner").on(
+        t.tenantId,
+        t.locationId,
+        t.customerId,
+        t.wearerId,
+        t.profileId,
+        t.id,
+      ),
+      unique("measurement_version_sequence").on(t.profileId, t.sequence),
+      foreignKey({
+        name: "measurement_version_profile_fk",
+        columns: [
+          t.tenantId,
+          t.locationId,
+          t.customerId,
+          t.wearerId,
+          t.profileId,
+        ],
+        foreignColumns: [
+          measurementProfiles.tenantId,
+          measurementProfiles.locationId,
+          measurementProfiles.customerId,
+          measurementProfiles.wearerId,
+          measurementProfiles.id,
+        ],
+      }),
+      foreignKey({
+        name: "measurement_version_garment_fk",
+        columns: [t.tenantId, t.garmentId, t.garmentVersionId],
+        foreignColumns: [
+          garmentVersions.tenantId,
+          garmentVersions.garmentId,
+          garmentVersions.id,
+        ],
+      }),
+      foreignKey({
+        name: "measurement_version_prior_fk",
+        columns: [
+          t.tenantId,
+          t.locationId,
+          t.customerId,
+          t.wearerId,
+          t.profileId,
+          t.priorVersionId,
+        ],
+        foreignColumns: [
+          t.tenantId,
+          t.locationId,
+          t.customerId,
+          t.wearerId,
+          t.profileId,
+          t.id,
+        ],
+      }),
+      check(
+        "measurement_version_schema",
+        sql`(${t.bodySchemaVersion} IS NOT NULL AND ${t.garmentId} IS NULL AND ${t.garmentVersionId} IS NULL) OR (${t.bodySchemaVersion} IS NULL AND ${t.garmentId} IS NOT NULL AND ${t.garmentVersionId} IS NOT NULL)`,
+      ),
+      check("measurement_version_sequence_positive", sql`${t.sequence}>0`),
+      check(
+        "measurement_version_date",
+        sql`${t.measuredOn} BETWEEN '0001-01-01'::date AND '9999-12-31'::date AND isfinite(${t.measuredOn})`,
+      ),
+      check(
+        "measurement_version_document",
+        sql`jsonb_typeof(${t.document})='object' AND octet_length(${t.document}::text)<=131072`,
+      ),
+      index("measurement_history").on(t.profileId, t.sequence.desc(), t.id),
+      index("measurement_trend").on(
+        t.profileId,
+        t.measuredOn,
+        t.recordedAt,
+        t.id,
+      ),
+      index("measurement_version_garment").on(
+        t.tenantId,
+        t.garmentId,
+        t.garmentVersionId,
+      ),
+      index("measurement_version_body").on(t.bodySchemaVersion),
+      index("measurement_version_actor").on(t.recordedBy),
+      index("measurement_version_operation").on(t.operationId),
+      masterPolicy(),
+    ],
+  )
+  .enableRLS();
+export const measurementCustomIdentities = app
+  .table(
+    "measurement_custom_identities",
+    {
+      ...measurementOwner(),
+      profileId: uuid("profile_id").notNull(),
+      nodeId: uuid("node_id").notNull(),
+      signature: jsonb("signature").notNull(),
+      introducedSequence: integer("introduced_sequence").notNull(),
+      retiredSequence: integer("retired_sequence"),
+    },
+    (t): PgTableExtraConfigValue[] => [
+      primaryKey({ columns: [t.profileId, t.nodeId] }),
+      foreignKey({
+        name: "measurement_custom_profile_fk",
+        columns: [
+          t.tenantId,
+          t.locationId,
+          t.customerId,
+          t.wearerId,
+          t.profileId,
+        ],
+        foreignColumns: [
+          measurementProfiles.tenantId,
+          measurementProfiles.locationId,
+          measurementProfiles.customerId,
+          measurementProfiles.wearerId,
+          measurementProfiles.id,
+        ],
+      }),
+      check(
+        "measurement_custom_sequence",
+        sql`${t.introducedSequence}>0 AND (${t.retiredSequence} IS NULL OR ${t.retiredSequence}>${t.introducedSequence})`,
+      ),
+      index("measurement_custom_owner").on(
+        t.tenantId,
+        t.locationId,
+        t.customerId,
+        t.wearerId,
+        t.profileId,
+      ),
+      masterPolicy(),
+    ],
+  )
+  .enableRLS();
+
+export const measurementPhotoReservations = app
+  .table(
+    "measurement_photo_reservations",
+    {
+      id: id(),
+      ...measurementOwner(),
+      actorId: uuid("actor_id")
+        .notNull()
+        .references(() => principals.id),
+      profileId: uuid("profile_id").notNull(),
+      versionId: uuid("version_id").notNull(),
+      expectedRevision: integer("expected_revision").notNull(),
+      schemaRef: jsonb("schema_ref").notNull(),
+      createdAt: createdAt(),
+      expiresAt: timestamp("expires_at", { withTimezone: true })
+        .default(sql`now() + interval '1 hour'`)
+        .notNull(),
+      creationOperationId: uuid("creation_operation_id").notNull(),
+      consumedVersionId: uuid("consumed_version_id"),
+      consumptionOperationId: uuid("consumption_operation_id"),
+    },
+    (t): PgTableExtraConfigValue[] => [
+      unique("measurement_photo_reservation_owner").on(
+        t.tenantId,
+        t.locationId,
+        t.customerId,
+        t.wearerId,
+        t.actorId,
+        t.profileId,
+        t.id,
+      ),
+      unique("measurement_photo_reserved_version").on(
+        t.tenantId,
+        t.locationId,
+        t.customerId,
+        t.wearerId,
+        t.profileId,
+        t.versionId,
+      ),
+      foreignKey({
+        name: "measurement_photo_reservation_wearer_fk",
+        columns: [t.tenantId, t.locationId, t.customerId, t.wearerId],
+        foreignColumns: [
+          customerWearers.tenantId,
+          customerWearers.locationId,
+          customerWearers.customerId,
+          customerWearers.id,
+        ],
+      }),
+      foreignKey({
+        name: "measurement_photo_consumed_version_fk",
+        columns: [
+          t.tenantId,
+          t.locationId,
+          t.customerId,
+          t.wearerId,
+          t.profileId,
+          t.consumedVersionId,
+        ],
+        foreignColumns: [
+          measurementVersions.tenantId,
+          measurementVersions.locationId,
+          measurementVersions.customerId,
+          measurementVersions.wearerId,
+          measurementVersions.profileId,
+          measurementVersions.id,
+        ],
+      }),
+      check(
+        "measurement_photo_reservation_state",
+        sql`(${t.consumedVersionId} IS NULL)=(${t.consumptionOperationId} IS NULL) AND (${t.consumedVersionId} IS NULL OR ${t.consumedVersionId}=${t.versionId}) AND ${t.expectedRevision}>=0 AND ${t.expiresAt}>${t.createdAt} AND ${t.expiresAt}<=${t.createdAt}+interval '1 hour' AND jsonb_typeof(${t.schemaRef})='object'`,
+      ),
+      index("measurement_photo_reservation_actor").on(t.actorId),
+      index("measurement_photo_reservation_creation").on(t.creationOperationId),
+      index("measurement_photo_reservation_consumption").on(
+        t.consumptionOperationId,
+      ),
+      index("measurement_photo_reservation_expiry")
+        .on(t.expiresAt)
+        .where(sql`${t.consumedVersionId} IS NULL`),
+      masterPolicy(),
+    ],
+  )
+  .enableRLS();
+export const measurementPhotoMemberships = app
+  .table(
+    "measurement_photo_memberships",
+    {
+      ...measurementOwner(),
+      profileId: uuid("profile_id").notNull(),
+      versionId: uuid("version_id").notNull(),
+      fileId: uuid("file_id").notNull(),
+      position: integer("position").notNull(),
+      note: text("note"),
+    },
+    (t): PgTableExtraConfigValue[] => [
+      primaryKey({ columns: [t.versionId, t.fileId] }),
+      unique("measurement_photo_position").on(t.versionId, t.position),
+      foreignKey({
+        name: "measurement_photo_membership_version_fk",
+        columns: [
+          t.tenantId,
+          t.locationId,
+          t.customerId,
+          t.wearerId,
+          t.profileId,
+          t.versionId,
+        ],
+        foreignColumns: [
+          measurementVersions.tenantId,
+          measurementVersions.locationId,
+          measurementVersions.customerId,
+          measurementVersions.wearerId,
+          measurementVersions.profileId,
+          measurementVersions.id,
+        ],
+      }),
+      check(
+        "measurement_photo_membership_bounds",
+        sql`${t.position} BETWEEN 1 AND 5 AND app.customer_text_valid(${t.note},1000,true)`,
+      ),
+      index("measurement_photo_membership_file").on(t.fileId),
+      masterPolicy(),
+    ],
+  )
+  .enableRLS();
+
+export const measurementCards = app
+  .table(
+    "measurement_cards",
+    {
+      id: id(),
+      ...measurementOwner(),
+      issuerId: uuid("issuer_id")
+        .notNull()
+        .references(() => principals.id),
+      wearerLabel: text("wearer_label").notNull(),
+      projectionVersion: integer("projection_version").notNull().default(1),
+      createdAt: createdAt(),
+      expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
+      revision: integer("revision").notNull().default(1),
+      creationOperationId: uuid("creation_operation_id").notNull(),
+      revokedAt: timestamp("revoked_at", { withTimezone: true }),
+      revokedBy: uuid("revoked_by").references(() => principals.id),
+      revocationReason: text("revocation_reason"),
+      revocationOperationId: uuid("revocation_operation_id"),
+    },
+    (t) => [
+      unique("measurement_card_owner").on(
+        t.tenantId,
+        t.locationId,
+        t.customerId,
+        t.wearerId,
+        t.id,
+      ),
+      foreignKey({
+        name: "measurement_card_wearer_fk",
+        columns: [t.tenantId, t.locationId, t.customerId, t.wearerId],
+        foreignColumns: [
+          customerWearers.tenantId,
+          customerWearers.locationId,
+          customerWearers.customerId,
+          customerWearers.id,
+        ],
+      }),
+      check(
+        "measurement_card_shape",
+        sql`${t.projectionVersion}=1 AND app.customer_text_valid(${t.wearerLabel},120,false) AND ${t.revision}>0 AND ${t.expiresAt}>${t.createdAt} AND ${t.expiresAt}<=${t.createdAt}+interval '30 days' AND ((${t.revokedAt} IS NULL AND ${t.revokedBy} IS NULL AND ${t.revocationReason} IS NULL AND ${t.revocationOperationId} IS NULL) OR (${t.revokedAt} IS NOT NULL AND ${t.revokedBy} IS NOT NULL AND ${t.revocationReason} IS NOT NULL AND ${t.revocationOperationId} IS NOT NULL AND app.customer_text_valid(${t.revocationReason},1000,false)))`,
+      ),
+      index("measurement_card_book").on(
+        t.tenantId,
+        t.locationId,
+        t.customerId,
+        t.wearerId,
+        t.createdAt.desc(),
+        t.id,
+      ),
+      index("measurement_card_issuer").on(t.issuerId),
+      index("measurement_card_revoker").on(t.revokedBy),
+      uniqueIndex("measurement_card_creation").on(t.creationOperationId),
+      index("measurement_card_revocation").on(t.revocationOperationId),
+      masterPolicy(),
+    ],
+  )
+  .enableRLS();
+export const measurementCardSelections = app
+  .table(
+    "measurement_card_selections",
+    {
+      ...measurementOwner(),
+      cardId: uuid("card_id").notNull(),
+      position: integer("position").notNull(),
+      profileId: uuid("profile_id").notNull(),
+      versionId: uuid("version_id").notNull(),
+      fieldIds: jsonb("field_ids").notNull(),
+      projection: jsonb("projection").notNull(),
+    },
+    (t) => [
+      primaryKey({ columns: [t.cardId, t.position] }),
+      unique("measurement_card_exact_version").on(t.cardId, t.versionId),
+      foreignKey({
+        name: "measurement_card_selection_card_fk",
+        columns: [t.tenantId, t.locationId, t.customerId, t.wearerId, t.cardId],
+        foreignColumns: [
+          measurementCards.tenantId,
+          measurementCards.locationId,
+          measurementCards.customerId,
+          measurementCards.wearerId,
+          measurementCards.id,
+        ],
+      }),
+      foreignKey({
+        name: "measurement_card_selection_version_fk",
+        columns: [
+          t.tenantId,
+          t.locationId,
+          t.customerId,
+          t.wearerId,
+          t.profileId,
+          t.versionId,
+        ],
+        foreignColumns: [
+          measurementVersions.tenantId,
+          measurementVersions.locationId,
+          measurementVersions.customerId,
+          measurementVersions.wearerId,
+          measurementVersions.profileId,
+          measurementVersions.id,
+        ],
+      }),
+      check(
+        "measurement_card_selection_shape",
+        sql`${t.position} BETWEEN 1 AND 10 AND jsonb_typeof(${t.fieldIds})='array' AND jsonb_array_length(${t.fieldIds}) BETWEEN 1 AND 30 AND jsonb_typeof(${t.projection})='object' AND octet_length(${t.projection}::text)<=262144`,
+      ),
+      index("measurement_card_selection_profile").on(t.profileId, t.cardId),
+      index("measurement_card_selection_version").on(t.versionId),
+      masterPolicy(),
+    ],
+  )
+  .enableRLS();
+export const measurementCardAdmissions = app
+  .table(
+    "measurement_card_admissions",
+    {
+      principalId: uuid("principal_id")
+        .primaryKey()
+        .references(() => principals.id),
+      windowStartedAt: timestamp("window_started_at", { withTimezone: true })
+        .defaultNow()
+        .notNull(),
+      requests: integer("requests").notNull().default(0),
+    },
+    (t) => [
+      check(
+        "measurement_card_admission_requests",
+        sql`${t.requests} BETWEEN 0 AND 31`,
+      ),
+      masterPolicy(),
+    ],
+  )
+  .enableRLS();
+
+const importScope = () => ({
+  tenantId: uuid("tenant_id").notNull(),
+  locationId: uuid("location_id").notNull(),
+  actorId: uuid("actor_id")
+    .notNull()
+    .references(() => principals.id),
+});
+export const domainImportBatches = app
+  .table(
+    "domain_import_batches",
+    {
+      id: id(),
+      ...importScope(),
+      family: text("family").notNull(),
+      namespace: text("namespace"),
+      digest: text("digest").notNull(),
+      state: text("state").notNull().default("preview"),
+      revision: integer("revision").notNull().default(1),
+      rowCount: integer("row_count").notNull(),
+      createdAt: createdAt(),
+      expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
+      purgedAt: timestamp("purged_at", { withTimezone: true }),
+      leaseToken: uuid("lease_token"),
+      leaseUntil: timestamp("lease_until", { withTimezone: true }),
+      creationOperationId: uuid("creation_operation_id").notNull(),
+    },
+    (t) => [
+      unique("domain_import_batch_owner").on(
+        t.tenantId,
+        t.locationId,
+        t.actorId,
+        t.id,
+      ),
+      foreignKey({
+        columns: [t.tenantId, t.locationId],
+        foreignColumns: [locations.tenantId, locations.id],
+      }),
+      check(
+        "domain_import_batch_shape",
+        sql`${t.family} IN ('customers','measurements') AND ${t.state} IN ('preview','running','complete','cancelled') AND ${t.revision}>0 AND ${t.rowCount} BETWEEN 1 AND 200 AND (${t.namespace} IS NULL OR app.customer_text_valid(${t.namespace},100,false)) AND (${t.namespace} IS NULL)=(${t.purgedAt} IS NOT NULL) AND (${t.leaseToken} IS NULL)=(${t.leaseUntil} IS NULL)`,
+      ),
+      index("domain_import_batch_actor").on(
+        t.actorId,
+        t.tenantId,
+        t.locationId,
+        t.createdAt.desc(),
+      ),
+      index("domain_import_batch_expiry").on(t.createdAt, t.id),
+      index("domain_import_batch_location").on(t.tenantId, t.locationId),
+      uniqueIndex("domain_import_batch_operation").on(t.creationOperationId),
+      masterPolicy(),
+    ],
+  )
+  .enableRLS();
+export const domainImportRecords = app
+  .table(
+    "domain_import_records",
+    {
+      id: id(),
+      ...importScope(),
+      batchId: uuid("batch_id").notNull(),
+      ordinal: integer("ordinal").notNull(),
+      revision: integer("revision").notNull().default(1),
+      state: text("state").notNull().default("pending"),
+      sourceId: text("source_id"),
+      rows: jsonb("rows").notNull(),
+      redundantRows: jsonb("redundant_rows").notNull(),
+      payload: jsonb("payload"),
+      issues: jsonb("issues").notNull().default(sql`'[]'::jsonb`),
+      decision: jsonb("decision"),
+      candidates: jsonb("candidates").notNull().default(sql`'[]'::jsonb`),
+      candidateCount: integer("candidate_count").notNull().default(0),
+      candidateFingerprint: text("candidate_fingerprint"),
+      bindings: jsonb("bindings").notNull().default(sql`'[]'::jsonb`),
+      prepared: jsonb("prepared"),
+      canonicalHash: text("canonical_hash"),
+      intentHash: text("intent_hash"),
+      operationKey: uuid("operation_key").notNull(),
+      requestHash: text("request_hash"),
+      outcomeOperationId: uuid("outcome_operation_id"),
+      counts: jsonb("counts")
+        .notNull()
+        .default(
+          sql`'{"customers":0,"wearers":0,"profiles":0,"versions":0}'::jsonb`,
+        ),
+    },
+    (t) => [
+      unique("domain_import_record_owner").on(
+        t.tenantId,
+        t.locationId,
+        t.actorId,
+        t.batchId,
+        t.id,
+      ),
+      unique("domain_import_record_order").on(t.batchId, t.ordinal),
+      foreignKey({
+        name: "domain_import_record_batch_fk",
+        columns: [t.tenantId, t.locationId, t.actorId, t.batchId],
+        foreignColumns: [
+          domainImportBatches.tenantId,
+          domainImportBatches.locationId,
+          domainImportBatches.actorId,
+          domainImportBatches.id,
+        ],
+      }),
+      check(
+        "domain_import_record_shape",
+        sql`${t.ordinal} BETWEEN 1 AND 200 AND ${t.revision}>0 AND ${t.state} IN ('pending','in-progress','created','reused','already-imported','skipped','needs-review','failed','cancelled') AND jsonb_array_length(${t.rows}) BETWEEN 1 AND 200 AND jsonb_array_length(${t.redundantRows})<=200 AND (${t.payload} IS NULL OR octet_length(${t.payload}::text)<=655360) AND (${t.prepared} IS NULL OR octet_length(${t.prepared}::text)<=1048576) AND ${t.candidateCount}>=0`,
+      ),
+      index("domain_import_records_actor").on(t.actorId),
+      index("domain_import_records_outcome").on(t.outcomeOperationId),
+      uniqueIndex("domain_import_record_attempt").on(t.operationKey),
+      masterPolicy(),
+    ],
+  )
+  .enableRLS();
+export const domainImportAttempts = app
+  .table(
+    "domain_import_attempts",
+    {
+      operationKey: uuid("operation_key").primaryKey(),
+      ...importScope(),
+      batchId: uuid("batch_id").notNull(),
+      recordId: uuid("record_id").notNull(),
+      revision: integer("revision").notNull(),
+      requestHash: text("request_hash").notNull(),
+      intentHash: text("intent_hash").notNull(),
+      state: text("state").notNull().default("pending"),
+      leaseToken: uuid("lease_token"),
+      startedAt: timestamp("started_at", { withTimezone: true }),
+      outcomeOperationId: uuid("outcome_operation_id"),
+    },
+    (t) => [
+      foreignKey({
+        name: "domain_import_attempt_record_fk",
+        columns: [t.tenantId, t.locationId, t.actorId, t.batchId, t.recordId],
+        foreignColumns: [
+          domainImportRecords.tenantId,
+          domainImportRecords.locationId,
+          domainImportRecords.actorId,
+          domainImportRecords.batchId,
+          domainImportRecords.id,
+        ],
+      }),
+      check(
+        "domain_import_attempt_shape",
+        sql`${t.revision}>0 AND ${t.state} IN ('pending','in-progress','rolled-back','committed') AND ${t.requestHash} ~ '^v1:[0-9a-f]{64}$' AND ${t.intentHash} ~ '^v1:[0-9a-f]{64}$' AND ${t.operationKey}::text ~ '^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$'`,
+      ),
+      unique("domain_import_attempt_revision").on(t.recordId, t.revision),
+      index("domain_import_attempt_record").on(
+        t.tenantId,
+        t.locationId,
+        t.actorId,
+        t.batchId,
+        t.recordId,
+      ),
+      index("domain_import_attempt_actor").on(t.actorId),
+      index("domain_import_attempt_outcome").on(t.outcomeOperationId),
+      masterPolicy(),
+    ],
+  )
+  .enableRLS();
+export const domainImportSources = app
+  .table(
+    "domain_import_sources",
+    {
+      id: id(),
+      tenantId: uuid("tenant_id").notNull(),
+      locationId: uuid("location_id").notNull(),
+      family: text("family").notNull(),
+      namespace: text("namespace").notNull(),
+      kind: text("kind").notNull(),
+      sourceId: text("source_id").notNull(),
+      parentSourceId: text("parent_source_id"),
+      sourceCustomerId: text("source_customer_id"),
+      sourceWearerId: text("source_wearer_id"),
+      sourceSequence: integer("source_sequence"),
+      acceptedHash: text("accepted_hash").notNull(),
+      customerId: uuid("customer_id").notNull(),
+      wearerId: uuid("wearer_id"),
+      profileId: uuid("profile_id"),
+      versionId: uuid("version_id"),
+      operationId: uuid("operation_id").notNull(),
+    },
+    (t) => [
+      unique("domain_import_source_identity").on(
+        t.tenantId,
+        t.locationId,
+        t.family,
+        t.namespace,
+        t.kind,
+        t.sourceId,
+      ),
+      foreignKey({
+        name: "domain_import_source_customer_fk",
+        columns: [t.tenantId, t.locationId, t.customerId],
+        foreignColumns: [
+          customers.tenantId,
+          customers.locationId,
+          customers.id,
+        ],
+      }),
+      foreignKey({
+        name: "domain_import_source_wearer_fk",
+        columns: [t.tenantId, t.locationId, t.customerId, t.wearerId],
+        foreignColumns: [
+          customerWearers.tenantId,
+          customerWearers.locationId,
+          customerWearers.customerId,
+          customerWearers.id,
+        ],
+      }),
+      foreignKey({
+        name: "domain_import_source_profile_fk",
+        columns: [
+          t.tenantId,
+          t.locationId,
+          t.customerId,
+          t.wearerId,
+          t.profileId,
+        ],
+        foreignColumns: [
+          measurementProfiles.tenantId,
+          measurementProfiles.locationId,
+          measurementProfiles.customerId,
+          measurementProfiles.wearerId,
+          measurementProfiles.id,
+        ],
+      }),
+      foreignKey({
+        name: "domain_import_source_version_fk",
+        columns: [
+          t.tenantId,
+          t.locationId,
+          t.customerId,
+          t.wearerId,
+          t.profileId,
+          t.versionId,
+        ],
+        foreignColumns: [
+          measurementVersions.tenantId,
+          measurementVersions.locationId,
+          measurementVersions.customerId,
+          measurementVersions.wearerId,
+          measurementVersions.profileId,
+          measurementVersions.id,
+        ],
+      }),
+      check(
+        "domain_import_source_shape",
+        sql`${t.family} IN ('customers','measurements') AND ${t.kind} IN ('customer','wearer','profile','version') AND app.customer_text_valid(${t.namespace},100,false) AND app.customer_text_valid(${t.sourceId},100,false) AND ${t.acceptedHash} ~ '^v1:[0-9a-f]{64}$' AND ((${t.kind}='customer' AND ${t.family}='customers' AND ${t.wearerId} IS NULL AND ${t.profileId} IS NULL AND ${t.versionId} IS NULL) OR (${t.kind}='wearer' AND ${t.family}='customers' AND ${t.wearerId} IS NOT NULL AND ${t.profileId} IS NULL AND ${t.versionId} IS NULL AND ${t.parentSourceId} IS NOT NULL) OR (${t.kind}='profile' AND ${t.family}='measurements' AND ${t.wearerId} IS NOT NULL AND ${t.profileId} IS NOT NULL AND ${t.versionId} IS NULL) OR (${t.kind}='version' AND ${t.family}='measurements' AND ${t.wearerId} IS NOT NULL AND ${t.profileId} IS NOT NULL AND ${t.versionId} IS NOT NULL AND ${t.sourceSequence}>0 AND ${t.parentSourceId} IS NOT NULL))`,
+      ),
+      index("domain_import_source_customer").on(
+        t.tenantId,
+        t.locationId,
+        t.customerId,
+      ),
+      index("domain_import_source_wearer").on(
+        t.tenantId,
+        t.locationId,
+        t.customerId,
+        t.wearerId,
+      ),
+      index("domain_import_source_profile").on(
+        t.tenantId,
+        t.locationId,
+        t.customerId,
+        t.wearerId,
+        t.profileId,
+      ),
+      index("domain_import_source_version").on(t.versionId),
+      index("domain_import_source_operation").on(t.operationId),
+      masterPolicy(),
+    ],
+  )
+  .enableRLS();
+export const domainImportBudgets = app
+  .table(
+    "domain_import_budgets",
+    {
+      ...importScope(),
+      windowStartedAt: timestamp("window_started_at", { withTimezone: true })
+        .notNull()
+        .defaultNow(),
+      previews: integer("previews").notNull().default(0),
+      chunks: integer("chunks").notNull().default(0),
+      leases: jsonb("leases").notNull().default(sql`'{}'::jsonb`),
+    },
+    (t) => [
+      primaryKey({ columns: [t.tenantId, t.locationId, t.actorId] }),
+      foreignKey({
+        columns: [t.tenantId, t.locationId],
+        foreignColumns: [locations.tenantId, locations.id],
+      }),
+      check(
+        "domain_import_budget_shape",
+        sql`${t.previews} BETWEEN 0 AND 5 AND ${t.chunks} BETWEEN 0 AND 10 AND jsonb_typeof(${t.leases})='object'`,
+      ),
+      index("domain_import_budget_actor").on(t.actorId),
       masterPolicy(),
     ],
   )

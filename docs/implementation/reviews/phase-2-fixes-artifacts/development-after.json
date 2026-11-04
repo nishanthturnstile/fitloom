@@ -1,0 +1,14 @@
+{
+  "database": "fitloom_dev",
+  "appliedMigrations": 50,
+  "allAppliedChecksumsMatch": true,
+  "counts": {
+    "garments": 6,
+    "garment_versions": 6,
+    "customers": 0,
+    "wearers": 0,
+    "measurement_profiles": 0,
+    "measurement_versions": 0,
+    "import_batches": 0
+  }
+}

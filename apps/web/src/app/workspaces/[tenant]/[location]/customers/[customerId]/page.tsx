@@ -98,6 +98,10 @@ export default async function Customer({
       <CustomerProfilePanel
         base={base}
         data={data}
+        measurements={{
+          read: context.workspace.permissions.includes("measurements.read"),
+          manage: context.workspace.permissions.includes("measurements.manage"),
+        }}
         today={new Intl.DateTimeFormat("en-CA", {
           timeZone: context.workspace.timezone ?? "UTC",
           year: "numeric",

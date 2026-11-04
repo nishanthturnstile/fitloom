@@ -67,30 +67,102 @@ try {
     assert.equal(response.status, 413);
     assert.ok(response.headers.get("cache-control").includes("no-store"));
   }
-  const slowStatus = await new Promise((resolve, reject) => {
+  const importPath = `${base}/api/workspaces/${randomUUID()}/${randomUUID()}/imports/customers/commands/preview`;
+  // Send headers first for the advertised-length rejection. Sending the entire
+  // buffer with fetch can raise EPIPE when an early 413 closes the upload.
+  const declared = await new Promise((resolve, reject) => {
     const request = httpRequest(
-      `${base}/api/workspaces/${randomUUID()}/${randomUUID()}/masters/commands/garment.save`,
+      importPath,
       {
         method: "POST",
-        headers: { origin: base, "content-type": "application/json" },
+        headers: {
+          origin: base,
+          "content-type": "application/json",
+          "content-length": 3 * 1024 * 1024 + 1,
+        },
       },
       (response) => {
         response.resume();
         response.on("end", () => {
-          resolve(response.statusCode);
+          resolve({
+            status: response.statusCode,
+            cache: response.headers["cache-control"],
+          });
           request.destroy();
         });
       },
     );
     request.on("error", reject);
     request.setTimeout(8000, () =>
-      request.destroy(new Error("Body deadline response was not received")),
+      request.destroy(Error("Import length rejection response missing")),
     );
-    request.write("{");
+    request.flushHeaders();
   });
-  assert.equal(slowStatus, 408);
+  assert.equal(declared.status, 413);
+  assert.match(declared.cache, /no-store/);
+  // Exercise the actual byte counter without Content-Length. The final byte
+  // crosses the limit after all bounded chunks have been written.
+  const streamed = await new Promise((resolve, reject) => {
+    const request = httpRequest(
+      importPath,
+      {
+        method: "POST",
+        headers: { origin: base, "content-type": "application/json" },
+      },
+      (response) => {
+        response.resume();
+        response.on("end", () =>
+          resolve({
+            status: response.statusCode,
+            cache: response.headers["cache-control"],
+          }),
+        );
+      },
+    );
+    request.on("error", reject);
+    request.setTimeout(8000, () =>
+      request.destroy(Error("Import stream rejection response missing")),
+    );
+    void (async () => {
+      const chunk = Buffer.alloc(65536, 120);
+      for (let i = 0; i < 48; i++)
+        await new Promise((done, fail) =>
+          request.write(chunk, (error) => (error ? fail(error) : done())),
+        );
+      request.end("x");
+    })().catch(reject);
+  });
+  assert.equal(streamed.status, 413);
+  assert.match(streamed.cache, /no-store/);
+  for (const suffix of [
+    "masters/commands/garment.save",
+    "imports/measurements/commands/preview",
+  ]) {
+    const slowStatus = await new Promise((resolve, reject) => {
+      const request = httpRequest(
+        `${base}/api/workspaces/${randomUUID()}/${randomUUID()}/${suffix}`,
+        {
+          method: "POST",
+          headers: { origin: base, "content-type": "application/json" },
+        },
+        (response) => {
+          response.resume();
+          response.on("end", () => {
+            resolve(response.statusCode);
+            request.destroy();
+          });
+        },
+      );
+      request.on("error", reject);
+      request.setTimeout(8000, () =>
+        request.destroy(new Error("Body deadline response was not received")),
+      );
+      request.write("{");
+    });
+    assert.equal(slowStatus, 408);
+  }
   console.log(
-    "Master body limits return stable 413 responses and a slow stream returns 408",
+    "Master/import body limits return stable 413 responses and slow streams return 408",
   );
 } finally {
   child.kill("SIGTERM");

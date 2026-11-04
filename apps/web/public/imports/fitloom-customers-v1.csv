@@ -1,0 +1,2 @@
+source_customer_id,customer_name,phone_country,phone,email,source_wearer_id,wearer_name,relationship,notes
+"customer_001","Sample customer","","","","wearer_001","Sample wearer","self",""

@@ -1,0 +1,34 @@
+{
+  "manifest": {
+    "total_files": 255,
+    "reviewed_files": 255,
+    "skipped_files": 0,
+    "coverage_rate": 1.0
+  },
+  "all_preview": {
+    "total_files": 326,
+    "reviewed_files": 255,
+    "skipped_files": 71,
+    "coverage_rate": 0.7822085889570553
+  },
+  "preview_reviewable": {
+    "total_files": 258,
+    "reviewed_files": 247,
+    "skipped_files": 11,
+    "coverage_rate": 0.9573643410852714
+  },
+  "preview_excluded": {
+    "total_files": 68,
+    "manually_reviewed_manifest_files": 8,
+    "outside_manifest_skipped": 60
+  },
+  "findings": {
+    "medium": 7,
+    "low": 3
+  },
+  "hashes_verified": 255,
+  "hash_mismatches": 0,
+  "rule_commands": 7,
+  "rule_command_failures": 0,
+  "rule_resolved_paths": 266
+}

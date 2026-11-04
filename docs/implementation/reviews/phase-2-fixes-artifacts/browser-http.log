@@ -1,0 +1,32 @@
+$ node --env-file-if-exists=../db/.env scripts/web-smoke.mjs && node --env-file-if-exists=../db/.env scripts/master-transport-check.mjs
+Worker receipt recovered 2322 ms after restart.
+Customer directory/navigation HTTP passed: >500 rows, bounded page/count, literal wildcards, AND tags, current target permissions and switch allowlist.
+Customer HTTP protocol passed: maximal Unicode save (47737 bytes), replay, typed duplicate review, private POST search, 400/401/413.
+Master HTTP checks passed: scoped registers, starter replay, immutable archived history, lifecycle/catalog tokens, conflicts, revoked write dependencies, price-free current/exact/history projections, and request bounds.
+Measurement photo HTTP passed: reserved upload, normalized private bytes, atomic replay, distinct purpose, restricted DTO/SSR, media-free analysis/capture and archived privacy revocation.
+Measurement card HTTP passed: actual PNG decode/resolution, fixed one-field projection, current reader/issuer scope, allowlisted sign-in return, uniform unavailable responses, private 429/Retry-After headers and archive/restore non-reactivation.
+Measurement HTTP passed: explicit wearer, price-free measuring-only intake, 52 profiles/versions with continuation, exact history, strict origin/query/body ownership, current permissions and archived entry denial.
+Customer register UI passed: complete search/count/paging, views, private return context, stale responses and permission-aware switching.
+Customer wearer UI passed: family identities, independent preferences, exact profile units, guarded sheets, lifecycle and continuation.
+Customer photos UI passed: private preview/upload, exact bind retry, failed replacement recovery, removal and separate wearer slots.
+Master register UI views passed.
+Master register UI reads passed.
+Master register UI catalogs passed.
+Measurement UI passed: wearer book, exact history, private return/search, body entry, unit display, dirty exit, committed-response-loss retry and empty-garment custom entry at desktop/narrow widths.
+Measurement revision UI passed: no-op, original units/history, exact uncertain retry, saved projection recovery, concurrent conflict, real server-field focus, native reload/back and scope-switch guards.
+Measurement custom/rebase UI passed: all five kinds, required false, zero, bounds, custom identity replacement, inactive choice carry-forward, reviewed current-schema draft, exact historical schema and parent archive race.
+Measurement reuse UI passed: independent and historical copies, exact retry, source independence, lifecycle replay, explicit reviewed ease, unsaved preview, manual provenance and responsive mapping.
+Measurement comparison UI passed: two/four exact versions, typed statuses, complete comparison table, 50+2 trend continuation, keyboard chart, actual gap path, scoped private state and desktop/narrow widths.
+Measurement photos UI passed: lost begin/upload/save/revoke recovery, one immutable membership, guarded draft, failed replacement, historical removal, archived privacy fallback and responsive private images.
+Measurement cards UI passed: fixed preview, exact issue/revoke recovery, protected PNG and print, responsive widths, no external resources, sign-in return and revoked read denial.
+Measurement revoked-write UI passed: current 403 removes private draft and releases leave protection.
+Import Chrome passed: exact lost preview retry, read-only lost chunk recovery, complete histories, explicit source owners, cancellation, revoked draft removal and 1440/1024/390/320 layouts.
+Garment editor frame passed: step identity retention, rail retention, no implicit saves, disabled preview and responsive layouts.
+Workspace shell UI passed: failed/canceled switches, mobile focus and navigation, shortcut, and 320/390/1024/1025/1440 widths.
+Workspace route UI passed: preferences, profile, assigned routes, document history, direct catalogs, clean uncertain-operation replay, and successful switches.
+Open-session authority UI passed: cached register, current, eligibility and exact-version prices removed; dirty drafts retained; no writes; 320/390/1024/1440px.
+Master UI checks passed: garment/service/add-on editors and history, eligibility, unset/zero rates, inactive references, ordering, visibility, first-use starters/collision rollback/no-op/replay, lost-response recovery, dirty navigation, roles, and desktop/narrow layouts.
+Supported import HTTP passed: full 200-row private preview above the interactive body limit, no business dry-run writes, typed decisions, atomic groups, canonical source maps, current format-specific permissions, read-only recovery after expiry/quota/lease, private downloads and 400/401/403/404/413/429 bounds.
+Worker drain observed: 34 ms; stopped telemetry became stale and recovered 2890 ms after restart.
+HTTP smoke passed: account SSR → registration → mail worker → Mailpit → verify → sign in → protected projection → resumable setup → shop provisioning → workspace SSR → direct-route authorization → logout. Operator default access denied. Signed provider receipts survive a real worker restart with one local effect; protected job projections pass. Private SeaweedFS upload/attach/download, current-authority denial, retirement, workspace UI, and operator-route denial pass. Actual TOTP operator routes pass lookup, replay, suspend/restore, recovery, job retry, and session revocation. Protected telemetry, stale-worker recovery, bounded pages, database failure, and storage failure return truthful outcomes.
+Master/import body limits return stable 413 responses and slow streams return 408

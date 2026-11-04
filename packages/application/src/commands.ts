@@ -123,6 +123,11 @@ export function createCommandExecutor(dependencies: {
   return async function execute<P, R>(
     command: Command<P, R>,
     raw: unknown,
+    policy?: {
+      maxAttempts: number;
+      deadlineAt: number;
+      minRemainingMs: number;
+    },
   ): Promise<{ operationId: string; replayed: boolean; result: R }> {
     const request = invocation.safeParse(raw);
     if (!request.success)
@@ -140,9 +145,26 @@ export function createCommandExecutor(dependencies: {
       throw new CommandError("validation", "Command input must be JSON");
     const hash = requestHash(semantic.data);
     const started = performance.now();
-    for (let attempt = 0; attempt < 3; attempt++) {
+    const maxAttempts = policy
+      ? z.int().min(1).max(3).parse(policy.maxAttempts)
+      : 3;
+    const ready = () => {
+      if (
+        policy &&
+        (!Number.isFinite(policy.deadlineAt) ||
+          policy.minRemainingMs < 0 ||
+          Date.now() + policy.minRemainingMs > policy.deadlineAt)
+      )
+        throw new CommandError(
+          "temporary",
+          "Command deadline reached; recover the exact operation",
+        );
+    };
+    for (let attempt = 0; attempt < maxAttempts; attempt++) {
       try {
+        ready();
         const identity = await dependencies.resolveIdentity();
+        ready();
         const actor = principalId.parse(identity.principalId);
         const scope: Scope = { ...request.data.scope, principalId: actor };
         const outcome = await withScope(
@@ -246,7 +268,8 @@ export function createCommandExecutor(dependencies: {
                 ? "access"
                 : "database",
         });
-        if ((code === "40001" || code === "40P01") && attempt < 2) continue;
+        if ((code === "40001" || code === "40P01") && attempt < maxAttempts - 1)
+          continue;
         const domainError = command.mapError?.(error);
         if (domainError) throw domainError;
         if (error instanceof CommandError) throw error;

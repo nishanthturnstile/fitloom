@@ -331,6 +331,8 @@ export const customerActivity = z.strictObject({
     ...customerCommandName.options,
     "customer-photo.bind",
     "customer-photo.remove",
+    "customer.import",
+    "wearer.import",
   ]),
   actor: z.enum(["You", "Shop staff"]),
   changedFields: z

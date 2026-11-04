@@ -46,6 +46,24 @@ export default async function Customers({
         title="Customers"
         description={`${context.workspace.locationName} · Contacts and named wearers for this location.`}
       />
+      <div className="flex flex-wrap gap-4 mb-5">
+        {context.workspace.permissions.includes("customers.import") ? (
+          <a
+            className="text-primary underline"
+            href={`${base}/customers/import`}
+          >
+            Import customers and wearers
+          </a>
+        ) : null}
+        {context.workspace.permissions.includes("measurements.import") ? (
+          <a
+            className="text-primary underline"
+            href={`${base}/measurements/import`}
+          >
+            Import measurement histories
+          </a>
+        ) : null}
+      </div>
       <CustomerRegister
         canManage={context.workspace.permissions.includes("customers.manage")}
         scope={{ ...context.target, principalId: context.principalId }}

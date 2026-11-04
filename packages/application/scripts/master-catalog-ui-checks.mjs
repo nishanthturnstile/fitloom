@@ -37,6 +37,24 @@ export async function exerciseCatalogUI(page, fixture) {
     await page.getByLabel("Search by name prefix", { exact: true }).fill(label);
     await click("Refresh register");
     await page.getByText("Register refreshed.", { exact: true }).waitFor();
+    while (
+      !(await page.getByRole("button", { name: label, exact: true }).count())
+    ) {
+      const next = page.getByRole("button", { name: "Next page", exact: true });
+      if (!(await next.isEnabled())) break;
+      const read = page.waitForResponse(
+        (r) =>
+          r.request().method() === "GET" &&
+          /\/masters\/(services|addons|garments)\?/.test(r.url()),
+      );
+      await next.click();
+      await read;
+      await page.waitForFunction(
+        () =>
+          document.getElementById("catalog-register")?.dataset.readState ===
+          "ready",
+      );
+    }
   };
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.goto(settings);
@@ -151,6 +169,43 @@ export async function exerciseCatalogUI(page, fixture) {
       original.serviceOverrides[0].rateOverride === "0.000000",
     "Base/override decimals did not persist",
   );
+  // Put the exact service header behind the first fifty prefix matches.
+  for (let index = 0; index < 50; index++) {
+    const r = await page.request.post(`${api}/commands/service.save`, {
+      headers: { origin: fixture.base },
+      data: {
+        operationKey: await page.evaluate(() => crypto.randomUUID()),
+        correlationId: await page.evaluate(() => crypto.randomUUID()),
+        payload: {
+          mode: "create",
+          label: `${serviceLabel} detail ${String(index).padStart(2, "0")}`,
+        },
+      },
+    });
+    check(r.ok(), `Prefix fixture service ${index} failed`);
+  }
+  const moveLast = await page.request.post(`${api}/commands/masters.reorder`, {
+    headers: { origin: fixture.base },
+    data: {
+      operationKey: await page.evaluate(() => crypto.randomUUID()),
+      correlationId: await page.evaluate(() => crypto.randomUUID()),
+      payload: {
+        kind: "service",
+        movedId: service.id,
+        beforeId: null,
+        expectedCatalogVersion: (await get("/catalog")).catalogVersion,
+      },
+    },
+  });
+  check(moveLast.ok(), "Prefix fixture reorder failed");
+  const prefixFirst = await get(
+    `/services?search=${encodeURIComponent(serviceLabel)}&active=all&visibility=all`,
+  );
+  check(
+    prefixFirst.nextOffset !== null &&
+      !prefixFirst.items.some((item) => item.id === service.id),
+    "Service fixture did not move the exact header to page two",
+  );
   await click("Services");
   await search(serviceLabel);
   await click(serviceLabel);
@@ -212,6 +267,7 @@ export async function exerciseCatalogUI(page, fixture) {
     .fill(`${serviceLabel} renamed`);
   await click("Reload saved version");
   await page.getByRole("button", { name: "Revision 3", exact: true }).waitFor();
+  await search(`${serviceLabel} renamed`);
   await click("Move to end");
   await page.getByText("Catalog order updated.", { exact: true }).waitFor();
   await click("Add-ons");

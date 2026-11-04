@@ -1,4 +1,5 @@
 import { identityEnvironment } from "@fitloom/application";
+import { measurementCardReturn } from "@fitloom/application/measurement-card-contracts";
 import { headers } from "next/headers";
 import { identityService } from "../../server/identity";
 import { AccountPanel } from "./account-panel";
@@ -14,6 +15,7 @@ export default async function Account({
     token?: string;
     error?: string;
     invite?: string;
+    card?: string;
     verified?: string;
   }>;
 }) {
@@ -60,9 +62,10 @@ export default async function Account({
             }
           : {})}
         destination={
-          query.invite && /^[0-9a-f-]{36}$/i.test(query.invite)
+          measurementCardReturn(query.card) ??
+          (query.invite && /^[0-9a-f-]{36}$/i.test(query.invite)
             ? `/invitations/${query.invite}`
-            : "/workspaces"
+            : "/workspaces")
         }
         {...(query.token ? { resetToken: query.token } : {})}
         {...(query.error ? { verificationError: query.error } : {})}

@@ -166,6 +166,40 @@ await test("verified identity, real Mailpit delivery, recovery, and operator MFA
       );
     });
     await admin.query("TRUNCATE app.auth_admission,public.rate_limit");
+    await t.test(
+      "card network admissions share PostgreSQL state and trust only the configured address header",
+      async () => {
+        const cardConfig = { ...config, proxyHeader: "x-card-fixture-address" };
+        const first = createIdentityService({
+          pool: authPool,
+          config: cardConfig,
+        });
+        const headers = new Headers({
+          "x-card-fixture-address": "198.51.100.7",
+        });
+        for (let i = 0; i < 60; i++)
+          assert.equal(await first.admitMeasurementCardRequest(headers), true);
+        const restarted = createIdentityService({
+          pool: authPool,
+          config: cardConfig,
+        });
+        assert.equal(
+          await restarted.admitMeasurementCardRequest(headers),
+          false,
+        );
+        headers.set("x-forwarded-for", "198.51.100.8");
+        assert.equal(
+          await restarted.admitMeasurementCardRequest(headers),
+          false,
+        );
+        headers.set("x-card-fixture-address", "198.51.100.8");
+        assert.equal(
+          await restarted.admitMeasurementCardRequest(headers),
+          true,
+        );
+      },
+    );
+
     const email = `identity-${randomUUID()}@example.test`;
     let client;
     await t.test(
